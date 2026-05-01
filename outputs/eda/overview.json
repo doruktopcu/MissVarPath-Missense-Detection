@@ -1,0 +1,14 @@
+{
+  "n_rows":21872,
+  "n_cols":777,
+  "n_numeric":447,
+  "n_object":330,
+  "n_bool":0,
+  "memory_mb":595.97,
+  "object_coercion":{
+    "n_object_cols":330,
+    "n_object_recoverable_as_numeric_>=95pct":0,
+    "n_object_recoverable_as_numeric_>=50pct":1,
+    "n_object_pure_text_<5pct":328
+  }
+}

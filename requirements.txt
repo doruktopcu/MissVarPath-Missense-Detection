@@ -1,0 +1,12 @@
+numpy>=1.26
+pandas>=2.2
+scikit-learn>=1.5
+matplotlib>=3.8
+seaborn>=0.13
+xgboost>=2.0
+lightgbm>=4.3
+catboost>=1.2
+torch>=2.2
+joblib>=1.4
+tqdm>=4.66
+pyarrow>=15.0

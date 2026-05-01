@@ -1,0 +1,11 @@
+{
+  "rows":21872,
+  "cols_after":211,
+  "features":208,
+  "dropped_label_leakage":39,
+  "dropped_identifiers":88,
+  "coerced_object_to_numeric":0,
+  "dropped_remaining_text":233,
+  "dropped_high_missing":207,
+  "dropped_zero_variance":1
+}

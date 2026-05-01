@@ -1,0 +1,17 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# Large data and model artifacts (regenerable)
+data/*.csv
+data/*.parquet
+outputs/preprocessing/*.parquet
+outputs/preprocessing/*.csv
+outputs/models/*.joblib
+outputs/models/*.pt
+outputs/models/*.pkl
