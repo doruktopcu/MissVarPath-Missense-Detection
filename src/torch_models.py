@@ -31,14 +31,16 @@ def _device() -> torch.device:
 class CNN1D(nn.Module):
     def __init__(self, n_features: int, n_classes: int):
         super().__init__()
+        # Global average pooling (output size 1) avoids the MPS adaptive-pool
+        # divisibility constraint; we pair it with a moderate FC head.
         self.net = nn.Sequential(
             nn.Conv1d(1, 32, kernel_size=7, padding=3),
             nn.ReLU(),
             nn.Conv1d(32, 64, kernel_size=5, padding=2),
             nn.ReLU(),
-            nn.AdaptiveAvgPool1d(8),
+            nn.AdaptiveAvgPool1d(1),
             nn.Flatten(),
-            nn.Linear(64 * 8, 128),
+            nn.Linear(64, 128),
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(128, n_classes),
@@ -152,12 +154,15 @@ class TorchClassifier(BaseEstimator, ClassifierMixin):
     def _forward(self, X) -> np.ndarray:
         X = self._to_tensor(X).numpy()
         X = self.scaler_.transform(X)
-        X = torch.as_tensor(X, dtype=torch.float32, device=self.device_)
+        X = torch.as_tensor(X, dtype=torch.float32)
         self.model_.eval()
+        out_chunks: list[np.ndarray] = []
         with torch.no_grad():
-            logits = self.model_(X)
-            proba = torch.softmax(logits, dim=-1).cpu().numpy()
-        return proba
+            for i in range(0, X.shape[0], self.batch_size):
+                xb = X[i:i + self.batch_size].to(self.device_)
+                logits = self.model_(xb)
+                out_chunks.append(torch.softmax(logits, dim=-1).cpu().numpy())
+        return np.concatenate(out_chunks, axis=0)
 
     def predict_proba(self, X) -> np.ndarray:
         return self._forward(X)

@@ -1,0 +1,31 @@
+[13:12:14] INFO train: Task=4class  variant=augmented  X=(21797, 414)  y unique=(array([0, 1, 2, 3]), array([5456, 5451, 5446, 5444]))  features=414
+[13:12:14] INFO train: Train: (17437, 414)  Test: (4360, 414)
+[13:12:14] INFO train: ======================================================================
+[13:12:14] INFO train: Model: CNN1D  (family=torch)
+[13:12:33] INFO train:   fold 1/5  acc=0.5628  macroF1=0.5438  (19.0s)
+[13:12:45] INFO train:   fold 2/5  acc=0.5814  macroF1=0.5768  (12.0s)
+[13:12:57] INFO train:   fold 3/5  acc=0.5242  macroF1=0.4650  (12.1s)
+[13:13:09] INFO train:   fold 4/5  acc=0.5343  macroF1=0.5292  (12.0s)
+[13:13:21] INFO train:   fold 5/5  acc=0.5383  macroF1=0.4660  (12.0s)
+[13:13:21] INFO train:   CV: acc=0.5482±0.0234  macroF1=0.5161±0.0494
+[13:13:37] INFO train: ======================================================================
+[13:13:37] INFO train: Model: LSTM  (family=torch)
+[13:36:50] INFO train:   fold 1/5  acc=0.5444  macroF1=0.5357  (1393.2s)
+[13:38:26] INFO train:   fold 2/5  acc=0.5215  macroF1=0.4894  (95.9s)
+[13:40:03] INFO train:   fold 3/5  acc=0.4826  macroF1=0.4388  (97.0s)
+[13:41:52] INFO train:   fold 4/5  acc=0.5231  macroF1=0.4993  (109.0s)
+[13:43:51] INFO train:   fold 5/5  acc=0.5199  macroF1=0.5077  (118.9s)
+[13:43:51] INFO train:   CV: acc=0.5183±0.0223  macroF1=0.4942±0.0354
+[13:46:30] INFO train: ======================================================================
+[13:46:30] INFO train: Model: RNN  (family=torch)
+[13:51:55] INFO train:   fold 1/5  acc=0.5020  macroF1=0.4209  (325.2s)
+[13:57:18] INFO train:   fold 2/5  acc=0.4054  macroF1=0.3255  (322.3s)
+[14:02:53] INFO train:   fold 3/5  acc=0.6458  macroF1=0.6385  (335.9s)
+[14:08:47] INFO train:   fold 4/5  acc=0.5658  macroF1=0.5308  (353.5s)
+[14:14:30] INFO train:   fold 5/5  acc=0.6559  macroF1=0.6503  (343.6s)
+[14:14:30] INFO train:   CV: acc=0.5550±0.1046  macroF1=0.5132±0.1401
+[14:22:01] INFO train: Leaderboard:
+model family  cv_acc_mean  cv_acc_std  cv_macro_f1_mean  cv_macro_f1_std  holdout_acc  holdout_macro_f1  holdout_weighted_f1  holdout_mcc  holdout_roc_auc_macro  fit_seconds
+ LSTM  torch     0.518321    0.022304          0.494182         0.035414     0.561468          0.553901             0.554006     0.417788               0.860959       157.32
+CNN1D  torch     0.548199    0.023363          0.516147         0.049353     0.560092          0.544092             0.544183     0.420806               0.855486        15.17
+  RNN  torch     0.554981    0.104561          0.513196         0.140135     0.540596          0.490656             0.490789     0.408045               0.851924       448.22

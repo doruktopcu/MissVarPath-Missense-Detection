@@ -34,3 +34,15 @@ TEST_SIZE = 0.2
 PROCESSED_PARQUET = PREPROC_DIR / "missense_processed.parquet"
 FEATURE_LIST_TXT = PREPROC_DIR / "final_features.txt"
 DROPPED_COLS_TXT = PREPROC_DIR / "dropped_columns.txt"
+
+# Sequence-feature outputs
+SEQUENCES_DIR = OUTPUTS_DIR / "sequences"
+SEQUENCES_DIR.mkdir(parents=True, exist_ok=True)
+FLANKS_PARQUET = SEQUENCES_DIR / "flanks.parquet"
+KMER_PARQUET = SEQUENCES_DIR / "kmer_features.parquet"
+BLAST_FEATURES_PARQUET = SEQUENCES_DIR / "blast_features.parquet"
+AUGMENTED_PARQUET = PREPROC_DIR / "missense_augmented.parquet"
+
+FLANK_SIZE = 25  # bp on each side of the variant
+ENSEMBL_REST = "https://rest.ensembl.org"
+ENSEMBL_ASSEMBLY = "GRCh38"  # gnomAD v4 / OpenCRAVAT default

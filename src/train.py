@@ -28,6 +28,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
 from .config import (
+    AUGMENTED_PARQUET,
     CLASS_2_NAMES,
     CLASS_4_NAMES,
     N_SPLITS,
@@ -49,8 +50,10 @@ from .utils import (
 LOG = get_logger("train")
 
 
-def load_processed(task: str) -> tuple[np.ndarray, np.ndarray, list[str], list[str]]:
-    df = pd.read_parquet(PROCESSED_PARQUET)
+def load_processed(task: str, variant: str = "base"
+                   ) -> tuple[np.ndarray, np.ndarray, list[str], list[str]]:
+    parquet = AUGMENTED_PARQUET if variant == "augmented" else PROCESSED_PARQUET
+    df = pd.read_parquet(parquet)
     target_col = "target_4" if task == "4class" else "target_2"
     class_names = CLASS_4_NAMES if task == "4class" else CLASS_2_NAMES
     feature_cols = [c for c in df.columns
@@ -117,17 +120,19 @@ def evaluate_holdout(spec: ModelSpec, X_tr, y_tr, X_te, y_te,
     return summary
 
 
-def run(task: str, model_names: list[str] | None = None) -> pd.DataFrame:
-    X, y, feature_cols, class_names = load_processed(task)
+def run(task: str, model_names: list[str] | None = None,
+        variant: str = "base") -> pd.DataFrame:
+    X, y, feature_cols, class_names = load_processed(task, variant=variant)
     n_classes = len(class_names)
-    LOG.info("Task=%s  X=%s  y unique=%s  features=%d",
-             task, X.shape, np.unique(y, return_counts=True), len(feature_cols))
+    LOG.info("Task=%s  variant=%s  X=%s  y unique=%s  features=%d",
+             task, variant, X.shape, np.unique(y, return_counts=True), len(feature_cols))
 
     X_tr, X_te, y_tr, y_te = train_test_split(
         X, y, test_size=TEST_SIZE, stratify=y, random_state=RANDOM_STATE)
     LOG.info("Train: %s  Test: %s", X_tr.shape, X_te.shape)
 
-    task_dir = REPORTS_DIR / task
+    suffix = "" if variant == "base" else f"_{variant}"
+    task_dir = REPORTS_DIR / f"{task}{suffix}"
     task_dir.mkdir(parents=True, exist_ok=True)
 
     specs = [get_model(n) for n in model_names] if model_names else MODEL_SPECS
@@ -187,6 +192,8 @@ def run(task: str, model_names: list[str] | None = None) -> pd.DataFrame:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
     p.add_argument("--task", choices=["4class", "2class"], default="4class")
+    p.add_argument("--variant", choices=["base", "augmented"], default="base",
+                   help="'base' = tabular only; 'augmented' = + k-mer + BLAST features.")
     p.add_argument("--models", nargs="*", default=None,
                    help="Optional subset of model names to run.")
     return p.parse_args()
@@ -194,4 +201,4 @@ def parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     args = parse_args()
-    run(args.task, args.models)
+    run(args.task, args.models, variant=args.variant)

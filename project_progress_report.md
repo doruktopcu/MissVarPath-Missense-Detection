@@ -247,6 +247,87 @@ Known artifact gap:
 
 Combined with #6 this completes the baseline pass requested in the very first prompt: 10 models × 2 tasks × {5-fold CV, 80/20 holdout, classification report, confusion matrix}. Total wall time ~36 min for 4-class + ~28 min for 2-class.
 
-### #8 — Placeholder for next entry.
+### #8 — Sequence-context features: k-mers + BLAST self-similarity.
+
+The proposal (§B and §3) calls for using flanking DNA around each variant for both k-mer features and BLAST alignment as a fallback when in-silico VEP scores are missing. This entry implements both, runs them on the full dataset, retrains all 10 models on the augmented feature set, and reports the lift (or lack thereof).
+
+**Pipeline (4 new modules):**
+
+1. **`src/sequence_fetch.py`** — fetches a ±25 bp flank around each variant from the Ensembl REST batch endpoint (`POST /sequence/region/human`, GRCh38, 50 regions per request, ~14 req/sec to stay under the 15 req/sec rate limit). The response uses a `query` field (not `id`) to echo the requested coordinates. The centre base of every fetched window is verified against the dataset's reported `ref_base`; rows where the check fails are flagged `ok=False`. The mutated alt-flank is built by single-base substitution at the centre.
+
+   Outputs: `outputs/sequences/flanks.parquet`. Result on the full dataset: **21,797 of 21,872 variants validated (99.66%)**. The 75 failures are mostly mitochondrial / patch-region coordinates where the requested window straddles a contig boundary or the reported ref doesn't match GRCh38 — they are dropped from downstream feature engineering. Total fetch time: ~13 minutes.
+
+2. **`src/sequence_features.py`** — k-mer count features. For k=3 (full alphabet space = 64 trinucleotides) we emit:
+   - `kmer_ref_<XYZ>` and `kmer_alt_<XYZ>` for every k-mer (128 columns)
+   - `kmer_diff_<XYZ>` = alt count − ref count (64 columns)
+   - aggregates: `gc_ref`, `gc_alt`, `entropy_ref`, `entropy_alt`
+   
+   Total: **196 sequence-derived features per variant**. K-mers containing non-{A,C,G,T} characters (rare 'N' bases) are skipped. Output: `outputs/sequences/kmer_features.parquet` (21,796 × 200 incl. join keys).
+
+3. **`src/blast_features.py`** — local BLAST self-similarity. Uses BLAST+ (`makeblastdb` + `blastn`) installed system-wide. The pipeline:
+   1. Reproduces the **same stratified 80/20 split** as `src.train` (RANDOM_STATE=42, stratify on target_4) so the BLAST DB only ever indexes training-set variants.
+   2. Builds a nucleotide BLAST DB from the **ref-flanks** of the training set (~17.4k sequences).
+   3. Queries every variant's **alt-flank** against this DB (`blastn`, word_size=7, evalue=10, max_target_seqs=11).
+   4. For each query, drops self-hits (`qseqid == sseqid`), takes the top-K=10 hits by bitscore, and aggregates labels of those neighbours.
+
+   Resulting features (10 per variant):
+   - `blast_n_hits`, `blast_top_bit`, `blast_top_pident`
+   - `blast_n_pathogenic`, `blast_n_benign` (counts among top-K)
+   - `blast_p_pathogenic_top1` (1 if nearest neighbour is pathogenic-tier)
+   - `blast_mean_bit_path`, `blast_mean_bit_benign`
+   - `blast_target_4_top1`, `blast_target_2_top1` (label of nearest neighbour, −1 if no hit)
+
+   Result: **242,841 BLAST hits** across **21,757 of 21,796 queries** (99.8% coverage). End-to-end BLAST step (DB build + 21,796 queries) ran in **~14 seconds** with `-num_threads 4`. Output: `outputs/sequences/blast_features.parquet`.
+
+4. **`src/build_augmented_dataset.py`** — joins the three sources by `(chrom, pos, ref, alt)` (k-mer) and `variant_id` (BLAST), drops rows missing flank/BLAST features, deduplicates the lone collision (`15:25371797 G>T` appears twice in the raw CSV), and writes `outputs/preprocessing/missense_augmented.parquet`. Final shape: **21,797 × 417** = **414 features** (208 base + 196 k-mer + 10 BLAST) + label/targets.
+
+5. **`src/train.py --variant augmented`** — same training pipeline as #6, but loads the augmented parquet and writes to `outputs/reports/4class_augmented/`.
+
+**Two infrastructure bugs fixed in passing:**
+
+- **MPS adaptive-pool divisibility:** `nn.AdaptiveAvgPool1d(8)` errors on Apple Silicon when the input length isn't divisible by 8. With 414 features that's the case. Switched CNN1D to global average pooling (`AdaptiveAvgPool1d(1)`) for portability. Side effect: information loss is larger, so CNN1D's CV score collapsed (see table) — but tabular CNN was never the right tool here, and we'll re-do it properly when sequence features arrive on their own.
+- **MPS OOM during torch model `predict_proba`:** the wrapper sent the entire test matrix to MPS at once (4,360 × 414 floats × bidirectional LSTM hidden = ~900 MB), tripping the 20 GB pool limit on the second torch run. Patched `TorchClassifier._forward` in `src/torch_models.py` to chunk inference at `batch_size=256`. After the fix, LSTM and RNN both completed holdout evaluation cleanly.
+
+**Results — augmented 4-class leaderboard** (held-out 20%, sorted by macro-F1):
+
+| Rank | Model | CV macroF1 (mean ± std) | Holdout acc | Holdout macroF1 | Δ macroF1 vs base |
+|------|-------|-------------------------|-------------|-----------------|-------------------|
+| 1 | RandomForest | 0.7912 ± 0.0076 | 0.7984 | **0.7977** | **+0.0073** |
+| 2 | XGBoost | 0.7994 ± 0.0087 | 0.7968 | 0.7964 | −0.0013 |
+| 3 | LightGBM | 0.7968 ± 0.0046 | 0.7952 | 0.7948 | −0.0065 |
+| 4 | CatBoost | 0.7919 ± 0.0082 | 0.7940 | 0.7933 | +0.0067 |
+| 5 | ExtraTrees | 0.7858 ± 0.0038 | 0.7842 | 0.7835 | −0.0033 |
+| 6 | LogisticRegression | 0.7619 ± 0.0057 | 0.7663 | 0.7660 | +0.0088 |
+| 7 | ShallowNN_MLP | 0.7165 ± 0.0038 | 0.7151 | 0.7095 | **−0.0376** |
+| 8 | LSTM (PyTorch) | 0.4942 ± 0.0354 | 0.5615 | 0.5539 | −0.0592 |
+| 9 | CNN1D (PyTorch) | 0.5161 ± 0.0494 | 0.5601 | 0.5441 | −0.1719 (MPS pool change) |
+| 10 | RNN (PyTorch) | 0.5132 ± 0.1401 | 0.5406 | 0.4907 | −0.1327 |
+
+(Δ vs base is the augmented holdout macroF1 minus the corresponding number from #6.)
+
+**Reading of the results — what BLAST/k-mer added (and didn't):**
+
+- **Strong models barely move.** RandomForest gets a small +0.007 lift; LightGBM gives back about the same. The ±0.005 band is well inside fold-level noise (CV stds are ~0.005–0.009 for the boosters). **There is no clear, robust benefit from adding k-mer + BLAST features on top of the existing OpenCRAVAT VEP scores.**
+- **This is consistent with the literature.** The base feature set already includes AlphaMissense, REVEL, CADD v1.7, MetaRNN, BayesDel, MutationTaster, PROVEAN, SIFT, ESM1b, EVE, PrimateAI, MVP, plus phyloP / phastCons conservation, plus protein-domain context (SwissProt). Each of those was *trained* on a flanking-sequence representation of the same locus, often with much richer encodings than 3-mer counts. The k-mer / BLAST features carry information that the deep VEPs already harvested, so a tree booster on top sees no new gradient.
+- **Where this kind of feature WOULD pay off:** the proposal explicitly identifies the case — VUS variants where AlphaMissense / CADD / REVEL scores are not available. A future experiment is to **drop the in-silico score columns** from the augmented set and train on (gnomAD-style features + conservation + k-mer + BLAST) only. If that ablation gets within striking distance of the current ~0.80 macroF1, it shows the sequence-context features can stand in for VEPs when those are missing — which is the actual clinical bottleneck the proposal calls out.
+- **Tiny shrinkage of the dataset (75 rows lost) is not the cause** of the flat lift — even RandomForest, which was trained on essentially the same rows, only moves +0.007.
+- **ShallowNN regression is real** (−0.038): adding 200+ raw integer count features to a fixed-budget MLP with `max_iter=60` is enough to starve training. This was already on the follow-up list from #6 and is more visible here.
+- **Torch sequence models worsened**, as expected. Three drivers compound: (a) the CNN1D global-pool change documented above, (b) feeding even more features as a fake "sequence" hurts the LSTM/RNN's already-poor inductive bias, (c) the RNN folds show a 0.140 std on macroF1 — high enough that the run is essentially numerical noise on top of a bad architecture choice.
+
+**Artifacts:**
+- `outputs/sequences/flanks.parquet`, `kmer_features.parquet`, `blast_features.parquet`
+- `outputs/preprocessing/missense_augmented.parquet`
+- `outputs/reports/4class_augmented/` — same layout as #6: per-model classification report `.md`, confusion matrices PNG (counts + normalized), `*_metrics.json`, `leaderboard.csv` (rebuilt from the JSONs after the partial-overwrite caused by the torch retry).
+- Logs: `outputs/sequences/fetch.log`, `outputs/reports/train_4class_augmented.log` (the killed sklearn-only first pass), `outputs/reports/train_4class_augmented_torch.log` (torch retry).
+
+**Decision: not adding these features to the default pipeline.** The base parquet (`missense_processed.parquet`) remains the canonical training input; the augmented parquet is opt-in via `--variant augmented`. The infrastructure is left in place so the VUS-style ablation can be done by simply listing the VEP-score columns to drop before re-running.
+
+**Follow-ups queued from this work:**
+- Run the **VEP-score ablation** described above (drop AlphaMissense/CADD/REVEL/etc. columns; keep only gnomAD freq + conservation + k-mer + BLAST). That is the experiment that actually answers "does sequence context help when in-silico scores are missing?".
+- Add **gene-stratified CV** (still pending from #6) — particularly important now because BLAST self-similarity could leak gene identity through neighbour labels.
+- **Bump `MLPClassifier` `max_iter`** so ShallowNN isn't budget-starved; the augmented run made this gap impossible to ignore.
+- **Switch torch models to CPU** by default, or guard MPS with a feature-length divisibility check, so the platform-specific bugs don't recur.
+
+### #9 — Placeholder for next entry.
 
 To be filled in by the next task.
