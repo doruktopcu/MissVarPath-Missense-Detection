@@ -1,41 +1,44 @@
 {
   "model": "LightGBM",
   "task": "2class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": null,
   "cv": [
     {
       "fold": 1,
       "accuracy": 0.9914285714285714,
       "macro_f1": 0.9914285714285714,
       "weighted_f1": 0.9914285714285714,
-      "fit_seconds": 10.66
+      "fit_seconds": 11.51
     },
     {
       "fold": 2,
       "accuracy": 0.986,
       "macro_f1": 0.9859998068544782,
       "weighted_f1": 0.9859998068544783,
-      "fit_seconds": 9.91
+      "fit_seconds": 8.82
     },
     {
       "fold": 3,
       "accuracy": 0.9874249785653044,
       "macro_f1": 0.9874249282362619,
       "weighted_f1": 0.9874249354261252,
-      "fit_seconds": 9.62
+      "fit_seconds": 11.42
     },
     {
       "fold": 4,
       "accuracy": 0.9914261217490712,
       "macro_f1": 0.991426087433815,
       "weighted_f1": 0.9914260825316354,
-      "fit_seconds": 9.23
+      "fit_seconds": 11.55
     },
     {
       "fold": 5,
       "accuracy": 0.9931408973992569,
       "macro_f1": 0.9931408968390101,
       "weighted_f1": 0.9931408973992569,
-      "fit_seconds": 9.06
+      "fit_seconds": 11.74
     }
   ],
   "cv_summary": {
@@ -53,7 +56,7 @@
       "Pathogenic/Likely pathogenic": 0.9881656804733728
     },
     "mcc": 0.9762694246276179,
-    "roc_auc_ovr_macro": NaN,
-    "fit_seconds": 11.37
+    "roc_auc_ovr_macro": 0.9992773485336737,
+    "fit_seconds": 12.74
   }
 }

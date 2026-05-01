@@ -72,10 +72,12 @@ META_COLS = {"clinvar_sig", "target_4", "target_2", "gene_symbol"}
 
 def load_processed(task: str, variant: str = "base",
                    drop_prefixes: list[str] | None = None,
+                   keep_prefixes: list[str] | None = None,
                    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[str], list[str]]:
     """Returns (X, y, groups, feature_cols, class_names).
 
     `groups` is the gene-symbol array (length = X.shape[0]); used by gene-CV.
+    `drop_prefixes` and `keep_prefixes` are mutually exclusive — use one or the other.
     """
     parquet = AUGMENTED_PARQUET if variant == "augmented" else PROCESSED_PARQUET
     df = pd.read_parquet(parquet)
@@ -83,12 +85,20 @@ def load_processed(task: str, variant: str = "base",
     class_names = CLASS_4_NAMES if task == "4class" else CLASS_2_NAMES
 
     feature_cols = [c for c in df.columns if c not in META_COLS]
+    if drop_prefixes and keep_prefixes:
+        raise ValueError("Use either --drop-prefixes or --keep-prefixes, not both.")
     if drop_prefixes:
         before = len(feature_cols)
         feature_cols = [c for c in feature_cols
                         if not any(c.startswith(p) for p in drop_prefixes)]
         LOG.info("Ablation drop: %d → %d features (dropped %d by prefix)",
                  before, len(feature_cols), before - len(feature_cols))
+    if keep_prefixes:
+        before = len(feature_cols)
+        feature_cols = [c for c in feature_cols
+                        if any(c.startswith(p) for p in keep_prefixes)]
+        LOG.info("Ablation keep: %d → %d features (kept %d by prefix)",
+                 before, len(feature_cols), len(feature_cols))
 
     X = df[feature_cols].to_numpy(dtype=np.float32)
     y = df[target_col].to_numpy(dtype=np.int64)
@@ -192,9 +202,11 @@ def _task_dir_name(task: str, variant: str, cv_mode: str, tag: str | None) -> st
 def run(task: str, model_names: list[str] | None = None,
         variant: str = "base", cv_mode: str = "kfold",
         drop_prefixes: list[str] | None = None,
+        keep_prefixes: list[str] | None = None,
         tag: str | None = None) -> pd.DataFrame:
     X, y, groups, feature_cols, class_names = load_processed(
-        task, variant=variant, drop_prefixes=drop_prefixes)
+        task, variant=variant, drop_prefixes=drop_prefixes,
+        keep_prefixes=keep_prefixes)
     n_classes = len(class_names)
     LOG.info("Task=%s  variant=%s  cv_mode=%s  tag=%s  X=%s  features=%d  unique_genes=%d",
              task, variant, cv_mode, tag, X.shape, len(feature_cols),
@@ -275,6 +287,8 @@ def parse_args() -> argparse.Namespace:
                    help="'kfold' = StratifiedKFold(5); 'gene' = StratifiedGroupKFold by gene_symbol with GroupShuffleSplit holdout.")
     p.add_argument("--drop-prefixes", nargs="*", default=None,
                    help="Column-name prefixes to drop (ablation).")
+    p.add_argument("--keep-prefixes", nargs="*", default=None,
+                   help="Column-name prefixes to keep — drops everything else.")
     p.add_argument("--tag", default=None, help="Tag appended to the report dir.")
     p.add_argument("--models", nargs="*", default=None,
                    help="Optional subset of model names to run.")
@@ -284,4 +298,5 @@ def parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     args = parse_args()
     run(args.task, args.models, variant=args.variant, cv_mode=args.cv_mode,
-        drop_prefixes=args.drop_prefixes, tag=args.tag)
+        drop_prefixes=args.drop_prefixes, keep_prefixes=args.keep_prefixes,
+        tag=args.tag)

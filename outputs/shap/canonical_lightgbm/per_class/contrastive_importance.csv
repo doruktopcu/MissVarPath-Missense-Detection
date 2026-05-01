@@ -1,0 +1,625 @@
+class_a,class_b,rank,feature,mean_abs_shap_diff
+Benign,Likely benign,1,allofus250k_gvs_max_af,2.036657321782141
+Benign,Likely benign,2,gnomad_af,1.9588390237905895
+Benign,Likely benign,3,ditto_score,1.822385227673757
+Benign,Likely benign,4,metarnn_score,0.69687462037479
+Benign,Likely benign,5,bayesdel_bayesdel_addaf_rankscore,0.5927975502052332
+Benign,Likely benign,6,gnomad3_af_afr,0.5680569541507065
+Benign,Likely benign,7,clinpred_score,0.4512353086948193
+Benign,Likely benign,8,metarnn_rank_score,0.37541444819031466
+Benign,Likely benign,9,gnomad3_af_nfe,0.36954348981469426
+Benign,Likely benign,10,gnomad3_af,0.29670932590281646
+Benign,Likely benign,11,allofus250k_gvs_max_ac,0.29114008526418694
+Benign,Likely benign,12,bayesdel_bayesdel_addaf_score,0.25099007362361453
+Benign,Likely benign,13,allofus250k_gvs_eas_ac,0.24397667311202573
+Benign,Likely benign,14,gnomad3_af_fin,0.242645954419073
+Benign,Likely benign,15,alphamissense_am_pathogenicity,0.24045058272687478
+Benign,Likely benign,16,ncer_score,0.2372845395166827
+Benign,Likely benign,17,allofus250k_gvs_afr_ac,0.22949208222486295
+Benign,Likely benign,18,mutpred1_mutpred_general_score,0.2171979104839346
+Benign,Likely benign,19,revel_score,0.17522287680375362
+Benign,Likely benign,20,gmvp_score,0.16844963859226156
+Benign,Likely benign,21,mistic_score,0.16456876230435738
+Benign,Likely benign,22,mutation_assessor_score,0.15737326778148678
+Benign,Likely benign,23,fathmm_xf_coding_fathmm_xf_coding_score,0.1514852071829453
+Benign,Likely benign,24,gnomad3_af_asj,0.1504636497498277
+Benign,Likely benign,25,gmvp_rank_score,0.1487118998900429
+Benign,Likely benign,26,chasmplus_pval,0.12190502345156741
+Benign,Likely benign,27,primateai_primateai_score,0.12092983279844174
+Benign,Likely benign,28,regeneron_all_an,0.11991780108374062
+Benign,Likely benign,29,vest_score,0.1173266029940183
+Benign,Likely benign,30,hg19_pos,0.11580975778454318
+Benign,Likely benign,31,allofus250k_gvs_oth_ac,0.10921157552424075
+Benign,Likely benign,32,original_input_pos,0.10601749881440885
+Benign,Likely benign,33,regeneron_all_ac,0.10493413542102405
+Benign,Likely benign,34,varity_r_varity_er,0.10398597315269
+Benign,Likely benign,35,gnomad3_af_sas,0.10315009041771656
+Benign,Likely benign,36,regeneron_all_af,0.10256573766825891
+Benign,Likely benign,37,vest_pval,0.09829540053359773
+Benign,Likely benign,38,allofus250k_gvs_sas_ac,0.09764209302252035
+Benign,Likely benign,39,metasvm_rankscore,0.09565925575724411
+Benign,Likely benign,40,polyphen2_hdiv_rank,0.09511800742621453
+Benign,Likely benign,41,gnomad_af_nfe,0.09336259689207753
+Benign,Likely benign,42,chasmplus_laml_pval,0.09321558637893711
+Benign,Likely benign,43,allofus250k_gvs_amr_ac,0.0927397131361415
+Benign,Likely benign,44,allofus250k_gvs_all_ac,0.09083048789006323
+Benign,Likely benign,45,primateai_primateai_rankscore,0.0898682852398735
+Benign,Likely benign,46,mutpred2_score,0.08811562651820022
+Benign,Likely benign,47,chasmplus_stad_pval,0.08788644493510032
+Benign,Likely benign,48,chasmplus_ov_pval,0.08781940950038014
+Benign,Likely benign,49,chasmplus_tgct_pval,0.08735872268203965
+Benign,Likely benign,50,dann_score,0.08309175330518113
+Benign,Likely benign,51,phastcons_phastcons17way_primate,0.08250139591057422
+Benign,Likely benign,52,fathmm_xf_score,0.0798071882035003
+Benign,Likely benign,53,lrt_lrt_score,0.0796316140591922
+Benign,Likely benign,54,chasmplus_coad_pval,0.0788410863556837
+Benign,Likely benign,55,eve_score,0.07783726547375296
+Benign,Likely benign,56,bayesdel_bayesdel_noaf_score,0.07736557029639053
+Benign,Likely benign,57,provean_score,0.07655497661039258
+Benign,Likely benign,58,metalr_score,0.07634799972633995
+Benign,Likely benign,59,chasmplus_blca_pval,0.07393175410913931
+Benign,Likely benign,60,sift_score,0.07351233799930902
+Benign,Likely benign,61,allofus250k_gvs_all_an,0.07335373316009684
+Benign,Likely benign,62,gnomad3_af_eas,0.07219014080321835
+Benign,Likely benign,63,alfa_total_alt,0.07158186897931641
+Benign,Likely benign,64,cscape_score,0.07122035284198105
+Benign,Likely benign,65,allofus250k_gvs_afr_af,0.07079063272429215
+Benign,Likely benign,66,cadd_score,0.0686409319786873
+Benign,Likely benign,67,sift_med,0.06454005342652316
+Benign,Likely benign,68,varity_r_varity_r_loo,0.0644098510513309
+Benign,Likely benign,69,chasmplus_uvm_score,0.06186916639276359
+Benign,Likely benign,70,chasmplus_kirp_pval,0.06112446051537409
+Benign,Likely benign,71,chasmplus_lusc_pval,0.05990461366319834
+Benign,Likely benign,72,allofus250k_gvs_max_an,0.05854472389981444
+Benign,Likely benign,73,allofus250k_gvs_eur_af,0.05683657940276798
+Benign,Likely benign,74,chasmplus_meso_pval,0.056466980344472936
+Benign,Likely benign,75,phylop_phylop100_vert,0.05644977545394603
+Benign,Likely benign,76,lrt_lrt_converted_rankscore,0.05545896471198671
+Benign,Likely benign,77,varity_r_varity_er_loo,0.055366516102744734
+Benign,Likely benign,78,metasvm_score,0.054814842963085815
+Benign,Likely benign,79,chasmplus_ucec_pval,0.05471017353837329
+Benign,Likely benign,80,mutationtaster_rankscore,0.05452657955342793
+Benign,Likely benign,81,cscape_coding_score,0.054139985458611845
+Benign,Likely benign,82,chasmplus_skcm_pval,0.052869492370497755
+Benign,Likely benign,83,alfa_total_freq,0.05236339666449186
+Benign,Likely benign,84,fitcons_fitcons_coding_score,0.051730533637119706
+Benign,Likely benign,85,chasmplus_score,0.05125468785727307
+Benign,Likely benign,86,chasmplus_skcm_score,0.050895523260401865
+Benign,Likely benign,87,revel_rankscore,0.0508827155931674
+Benign,Likely benign,88,sift_seqs,0.05076637381810665
+Benign,Likely benign,89,chasmplus_ov_score,0.05038829123615049
+Benign,Likely benign,90,dann_coding_dann_coding_score,0.05030213715145172
+Benign,Likely benign,91,chasmplus_uvm_pval,0.04848643390990197
+Benign,Likely benign,92,chasmplus_coad_score,0.04836116733039384
+Benign,Likely benign,93,chasmplus_luad_pval,0.04778091846316858
+Benign,Likely benign,94,sift_rankscore,0.04716717033993319
+Benign,Likely benign,95,chasmplus_cesc_pval,0.04711169398806476
+Benign,Likely benign,96,varity_r_varity_r,0.04705008006761037
+Benign,Likely benign,97,alfa_latin_american_latin2_alt,0.04703261730932539
+Benign,Likely benign,98,polyphen2_hvar_rank,0.04670852898313129
+Benign,Likely benign,99,gerp_gerp_nr,0.04616387670644815
+Benign,Likely benign,100,genocanyon_score,0.045589826534471245
+Benign,Likely benign,101,siphy_logodds,0.04409073976632766
+Benign,Likely benign,102,chasmplus_luad_score,0.0439532848138742
+Benign,Likely benign,103,chasmplus_lusc_score,0.04358711222308997
+Benign,Likely benign,104,allofus250k_gvs_afr_an,0.04341571817567748
+Benign,Likely benign,105,chasmplus_prad_pval,0.04332579380960885
+Benign,Likely benign,106,gnomad3_af_oth,0.04331492090545216
+Benign,Likely benign,107,mutationtaster_score,0.04294225866814796
+Benign,Likely benign,108,esm1b_score,0.04270620814561223
+Benign,Likely benign,109,chasmplus_laml_score,0.04239803305676693
+Benign,Likely benign,110,chasmplus_cesc_score,0.04146958180203983
+Benign,Likely benign,111,gnomad3_af_lat,0.04131086096943926
+Benign,Likely benign,112,phylop_phylop470_mamm,0.04044830956505994
+Benign,Likely benign,113,chasmplus_tgct_score,0.04023681931743292
+Benign,Likely benign,114,phdsnpg_score,0.03984315059311537
+Benign,Likely benign,115,chasmplus_esca_pval,0.03901887161338366
+Benign,Likely benign,116,allofus250k_gvs_amr_an,0.0389817638335012
+Benign,Likely benign,117,chasmplus_acc_pval,0.03890594435559619
+Benign,Likely benign,118,chasmplus_brca_score,0.03889673035871333
+Benign,Likely benign,119,esm1b_rankscore,0.038154997691480404
+Benign,Likely benign,120,phdsnpg_fdr,0.03786536838386347
+Benign,Likely benign,121,provean_rankscore,0.037770013729104025
+Benign,Likely benign,122,fathmm_mkl_fathmm_mkl_coding_score,0.036905613084089975
+Benign,Likely benign,123,chasmplus_kirc_pval,0.036784301853322675
+Benign,Likely benign,124,chasmplus_gbm_pval,0.03673498404349163
+Benign,Likely benign,125,chasmplus_ucec_score,0.03624324731989551
+Benign,Likely benign,126,chasmplus_kich_score,0.03582741292600352
+Benign,Likely benign,127,allofus250k_gvs_amr_af,0.03540173320731195
+Benign,Likely benign,128,cadd_exome_score,0.034977894554951
+Benign,Likely benign,129,chasmplus_hnsc_pval,0.03456976251687047
+Benign,Likely benign,130,cadd_phred,0.03452098620231225
+Benign,Likely benign,131,chasmplus_sarc_pval,0.033788683550414575
+Benign,Likely benign,132,allofus250k_gvs_eur_an,0.032653499804589516
+Benign,Likely benign,133,phylop_phylop17_primate,0.03237411180005031
+Benign,Likely benign,134,gerp_gerp_rs,0.032048727944137906
+Benign,Likely benign,135,chasmplus_kirp_score,0.031965626593666634
+Benign,Likely benign,136,chasmplus_prad_score,0.03177324220530539
+Benign,Likely benign,137,mutpred2_rankscore,0.031629928089454785
+Benign,Likely benign,138,chasmplus_brca_pval,0.031482954735622536
+Benign,Likely benign,139,phylop_phylop470_mamm_r,0.031121676739256615
+Benign,Likely benign,140,fathmm_xf_coding_fathmm_xf_coding_rankscore,0.03064181367681638
+Benign,Likely benign,141,phastcons_phastcons100_vert,0.030446019280437667
+Benign,Likely benign,142,chasmplus_lihc_pval,0.030071608667954056
+Benign,Likely benign,143,allofus250k_gvs_all_af,0.02969043429082021
+Benign,Likely benign,144,chasmplus_chol_pval,0.02961684752256982
+Benign,Likely benign,145,chasmplus_stad_score,0.029020403604221496
+Benign,Likely benign,146,bayesdel_bayesdel_noaf_rankscore,0.028666467879443595
+Benign,Likely benign,147,allofus250k_gvs_eur_ac,0.02835978058847915
+Benign,Likely benign,148,allofus250k_gvs_mid_af,0.028153732041054817
+Benign,Likely benign,149,chasmplus_read_pval,0.02673461446531536
+Benign,Likely benign,150,lrt_lrt_omega,0.02658116841699288
+Benign,Likely benign,151,chasmplus_lihc_score,0.026426474086471516
+Benign,Likely benign,152,chasmplus_dlbc_pval,0.02632503738919002
+Benign,Likely benign,153,mutpred1_mutpred_rankscore,0.02631272754220155
+Benign,Likely benign,154,chasmplus_paad_pval,0.026150977267161656
+Benign,Likely benign,155,chasmplus_thym_pval,0.02584970223072647
+Benign,Likely benign,156,allofus250k_gvs_eas_af,0.02529177827964596
+Benign,Likely benign,157,alfa_latin_american_latin1_alt,0.02519201320243584
+Benign,Likely benign,158,funseq2_score,0.02471082925426479
+Benign,Likely benign,159,chasmplus_blca_score,0.024498514576912937
+Benign,Likely benign,160,chasmplus_meso_score,0.02410276898749752
+Benign,Likely benign,161,chasmplus_paad_score,0.02355630145824923
+Benign,Likely benign,162,genocanyon_rankscore,0.023296450424038172
+Benign,Likely benign,163,dann_coding_dann_rankscore,0.02302284683943531
+Benign,Likely benign,164,phylop_phylop17_primate_r,0.022259388901189277
+Benign,Likely benign,165,chasmplus_acc_score,0.021370558690705827
+Benign,Likely benign,166,chasmplus_gbm_score,0.020708839222354287
+Benign,Likely benign,167,chasmplus_lgg_pval,0.02055538652225558
+Benign,Likely benign,168,chasmplus_kirc_score,0.020504022765340593
+Benign,Likely benign,169,siphy_logodds_rank,0.0202740505698944
+Benign,Likely benign,170,chasmplus_dlbc_score,0.019801401903519814
+Benign,Likely benign,171,chasmplus_ucs_pval,0.019626771847171057
+Benign,Likely benign,172,clinpred_rankscore,0.01841991955541691
+Benign,Likely benign,173,mutation_assessor_rankscore,0.0182028377731855
+Benign,Likely benign,174,cadd_exome_phred,0.01804734016227511
+Benign,Likely benign,175,phylop_phylop100_vert_r,0.017412085223946706
+Benign,Likely benign,176,chasmplus_thca_score,0.017179379868185914
+Benign,Likely benign,177,chasmplus_chol_score,0.017007018482726417
+Benign,Likely benign,178,chasmplus_ucs_score,0.01681835613589092
+Benign,Likely benign,179,chasmplus_esca_score,0.0166557475246416
+Benign,Likely benign,180,alfa_latin_american_latin2_freq,0.016406487034561188
+Benign,Likely benign,181,chasmplus_sarc_score,0.016248971294219202
+Benign,Likely benign,182,chasmplus_kich_pval,0.01525124347745013
+Benign,Likely benign,183,chasmplus_thym_score,0.014995195963778633
+Benign,Likely benign,184,eve_rank_score,0.014946766373928272
+Benign,Likely benign,185,chasmplus_hnsc_score,0.014893095977048389
+Benign,Likely benign,186,chasmplus_pcpg_pval,0.014688228881319416
+Benign,Likely benign,187,metalr_rankscore,0.014562642496217743
+Benign,Likely benign,188,chasmplus_lgg_score,0.01350795464379249
+Benign,Likely benign,189,chasmplus_read_score,0.013218813906735951
+Benign,Likely benign,190,phastcons_phastcons17way_primate_r,0.01252883645350909
+Benign,Likely benign,191,phastcons_phastcons470_mamm,0.011754848752860047
+Benign,Likely benign,192,allofus250k_gvs_mid_ac,0.011641596984336153
+Benign,Likely benign,193,allofus250k_gvs_eas_an,0.0115865994173554
+Benign,Likely benign,194,allofus250k_gvs_oth_an,0.011383667212885527
+Benign,Likely benign,195,chasmplus_thca_pval,0.011298174878111251
+Benign,Likely benign,196,chasmplus_pcpg_score,0.011055548206975904
+Benign,Likely benign,197,allofus250k_gvs_oth_af,0.010706919122028665
+Benign,Likely benign,198,allofus250k_gvs_sas_af,0.00747325746754862
+Benign,Likely benign,199,fathmm_mkl_fathmm_mkl_coding_rankscore,0.007352729438319898
+Benign,Likely benign,200,fitcons_fitcons_coding_rankscore,0.007170618728887209
+Benign,Likely benign,201,allofus250k_gvs_sas_an,0.0070573116070484655
+Benign,Likely benign,202,gerp_gerp_rs_rank,0.006818851643623554
+Benign,Likely benign,203,alfa_latin_american_latin1_freq,0.006478545743839046
+Benign,Likely benign,204,cscape_coding_rankscore,0.004203722590159479
+Benign,Likely benign,205,allofus250k_gvs_mid_an,0.0030793839670202323
+Benign,Likely benign,206,phastcons_phastcons100_vert_r,0.002677756433891127
+Benign,Likely benign,207,phastcons_phastcons470_mamm_r,0.001700125313404768
+Benign,Likely benign,208,fitcons_fitcons_coding_pred,0.00038294687491341835
+Likely pathogenic,Pathogenic,1,ditto_score,1.3925541740545901
+Likely pathogenic,Pathogenic,2,alfa_total_alt,0.4464226607326942
+Likely pathogenic,Pathogenic,3,mutpred2_rankscore,0.33981268158309386
+Likely pathogenic,Pathogenic,4,gnomad_af,0.317554319621152
+Likely pathogenic,Pathogenic,5,mutpred1_mutpred_general_score,0.30888306936632187
+Likely pathogenic,Pathogenic,6,clinpred_score,0.288408968713723
+Likely pathogenic,Pathogenic,7,metarnn_score,0.22865957099762002
+Likely pathogenic,Pathogenic,8,metarnn_rank_score,0.1688273355183086
+Likely pathogenic,Pathogenic,9,ncer_score,0.1661235637978632
+Likely pathogenic,Pathogenic,10,phdsnpg_score,0.16108196136581782
+Likely pathogenic,Pathogenic,11,gnomad3_af_nfe,0.15061135049866065
+Likely pathogenic,Pathogenic,12,bayesdel_bayesdel_addaf_score,0.14970426206611498
+Likely pathogenic,Pathogenic,13,gnomad3_af_sas,0.1477661841858498
+Likely pathogenic,Pathogenic,14,bayesdel_bayesdel_noaf_score,0.13866157020585856
+Likely pathogenic,Pathogenic,15,allofus250k_gvs_eur_af,0.13815956683929353
+Likely pathogenic,Pathogenic,16,revel_score,0.13101699851217
+Likely pathogenic,Pathogenic,17,vest_score,0.12660041533906632
+Likely pathogenic,Pathogenic,18,alfa_total_freq,0.11918431812150004
+Likely pathogenic,Pathogenic,19,gnomad_af_nfe,0.11861316765005145
+Likely pathogenic,Pathogenic,20,mutpred2_score,0.11389263833238406
+Likely pathogenic,Pathogenic,21,dann_coding_dann_rankscore,0.10951888671927429
+Likely pathogenic,Pathogenic,22,dann_coding_dann_coding_score,0.1016984287222675
+Likely pathogenic,Pathogenic,23,mutationtaster_score,0.09407401925173405
+Likely pathogenic,Pathogenic,24,metalr_score,0.09280224727525119
+Likely pathogenic,Pathogenic,25,mistic_score,0.0891381432212713
+Likely pathogenic,Pathogenic,26,gerp_gerp_rs,0.07412461868225513
+Likely pathogenic,Pathogenic,27,original_input_pos,0.0734530637795554
+Likely pathogenic,Pathogenic,28,polyphen2_hvar_rank,0.072402809102404
+Likely pathogenic,Pathogenic,29,allofus250k_gvs_max_an,0.07175689308259027
+Likely pathogenic,Pathogenic,30,alphamissense_am_pathogenicity,0.06976417181466443
+Likely pathogenic,Pathogenic,31,genocanyon_score,0.0694860930823981
+Likely pathogenic,Pathogenic,32,bayesdel_bayesdel_noaf_rankscore,0.06884287175246966
+Likely pathogenic,Pathogenic,33,allofus250k_gvs_all_ac,0.06859967297485559
+Likely pathogenic,Pathogenic,34,dann_score,0.06693467745936951
+Likely pathogenic,Pathogenic,35,esm1b_rankscore,0.06603729170894755
+Likely pathogenic,Pathogenic,36,bayesdel_bayesdel_addaf_rankscore,0.06443351531273755
+Likely pathogenic,Pathogenic,37,fitcons_fitcons_coding_score,0.06415320608558786
+Likely pathogenic,Pathogenic,38,revel_rankscore,0.060581471345194475
+Likely pathogenic,Pathogenic,39,gmvp_score,0.059714045081855495
+Likely pathogenic,Pathogenic,40,regeneron_all_an,0.05885966700051633
+Likely pathogenic,Pathogenic,41,sift_seqs,0.05668438308248648
+Likely pathogenic,Pathogenic,42,hg19_pos,0.05634823180641948
+Likely pathogenic,Pathogenic,43,cscape_score,0.056161637588952186
+Likely pathogenic,Pathogenic,44,gnomad3_af_fin,0.05413421162876066
+Likely pathogenic,Pathogenic,45,lrt_lrt_score,0.05397133768020796
+Likely pathogenic,Pathogenic,46,chasmplus_lihc_pval,0.05288153867568835
+Likely pathogenic,Pathogenic,47,sift_med,0.051519075072048344
+Likely pathogenic,Pathogenic,48,gerp_gerp_nr,0.0510327606823663
+Likely pathogenic,Pathogenic,49,fathmm_mkl_fathmm_mkl_coding_score,0.05101822461928006
+Likely pathogenic,Pathogenic,50,allofus250k_gvs_afr_af,0.05081026201061521
+Likely pathogenic,Pathogenic,51,fathmm_xf_score,0.05065156198920545
+Likely pathogenic,Pathogenic,52,metasvm_rankscore,0.04931805804069431
+Likely pathogenic,Pathogenic,53,mutation_assessor_score,0.04926797640944831
+Likely pathogenic,Pathogenic,54,mutationtaster_rankscore,0.04835295929629112
+Likely pathogenic,Pathogenic,55,chasmplus_lusc_pval,0.048263569052957984
+Likely pathogenic,Pathogenic,56,primateai_primateai_score,0.047950328005730784
+Likely pathogenic,Pathogenic,57,chasmplus_pval,0.04747044340060286
+Likely pathogenic,Pathogenic,58,genocanyon_rankscore,0.04724331827543785
+Likely pathogenic,Pathogenic,59,allofus250k_gvs_eur_ac,0.047055877785224166
+Likely pathogenic,Pathogenic,60,eve_score,0.04699533912437953
+Likely pathogenic,Pathogenic,61,allofus250k_gvs_eas_af,0.04695583428171901
+Likely pathogenic,Pathogenic,62,chasmplus_score,0.046874970998188506
+Likely pathogenic,Pathogenic,63,sift_rankscore,0.0466010777351604
+Likely pathogenic,Pathogenic,64,esm1b_score,0.04631577471714294
+Likely pathogenic,Pathogenic,65,fathmm_xf_coding_fathmm_xf_coding_score,0.04529908774296113
+Likely pathogenic,Pathogenic,66,chasmplus_paad_pval,0.04442974606606411
+Likely pathogenic,Pathogenic,67,cadd_phred,0.04391851779934339
+Likely pathogenic,Pathogenic,68,allofus250k_gvs_max_ac,0.043697044990153706
+Likely pathogenic,Pathogenic,69,provean_rankscore,0.042714826287497794
+Likely pathogenic,Pathogenic,70,provean_score,0.042591195391775964
+Likely pathogenic,Pathogenic,71,phastcons_phastcons17way_primate,0.04223668473696421
+Likely pathogenic,Pathogenic,72,siphy_logodds,0.042144727766115664
+Likely pathogenic,Pathogenic,73,allofus250k_gvs_oth_af,0.04140913986088038
+Likely pathogenic,Pathogenic,74,phastcons_phastcons470_mamm,0.041128199226035535
+Likely pathogenic,Pathogenic,75,varity_r_varity_er_loo,0.03990878507357466
+Likely pathogenic,Pathogenic,76,phylop_phylop17_primate,0.03985927656227699
+Likely pathogenic,Pathogenic,77,phdsnpg_fdr,0.03945238529977556
+Likely pathogenic,Pathogenic,78,varity_r_varity_r_loo,0.039370050858269966
+Likely pathogenic,Pathogenic,79,chasmplus_lgg_pval,0.039248379249407106
+Likely pathogenic,Pathogenic,80,phylop_phylop470_mamm,0.03860499316953507
+Likely pathogenic,Pathogenic,81,phylop_phylop100_vert,0.037763933029285095
+Likely pathogenic,Pathogenic,82,chasmplus_kirp_pval,0.03758216447460407
+Likely pathogenic,Pathogenic,83,vest_pval,0.03721271395232885
+Likely pathogenic,Pathogenic,84,chasmplus_cesc_pval,0.03685305874739652
+Likely pathogenic,Pathogenic,85,chasmplus_skcm_score,0.036262664142751096
+Likely pathogenic,Pathogenic,86,cadd_score,0.036080721607474914
+Likely pathogenic,Pathogenic,87,gnomad3_af_afr,0.03591226042816937
+Likely pathogenic,Pathogenic,88,varity_r_varity_r,0.03551616646627026
+Likely pathogenic,Pathogenic,89,primateai_primateai_rankscore,0.03522726206585776
+Likely pathogenic,Pathogenic,90,gnomad3_af_eas,0.03500186950644264
+Likely pathogenic,Pathogenic,91,cscape_coding_score,0.03473180538605332
+Likely pathogenic,Pathogenic,92,chasmplus_uvm_pval,0.034704826883265594
+Likely pathogenic,Pathogenic,93,chasmplus_gbm_pval,0.03406221448161504
+Likely pathogenic,Pathogenic,94,chasmplus_dlbc_pval,0.03305494297263359
+Likely pathogenic,Pathogenic,95,chasmplus_coad_pval,0.03286508382833559
+Likely pathogenic,Pathogenic,96,chasmplus_kirc_pval,0.03273769130621026
+Likely pathogenic,Pathogenic,97,gmvp_rank_score,0.03251670822961336
+Likely pathogenic,Pathogenic,98,chasmplus_stad_pval,0.03211414298518174
+Likely pathogenic,Pathogenic,99,chasmplus_thym_pval,0.03202090527950641
+Likely pathogenic,Pathogenic,100,chasmplus_luad_pval,0.0317995575564562
+Likely pathogenic,Pathogenic,101,polyphen2_hdiv_rank,0.031584887241025206
+Likely pathogenic,Pathogenic,102,chasmplus_skcm_pval,0.031076188804051833
+Likely pathogenic,Pathogenic,103,sift_score,0.029384668777841325
+Likely pathogenic,Pathogenic,104,chasmplus_prad_pval,0.029222526134106138
+Likely pathogenic,Pathogenic,105,chasmplus_cesc_score,0.029215337350614382
+Likely pathogenic,Pathogenic,106,chasmplus_pcpg_pval,0.028010353486221207
+Likely pathogenic,Pathogenic,107,regeneron_all_af,0.027850960724951603
+Likely pathogenic,Pathogenic,108,metasvm_score,0.027184730782352746
+Likely pathogenic,Pathogenic,109,chasmplus_hnsc_pval,0.026459275837181866
+Likely pathogenic,Pathogenic,110,mutpred1_mutpred_rankscore,0.025457181626601245
+Likely pathogenic,Pathogenic,111,chasmplus_brca_pval,0.025052745929975848
+Likely pathogenic,Pathogenic,112,varity_r_varity_er,0.02502764258497578
+Likely pathogenic,Pathogenic,113,chasmplus_stad_score,0.024667581521491573
+Likely pathogenic,Pathogenic,114,chasmplus_sarc_pval,0.024659753226511177
+Likely pathogenic,Pathogenic,115,chasmplus_ucec_pval,0.024579536594740447
+Likely pathogenic,Pathogenic,116,chasmplus_tgct_pval,0.02452635053350492
+Likely pathogenic,Pathogenic,117,chasmplus_dlbc_score,0.024157922026702087
+Likely pathogenic,Pathogenic,118,chasmplus_gbm_score,0.02397749526878953
+Likely pathogenic,Pathogenic,119,chasmplus_blca_pval,0.02349727414981622
+Likely pathogenic,Pathogenic,120,phastcons_phastcons100_vert,0.02324369643524364
+Likely pathogenic,Pathogenic,121,chasmplus_lihc_score,0.023197792688862132
+Likely pathogenic,Pathogenic,122,chasmplus_kirp_score,0.02283719430608941
+Likely pathogenic,Pathogenic,123,chasmplus_kirc_score,0.022307819859325995
+Likely pathogenic,Pathogenic,124,chasmplus_luad_score,0.022143590712064263
+Likely pathogenic,Pathogenic,125,phylop_phylop470_mamm_r,0.022134351331514292
+Likely pathogenic,Pathogenic,126,regeneron_all_ac,0.021595581855166024
+Likely pathogenic,Pathogenic,127,chasmplus_tgct_score,0.020824051912747728
+Likely pathogenic,Pathogenic,128,chasmplus_thca_pval,0.020779593803600192
+Likely pathogenic,Pathogenic,129,allofus250k_gvs_eur_an,0.020515289415111732
+Likely pathogenic,Pathogenic,130,chasmplus_lgg_score,0.019992242066573487
+Likely pathogenic,Pathogenic,131,lrt_lrt_omega,0.019816499807259715
+Likely pathogenic,Pathogenic,132,chasmplus_acc_pval,0.01975022364889998
+Likely pathogenic,Pathogenic,133,lrt_lrt_converted_rankscore,0.01884911647038121
+Likely pathogenic,Pathogenic,134,phylop_phylop100_vert_r,0.018766663491540905
+Likely pathogenic,Pathogenic,135,gnomad3_af,0.01875055185258474
+Likely pathogenic,Pathogenic,136,allofus250k_gvs_all_af,0.01816192054215655
+Likely pathogenic,Pathogenic,137,allofus250k_gvs_amr_ac,0.017998729908489226
+Likely pathogenic,Pathogenic,138,chasmplus_ov_pval,0.01788364421033295
+Likely pathogenic,Pathogenic,139,chasmplus_laml_pval,0.01775910466119827
+Likely pathogenic,Pathogenic,140,chasmplus_esca_pval,0.01734821493939514
+Likely pathogenic,Pathogenic,141,cadd_exome_score,0.017174777486159996
+Likely pathogenic,Pathogenic,142,eve_rank_score,0.017077710742942256
+Likely pathogenic,Pathogenic,143,fathmm_xf_coding_fathmm_xf_coding_rankscore,0.016978771715590577
+Likely pathogenic,Pathogenic,144,chasmplus_sarc_score,0.016752610821265376
+Likely pathogenic,Pathogenic,145,chasmplus_meso_pval,0.01662299561366388
+Likely pathogenic,Pathogenic,146,allofus250k_gvs_all_an,0.016481897770149436
+Likely pathogenic,Pathogenic,147,chasmplus_esca_score,0.016323572403505078
+Likely pathogenic,Pathogenic,148,chasmplus_ucec_score,0.01619964149659256
+Likely pathogenic,Pathogenic,149,allofus250k_gvs_eas_ac,0.01608043308160653
+Likely pathogenic,Pathogenic,150,funseq2_score,0.015605382030056007
+Likely pathogenic,Pathogenic,151,chasmplus_uvm_score,0.0154870892889137
+Likely pathogenic,Pathogenic,152,chasmplus_lusc_score,0.015452644408805208
+Likely pathogenic,Pathogenic,153,phastcons_phastcons17way_primate_r,0.015274168098011838
+Likely pathogenic,Pathogenic,154,chasmplus_blca_score,0.014957610174846378
+Likely pathogenic,Pathogenic,155,siphy_logodds_rank,0.01442899043254501
+Likely pathogenic,Pathogenic,156,chasmplus_hnsc_score,0.014352061664992248
+Likely pathogenic,Pathogenic,157,chasmplus_read_pval,0.014214993977692382
+Likely pathogenic,Pathogenic,158,chasmplus_chol_pval,0.013688232134701472
+Likely pathogenic,Pathogenic,159,clinpred_rankscore,0.013503840010152503
+Likely pathogenic,Pathogenic,160,chasmplus_prad_score,0.013370165620544945
+Likely pathogenic,Pathogenic,161,metalr_rankscore,0.012905218109773353
+Likely pathogenic,Pathogenic,162,chasmplus_thym_score,0.012859408982252497
+Likely pathogenic,Pathogenic,163,chasmplus_kich_pval,0.012838463553063948
+Likely pathogenic,Pathogenic,164,chasmplus_ucs_pval,0.012467754216304755
+Likely pathogenic,Pathogenic,165,chasmplus_coad_score,0.012319466504445698
+Likely pathogenic,Pathogenic,166,chasmplus_ucs_score,0.012244879333617538
+Likely pathogenic,Pathogenic,167,gnomad3_af_lat,0.012168195475016458
+Likely pathogenic,Pathogenic,168,chasmplus_brca_score,0.012055027262494633
+Likely pathogenic,Pathogenic,169,allofus250k_gvs_oth_ac,0.011980866955226313
+Likely pathogenic,Pathogenic,170,chasmplus_paad_score,0.011929580083645858
+Likely pathogenic,Pathogenic,171,fathmm_mkl_fathmm_mkl_coding_rankscore,0.011908597106401655
+Likely pathogenic,Pathogenic,172,chasmplus_thca_score,0.011839800901306657
+Likely pathogenic,Pathogenic,173,chasmplus_read_score,0.011557775993424163
+Likely pathogenic,Pathogenic,174,gerp_gerp_rs_rank,0.011058995344027128
+Likely pathogenic,Pathogenic,175,chasmplus_ov_score,0.011037907018086148
+Likely pathogenic,Pathogenic,176,chasmplus_pcpg_score,0.010698792215086952
+Likely pathogenic,Pathogenic,177,chasmplus_acc_score,0.010333566999454018
+Likely pathogenic,Pathogenic,178,allofus250k_gvs_oth_an,0.010248510401729295
+Likely pathogenic,Pathogenic,179,gnomad3_af_asj,0.009973387995273272
+Likely pathogenic,Pathogenic,180,allofus250k_gvs_afr_an,0.00987844870531424
+Likely pathogenic,Pathogenic,181,allofus250k_gvs_max_af,0.009811851089595683
+Likely pathogenic,Pathogenic,182,fitcons_fitcons_coding_rankscore,0.009708831984866008
+Likely pathogenic,Pathogenic,183,chasmplus_laml_score,0.009610741316918461
+Likely pathogenic,Pathogenic,184,cadd_exome_phred,0.009026892058946728
+Likely pathogenic,Pathogenic,185,chasmplus_meso_score,0.007889158557507265
+Likely pathogenic,Pathogenic,186,chasmplus_chol_score,0.0077120900916151916
+Likely pathogenic,Pathogenic,187,allofus250k_gvs_eas_an,0.007705607283309011
+Likely pathogenic,Pathogenic,188,allofus250k_gvs_afr_ac,0.007314970630430175
+Likely pathogenic,Pathogenic,189,phastcons_phastcons470_mamm_r,0.00709880019632272
+Likely pathogenic,Pathogenic,190,mutation_assessor_rankscore,0.006819079153477933
+Likely pathogenic,Pathogenic,191,chasmplus_kich_score,0.006510225500908638
+Likely pathogenic,Pathogenic,192,allofus250k_gvs_amr_an,0.006457966410644598
+Likely pathogenic,Pathogenic,193,phylop_phylop17_primate_r,0.005735559087202895
+Likely pathogenic,Pathogenic,194,allofus250k_gvs_amr_af,0.005670387203508536
+Likely pathogenic,Pathogenic,195,phastcons_phastcons100_vert_r,0.0044677633202147
+Likely pathogenic,Pathogenic,196,cscape_coding_rankscore,0.004431536248688737
+Likely pathogenic,Pathogenic,197,allofus250k_gvs_mid_an,0.002318510444326635
+Likely pathogenic,Pathogenic,198,gnomad3_af_oth,0.0018809260754328052
+Likely pathogenic,Pathogenic,199,allofus250k_gvs_sas_af,0.001372361711592053
+Likely pathogenic,Pathogenic,200,allofus250k_gvs_sas_an,0.0012033900409477401
+Likely pathogenic,Pathogenic,201,fitcons_fitcons_coding_pred,0.000750491369768505
+Likely pathogenic,Pathogenic,202,allofus250k_gvs_mid_ac,0.0
+Likely pathogenic,Pathogenic,203,allofus250k_gvs_mid_af,0.0
+Likely pathogenic,Pathogenic,204,alfa_latin_american_latin2_freq,0.0
+Likely pathogenic,Pathogenic,205,alfa_latin_american_latin2_alt,0.0
+Likely pathogenic,Pathogenic,206,alfa_latin_american_latin1_freq,0.0
+Likely pathogenic,Pathogenic,207,alfa_latin_american_latin1_alt,0.0
+Likely pathogenic,Pathogenic,208,allofus250k_gvs_sas_ac,0.0
+Benign,Pathogenic,1,ditto_score,4.999700383699272
+Benign,Pathogenic,2,allofus250k_gvs_max_af,1.431504830615466
+Benign,Pathogenic,3,gnomad_af,1.080095231787937
+Benign,Pathogenic,4,metarnn_score,0.9683580776553925
+Benign,Pathogenic,5,clinpred_score,0.9418735177277768
+Benign,Pathogenic,6,bayesdel_bayesdel_addaf_rankscore,0.839993557358712
+Benign,Pathogenic,7,metarnn_rank_score,0.7887052937920022
+Benign,Pathogenic,8,gnomad3_af_afr,0.5322011898251234
+Benign,Pathogenic,9,alphamissense_am_pathogenicity,0.3959771700272351
+Benign,Pathogenic,10,gnomad3_af_nfe,0.31700533470561915
+Benign,Pathogenic,11,bayesdel_bayesdel_addaf_score,0.3031908502768683
+Benign,Pathogenic,12,gnomad3_af_sas,0.23906735614007488
+Benign,Pathogenic,13,ncer_score,0.2371515823190336
+Benign,Pathogenic,14,allofus250k_gvs_max_ac,0.20621123191925672
+Benign,Pathogenic,15,gnomad3_af,0.20463701609052665
+Benign,Pathogenic,16,allofus250k_gvs_eas_ac,0.19994242754532485
+Benign,Pathogenic,17,gmvp_score,0.1902887722752872
+Benign,Pathogenic,18,mutpred1_mutpred_general_score,0.1851659936138199
+Benign,Pathogenic,19,mutation_assessor_score,0.14610771081790483
+Benign,Pathogenic,20,gnomad3_af_fin,0.13763670648195397
+Benign,Pathogenic,21,bayesdel_bayesdel_noaf_score,0.12622930130717497
+Benign,Pathogenic,22,phastcons_phastcons17way_primate,0.11690654530729128
+Benign,Pathogenic,23,regeneron_all_af,0.11331706680823202
+Benign,Pathogenic,24,allofus250k_gvs_afr_ac,0.10681007229889213
+Benign,Pathogenic,25,metalr_score,0.10617228558019233
+Benign,Pathogenic,26,regeneron_all_an,0.10024121962956037
+Benign,Pathogenic,27,gnomad3_af_asj,0.09828641126465479
+Benign,Pathogenic,28,vest_score,0.0979009556992891
+Benign,Pathogenic,29,chasmplus_pval,0.09603121386127313
+Benign,Pathogenic,30,primateai_primateai_rankscore,0.08985000279335724
+Benign,Pathogenic,31,allofus250k_gvs_afr_af,0.08768601138265276
+Benign,Pathogenic,32,regeneron_all_ac,0.08744192665436262
+Benign,Pathogenic,33,hg19_pos,0.08738315613287594
+Benign,Pathogenic,34,metasvm_rankscore,0.08634806392062122
+Benign,Pathogenic,35,allofus250k_gvs_sas_ac,0.08544909847392179
+Benign,Pathogenic,36,dann_coding_dann_coding_score,0.0838924506713367
+Benign,Pathogenic,37,allofus250k_gvs_amr_ac,0.08074696309598133
+Benign,Pathogenic,38,fathmm_xf_coding_fathmm_xf_coding_score,0.07738872443151606
+Benign,Pathogenic,39,original_input_pos,0.07605606215576292
+Benign,Pathogenic,40,phdsnpg_score,0.07596911636657538
+Benign,Pathogenic,41,dann_coding_dann_rankscore,0.07156014219945611
+Benign,Pathogenic,42,varity_r_varity_r_loo,0.0700584291270339
+Benign,Pathogenic,43,chasmplus_ov_pval,0.06944599890937152
+Benign,Pathogenic,44,allofus250k_gvs_oth_ac,0.06931266938033873
+Benign,Pathogenic,45,mutationtaster_score,0.0692581079383916
+Benign,Pathogenic,46,chasmplus_kirp_pval,0.06868480590768475
+Benign,Pathogenic,47,revel_score,0.06629448059924717
+Benign,Pathogenic,48,primateai_primateai_score,0.06552246822177166
+Benign,Pathogenic,49,mistic_score,0.06187763935390124
+Benign,Pathogenic,50,sift_med,0.06157176359476867
+Benign,Pathogenic,51,chasmplus_tgct_pval,0.0613191267683703
+Benign,Pathogenic,52,allofus250k_gvs_all_ac,0.06124518504672106
+Benign,Pathogenic,53,alfa_total_alt,0.05916803341182588
+Benign,Pathogenic,54,gnomad_af_nfe,0.05779497991648894
+Benign,Pathogenic,55,bayesdel_bayesdel_noaf_rankscore,0.057712887271197
+Benign,Pathogenic,56,chasmplus_uvm_score,0.05675769785787711
+Benign,Pathogenic,57,fitcons_fitcons_coding_score,0.056425559517268076
+Benign,Pathogenic,58,chasmplus_uvm_pval,0.054239191641053654
+Benign,Pathogenic,59,polyphen2_hvar_rank,0.05377704032613331
+Benign,Pathogenic,60,genocanyon_rankscore,0.05355765084745977
+Benign,Pathogenic,61,chasmplus_score,0.05122495409255331
+Benign,Pathogenic,62,chasmplus_skcm_pval,0.051087075808293726
+Benign,Pathogenic,63,mutationtaster_rankscore,0.04994770582169708
+Benign,Pathogenic,64,sift_seqs,0.04992626638134841
+Benign,Pathogenic,65,gnomad3_af_eas,0.049866036947060446
+Benign,Pathogenic,66,clinpred_rankscore,0.04966035276407247
+Benign,Pathogenic,67,chasmplus_gbm_pval,0.04861559901790992
+Benign,Pathogenic,68,chasmplus_stad_pval,0.04861430969237188
+Benign,Pathogenic,69,chasmplus_laml_pval,0.047054907761343204
+Benign,Pathogenic,70,metasvm_score,0.04669350989063196
+Benign,Pathogenic,71,chasmplus_lusc_pval,0.046621739471100244
+Benign,Pathogenic,72,allofus250k_gvs_max_an,0.04511939307216915
+Benign,Pathogenic,73,alfa_latin_american_latin2_alt,0.04474670727524284
+Benign,Pathogenic,74,chasmplus_ov_score,0.04450356157793202
+Benign,Pathogenic,75,chasmplus_skcm_score,0.04333945687286148
+Benign,Pathogenic,76,phylop_phylop100_vert,0.0433336801152554
+Benign,Pathogenic,77,eve_score,0.041429678763657315
+Benign,Pathogenic,78,chasmplus_coad_pval,0.04098736875106784
+Benign,Pathogenic,79,dann_score,0.040814443910564366
+Benign,Pathogenic,80,varity_r_varity_r,0.04009629838985283
+Benign,Pathogenic,81,varity_r_varity_er_loo,0.03955516348630408
+Benign,Pathogenic,82,fathmm_xf_score,0.039317461539178734
+Benign,Pathogenic,83,revel_rankscore,0.03909070458396164
+Benign,Pathogenic,84,chasmplus_dlbc_pval,0.03901515722782243
+Benign,Pathogenic,85,chasmplus_lihc_pval,0.038601153888084
+Benign,Pathogenic,86,sift_rankscore,0.038167997627771656
+Benign,Pathogenic,87,chasmplus_cesc_pval,0.03787105064898978
+Benign,Pathogenic,88,allofus250k_gvs_eur_af,0.03761151468109149
+Benign,Pathogenic,89,chasmplus_luad_score,0.03718955708241134
+Benign,Pathogenic,90,alfa_total_freq,0.03714624398302319
+Benign,Pathogenic,91,chasmplus_luad_pval,0.036365189185203
+Benign,Pathogenic,92,chasmplus_prad_pval,0.036362152455009754
+Benign,Pathogenic,93,chasmplus_blca_pval,0.03599446627998869
+Benign,Pathogenic,94,mutpred2_score,0.035903639875812375
+Benign,Pathogenic,95,lrt_lrt_score,0.03558553566456439
+Benign,Pathogenic,96,mutpred2_rankscore,0.035311065074507396
+Benign,Pathogenic,97,gerp_gerp_nr,0.03518243599338544
+Benign,Pathogenic,98,chasmplus_brca_score,0.03469615388753888
+Benign,Pathogenic,99,phdsnpg_fdr,0.0341291540722852
+Benign,Pathogenic,100,chasmplus_cesc_score,0.033483260945415094
+Benign,Pathogenic,101,phylop_phylop470_mamm,0.03341073060401801
+Benign,Pathogenic,102,gnomad3_af_oth,0.03292579306742122
+Benign,Pathogenic,103,chasmplus_meso_pval,0.03282424119751537
+Benign,Pathogenic,104,provean_score,0.03282149043177352
+Benign,Pathogenic,105,allofus250k_gvs_amr_an,0.0325951385727471
+Benign,Pathogenic,106,sift_score,0.03243823532233069
+Benign,Pathogenic,107,chasmplus_lusc_score,0.03235614881281566
+Benign,Pathogenic,108,allofus250k_gvs_amr_af,0.03226373263350866
+Benign,Pathogenic,109,chasmplus_brca_pval,0.03208980504228639
+Benign,Pathogenic,110,siphy_logodds,0.031773805689762215
+Benign,Pathogenic,111,chasmplus_hnsc_pval,0.031138970364066897
+Benign,Pathogenic,112,vest_pval,0.031123272598787086
+Benign,Pathogenic,113,chasmplus_tgct_score,0.02977477612913
+Benign,Pathogenic,114,allofus250k_gvs_afr_an,0.02969363553594458
+Benign,Pathogenic,115,chasmplus_prad_score,0.02927967692069875
+Benign,Pathogenic,116,cscape_score,0.029160440718837582
+Benign,Pathogenic,117,chasmplus_ucec_pval,0.02805921411352444
+Benign,Pathogenic,118,cadd_score,0.028051930485773906
+Benign,Pathogenic,119,allofus250k_gvs_all_an,0.027540051931915426
+Benign,Pathogenic,120,gerp_gerp_rs,0.027359779742807934
+Benign,Pathogenic,121,chasmplus_kirp_score,0.02720959412083004
+Benign,Pathogenic,122,chasmplus_lihc_score,0.027003041719938448
+Benign,Pathogenic,123,fathmm_mkl_fathmm_mkl_coding_score,0.02697111969475003
+Benign,Pathogenic,124,chasmplus_thym_pval,0.026962402579597873
+Benign,Pathogenic,125,cscape_coding_score,0.026781250088230693
+Benign,Pathogenic,126,chasmplus_kirc_pval,0.026435156849663622
+Benign,Pathogenic,127,fathmm_xf_coding_fathmm_xf_coding_rankscore,0.026203440035327482
+Benign,Pathogenic,128,phylop_phylop17_primate,0.026027887521311032
+Benign,Pathogenic,129,polyphen2_hdiv_rank,0.025961203373557066
+Benign,Pathogenic,130,mutpred1_mutpred_rankscore,0.02572084877636836
+Benign,Pathogenic,131,chasmplus_chol_pval,0.025378426806045504
+Benign,Pathogenic,132,genocanyon_score,0.025249205785298216
+Benign,Pathogenic,133,chasmplus_dlbc_score,0.025049947597913912
+Benign,Pathogenic,134,provean_rankscore,0.024735609517441335
+Benign,Pathogenic,135,esm1b_score,0.024727272122771163
+Benign,Pathogenic,136,phylop_phylop100_vert_r,0.02415655767414892
+Benign,Pathogenic,137,chasmplus_gbm_score,0.023268243288040086
+Benign,Pathogenic,138,allofus250k_gvs_mid_af,0.02185588531828789
+Benign,Pathogenic,139,chasmplus_esca_pval,0.021637171913085094
+Benign,Pathogenic,140,esm1b_rankscore,0.021002374226341065
+Benign,Pathogenic,141,lrt_lrt_omega,0.020477968134280766
+Benign,Pathogenic,142,chasmplus_laml_score,0.020282792578976867
+Benign,Pathogenic,143,chasmplus_ucec_score,0.02014905637514529
+Benign,Pathogenic,144,chasmplus_coad_score,0.019926402984131043
+Benign,Pathogenic,145,chasmplus_sarc_pval,0.01984863959668985
+Benign,Pathogenic,146,allofus250k_gvs_all_af,0.019541373033257706
+Benign,Pathogenic,147,chasmplus_lgg_pval,0.01950422983647469
+Benign,Pathogenic,148,funseq2_score,0.019338549481806654
+Benign,Pathogenic,149,chasmplus_pcpg_pval,0.019087818616470787
+Benign,Pathogenic,150,chasmplus_thca_score,0.018649533307338262
+Benign,Pathogenic,151,chasmplus_paad_pval,0.018420790598343173
+Benign,Pathogenic,152,chasmplus_stad_score,0.01840258843566739
+Benign,Pathogenic,153,gnomad3_af_lat,0.01839230732214847
+Benign,Pathogenic,154,chasmplus_kirc_score,0.018229209782429468
+Benign,Pathogenic,155,chasmplus_read_pval,0.018197011818640522
+Benign,Pathogenic,156,allofus250k_gvs_eur_an,0.018164169927379837
+Benign,Pathogenic,157,allofus250k_gvs_eas_af,0.01799509174088916
+Benign,Pathogenic,158,phastcons_phastcons470_mamm,0.01783867545165519
+Benign,Pathogenic,159,chasmplus_ucs_pval,0.017525675465570784
+Benign,Pathogenic,160,gmvp_rank_score,0.01736432952063631
+Benign,Pathogenic,161,chasmplus_meso_score,0.01720877676101051
+Benign,Pathogenic,162,phylop_phylop470_mamm_r,0.016665237749796804
+Benign,Pathogenic,163,cadd_phred,0.016608194590952037
+Benign,Pathogenic,164,chasmplus_blca_score,0.016571511092689804
+Benign,Pathogenic,165,chasmplus_read_score,0.016348025011996822
+Benign,Pathogenic,166,phylop_phylop17_primate_r,0.01611094353748942
+Benign,Pathogenic,167,chasmplus_chol_score,0.015913193503288185
+Benign,Pathogenic,168,chasmplus_thca_pval,0.01587886403805049
+Benign,Pathogenic,169,eve_rank_score,0.015608140212303312
+Benign,Pathogenic,170,varity_r_varity_er,0.015556997012379156
+Benign,Pathogenic,171,metalr_rankscore,0.015445064269974993
+Benign,Pathogenic,172,chasmplus_acc_pval,0.015364915331214878
+Benign,Pathogenic,173,cadd_exome_score,0.015160095817921644
+Benign,Pathogenic,174,lrt_lrt_converted_rankscore,0.014881142653649253
+Benign,Pathogenic,175,alfa_latin_american_latin2_freq,0.014476245897484386
+Benign,Pathogenic,176,chasmplus_lgg_score,0.013448904230405205
+Benign,Pathogenic,177,chasmplus_sarc_score,0.013361977422960376
+Benign,Pathogenic,178,chasmplus_ucs_score,0.013067381334549563
+Benign,Pathogenic,179,chasmplus_thym_score,0.012933064069471329
+Benign,Pathogenic,180,chasmplus_hnsc_score,0.012791460459892543
+Benign,Pathogenic,181,mutation_assessor_rankscore,0.012543320472203726
+Benign,Pathogenic,182,alfa_latin_american_latin1_alt,0.012096848670121058
+Benign,Pathogenic,183,siphy_logodds_rank,0.011883728698498568
+Benign,Pathogenic,184,phastcons_phastcons17way_primate_r,0.01187475553550491
+Benign,Pathogenic,185,phastcons_phastcons100_vert,0.011769972898251716
+Benign,Pathogenic,186,chasmplus_esca_score,0.011742135530621766
+Benign,Pathogenic,187,chasmplus_kich_pval,0.01166505009532577
+Benign,Pathogenic,188,allofus250k_gvs_eur_ac,0.011549162893418589
+Benign,Pathogenic,189,cadd_exome_phred,0.01082815434891392
+Benign,Pathogenic,190,chasmplus_paad_score,0.010160367990012327
+Benign,Pathogenic,191,fitcons_fitcons_coding_rankscore,0.009699736526822395
+Benign,Pathogenic,192,chasmplus_pcpg_score,0.009169464166975533
+Benign,Pathogenic,193,allofus250k_gvs_oth_an,0.008444054847376073
+Benign,Pathogenic,194,allofus250k_gvs_mid_ac,0.008218016841297237
+Benign,Pathogenic,195,chasmplus_kich_score,0.007936528746123925
+Benign,Pathogenic,196,allofus250k_gvs_eas_an,0.007640955883974222
+Benign,Pathogenic,197,chasmplus_acc_score,0.007410134231373332
+Benign,Pathogenic,198,fathmm_mkl_fathmm_mkl_coding_rankscore,0.007330926523531051
+Benign,Pathogenic,199,allofus250k_gvs_oth_af,0.007061179491050207
+Benign,Pathogenic,200,allofus250k_gvs_sas_af,0.006646291503130579
+Benign,Pathogenic,201,alfa_latin_american_latin1_freq,0.006222187766313226
+Benign,Pathogenic,202,gerp_gerp_rs_rank,0.0060088893162255725
+Benign,Pathogenic,203,allofus250k_gvs_sas_an,0.004414749214253767
+Benign,Pathogenic,204,phastcons_phastcons470_mamm_r,0.003541698249004396
+Benign,Pathogenic,205,allofus250k_gvs_mid_an,0.003214884374764087
+Benign,Pathogenic,206,phastcons_phastcons100_vert_r,0.0028819402163804404
+Benign,Pathogenic,207,cscape_coding_rankscore,0.0028223969997201994
+Benign,Pathogenic,208,fitcons_fitcons_coding_pred,0.0006544151511054665

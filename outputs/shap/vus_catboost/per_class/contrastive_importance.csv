@@ -1,0 +1,802 @@
+class_a,class_b,rank,feature,mean_abs_shap_diff
+Benign,Likely benign,1,allofus250k_gvs_max_af,0.6537144556162275
+Benign,Likely benign,2,gnomad_af,0.4687719506185827
+Benign,Likely benign,3,allofus250k_gvs_max_ac,0.18206448414881574
+Benign,Likely benign,4,gnomad3_af,0.14962049538704603
+Benign,Likely benign,5,blast_mean_bit_path,0.13955009591665868
+Benign,Likely benign,6,gnomad3_af_afr,0.0920854195526849
+Benign,Likely benign,7,gnomad3_af_fin,0.07858506068377322
+Benign,Likely benign,8,gnomad3_af_oth,0.07742260961475185
+Benign,Likely benign,9,allofus250k_gvs_afr_ac,0.06727207919339605
+Benign,Likely benign,10,allofus250k_gvs_afr_af,0.0542887774312101
+Benign,Likely benign,11,hg19_pos,0.05299891517113516
+Benign,Likely benign,12,gnomad3_af_asj,0.051065521793257934
+Benign,Likely benign,13,gerp_gerp_nr,0.047693893724917315
+Benign,Likely benign,14,allofus250k_gvs_all_ac,0.046466952270637324
+Benign,Likely benign,15,gnomad3_af_lat,0.046149945855039474
+Benign,Likely benign,16,allofus250k_gvs_all_af,0.044843587037084576
+Benign,Likely benign,17,blast_top_bit,0.043749558000323714
+Benign,Likely benign,18,allofus250k_gvs_amr_af,0.03943218764869578
+Benign,Likely benign,19,allofus250k_gvs_eas_af,0.03791624948998283
+Benign,Likely benign,20,original_input_pos,0.03703548364693932
+Benign,Likely benign,21,blast_mean_bit_benign,0.033503536660821405
+Benign,Likely benign,22,phylop_phylop100_vert_r,0.030666625327535047
+Benign,Likely benign,23,alfa_total_alt,0.029811090508285974
+Benign,Likely benign,24,blast_target_4_top1,0.029627556519481138
+Benign,Likely benign,25,gc_ref,0.02835176929059179
+Benign,Likely benign,26,allofus250k_gvs_eas_ac,0.028277557977948717
+Benign,Likely benign,27,phylop_phylop100_vert,0.027906491524815995
+Benign,Likely benign,28,allofus250k_gvs_sas_af,0.025878180493139787
+Benign,Likely benign,29,phylop_phylop470_mamm_r,0.023934686998598857
+Benign,Likely benign,30,allofus250k_gvs_max_an,0.0231481369420649
+Benign,Likely benign,31,gc_alt,0.023096954047306117
+Benign,Likely benign,32,phastcons_phastcons17way_primate,0.02204976152636005
+Benign,Likely benign,33,kmer_alt_CTA,0.022022772572790443
+Benign,Likely benign,34,phylop_phylop470_mamm,0.02167784781327324
+Benign,Likely benign,35,gnomad3_af_sas,0.021303401868837026
+Benign,Likely benign,36,gerp_gerp_rs,0.02059281284210889
+Benign,Likely benign,37,gnomad3_af_nfe,0.020551010826186825
+Benign,Likely benign,38,kmer_alt_CGA,0.019619787566725385
+Benign,Likely benign,39,phastcons_phastcons17way_primate_r,0.01908088893298238
+Benign,Likely benign,40,gnomad3_af_eas,0.018266261736671417
+Benign,Likely benign,41,entropy_ref,0.017053447161867526
+Benign,Likely benign,42,allofus250k_gvs_oth_af,0.0170277569564078
+Benign,Likely benign,43,kmer_alt_ATT,0.01694543787821929
+Benign,Likely benign,44,allofus250k_gvs_eur_ac,0.016615843434377095
+Benign,Likely benign,45,kmer_ref_TAC,0.016537238233481355
+Benign,Likely benign,46,alfa_total_freq,0.015524225907279357
+Benign,Likely benign,47,allofus250k_gvs_all_an,0.015115985462883279
+Benign,Likely benign,48,kmer_alt_ACG,0.014986375425451549
+Benign,Likely benign,49,kmer_ref_CTA,0.013623053304665136
+Benign,Likely benign,50,allofus250k_gvs_sas_ac,0.013511446404764059
+Benign,Likely benign,51,allofus250k_gvs_amr_ac,0.013349139876555923
+Benign,Likely benign,52,allofus250k_gvs_oth_ac,0.01304942195707082
+Benign,Likely benign,53,kmer_alt_AAG,0.012594972764791344
+Benign,Likely benign,54,kmer_alt_GGC,0.012572963063736299
+Benign,Likely benign,55,blast_n_pathogenic,0.012454631689764448
+Benign,Likely benign,56,kmer_ref_ACG,0.012453774244907956
+Benign,Likely benign,57,allofus250k_gvs_afr_an,0.01243308132343032
+Benign,Likely benign,58,kmer_ref_TTT,0.01175072913589532
+Benign,Likely benign,59,phastcons_phastcons470_mamm,0.011046690434967336
+Benign,Likely benign,60,entropy_alt,0.010872256744649195
+Benign,Likely benign,61,phylop_phylop17_primate,0.010678292819623432
+Benign,Likely benign,62,kmer_ref_TGG,0.010537170805021203
+Benign,Likely benign,63,gerp_gerp_rs_rank,0.01007259979366388
+Benign,Likely benign,64,kmer_alt_TGA,0.010012199489970256
+Benign,Likely benign,65,kmer_diff_GTG,0.009922326275657407
+Benign,Likely benign,66,allofus250k_gvs_amr_an,0.009868133888662228
+Benign,Likely benign,67,kmer_alt_TCC,0.009760832664001698
+Benign,Likely benign,68,allofus250k_gvs_eur_af,0.009560597557285042
+Benign,Likely benign,69,kmer_alt_TCT,0.009533448235739081
+Benign,Likely benign,70,kmer_ref_ATA,0.00936563382407131
+Benign,Likely benign,71,kmer_alt_TAT,0.009273011461344212
+Benign,Likely benign,72,kmer_ref_TCT,0.009229111197191922
+Benign,Likely benign,73,kmer_ref_CAT,0.00910574536585525
+Benign,Likely benign,74,phylop_phylop17_primate_r,0.008948464183636146
+Benign,Likely benign,75,kmer_ref_CGC,0.008844516244211289
+Benign,Likely benign,76,kmer_ref_GCG,0.00879330043348412
+Benign,Likely benign,77,kmer_alt_CCT,0.008665363218763003
+Benign,Likely benign,78,kmer_alt_CGG,0.008650077546697131
+Benign,Likely benign,79,phastcons_phastcons470_mamm_r,0.008521928791937722
+Benign,Likely benign,80,kmer_alt_GTC,0.008245864831417008
+Benign,Likely benign,81,allofus250k_gvs_oth_an,0.008208472333049747
+Benign,Likely benign,82,kmer_ref_AAC,0.008164304324118608
+Benign,Likely benign,83,kmer_ref_AGT,0.007978057271992701
+Benign,Likely benign,84,kmer_alt_CAG,0.00793545601220798
+Benign,Likely benign,85,kmer_diff_CCC,0.00793154521892692
+Benign,Likely benign,86,phastcons_phastcons100_vert,0.007869099188202526
+Benign,Likely benign,87,kmer_ref_ATT,0.007552958792870154
+Benign,Likely benign,88,kmer_diff_CCA,0.007540623744575271
+Benign,Likely benign,89,kmer_alt_CCG,0.0074221102970372
+Benign,Likely benign,90,kmer_alt_TCG,0.007315111051065233
+Benign,Likely benign,91,kmer_ref_GGC,0.007307134954769438
+Benign,Likely benign,92,kmer_diff_TCG,0.0073046889341471756
+Benign,Likely benign,93,kmer_diff_CGA,0.007288763407221457
+Benign,Likely benign,94,allofus250k_gvs_mid_ac,0.007099160482682131
+Benign,Likely benign,95,kmer_ref_GCA,0.006764925498879414
+Benign,Likely benign,96,gnomad_af_nfe,0.006760683708620325
+Benign,Likely benign,97,kmer_ref_AGC,0.006750245602803099
+Benign,Likely benign,98,blast_n_benign,0.006690546328577805
+Benign,Likely benign,99,kmer_ref_GGT,0.006477470653935551
+Benign,Likely benign,100,kmer_ref_GAT,0.006383020794473973
+Benign,Likely benign,101,kmer_alt_AAA,0.00624251197144019
+Benign,Likely benign,102,kmer_diff_GAC,0.006156829785027986
+Benign,Likely benign,103,kmer_ref_TAA,0.00612389095040342
+Benign,Likely benign,104,kmer_ref_CCT,0.00608026800054664
+Benign,Likely benign,105,kmer_diff_CGG,0.006077668099470029
+Benign,Likely benign,106,kmer_alt_TTG,0.006002917244885227
+Benign,Likely benign,107,kmer_alt_GGA,0.005966748687614232
+Benign,Likely benign,108,kmer_alt_GGG,0.005943323398479489
+Benign,Likely benign,109,kmer_alt_CAT,0.005930819225030955
+Benign,Likely benign,110,kmer_ref_CTT,0.00591819948006489
+Benign,Likely benign,111,kmer_ref_CCA,0.005908408519084669
+Benign,Likely benign,112,blast_target_2_top1,0.0058463875438132746
+Benign,Likely benign,113,blast_top_pident,0.005803790482349919
+Benign,Likely benign,114,kmer_ref_CTG,0.005792080566668339
+Benign,Likely benign,115,kmer_alt_GAT,0.005786942944377622
+Benign,Likely benign,116,kmer_alt_TAC,0.0056754239176944185
+Benign,Likely benign,117,kmer_ref_TAG,0.005605189500126664
+Benign,Likely benign,118,kmer_ref_CAC,0.005525520832216732
+Benign,Likely benign,119,kmer_ref_TGC,0.005523897196686386
+Benign,Likely benign,120,kmer_alt_ACA,0.0055155113065589135
+Benign,Likely benign,121,phastcons_phastcons100_vert_r,0.005448091372680161
+Benign,Likely benign,122,allofus250k_gvs_eur_an,0.00525522105062306
+Benign,Likely benign,123,kmer_ref_GTG,0.005233614959213828
+Benign,Likely benign,124,kmer_diff_CCG,0.005212325653210239
+Benign,Likely benign,125,kmer_ref_TCC,0.005202734867279125
+Benign,Likely benign,126,kmer_alt_CTC,0.00519077706722816
+Benign,Likely benign,127,kmer_ref_ACC,0.005180294395277217
+Benign,Likely benign,128,kmer_ref_CAG,0.005177757517452964
+Benign,Likely benign,129,kmer_alt_GTA,0.005004362182503025
+Benign,Likely benign,130,kmer_alt_ATA,0.004988729418905128
+Benign,Likely benign,131,kmer_diff_ATG,0.004969717185657505
+Benign,Likely benign,132,kmer_ref_GAA,0.004947190014188062
+Benign,Likely benign,133,kmer_alt_TGG,0.004914396703948674
+Benign,Likely benign,134,kmer_alt_ACC,0.0049052795357260575
+Benign,Likely benign,135,kmer_diff_CTG,0.004820784561899374
+Benign,Likely benign,136,kmer_alt_CTG,0.004671590190600296
+Benign,Likely benign,137,kmer_ref_GGA,0.004610658982507165
+Benign,Likely benign,138,kmer_ref_ATC,0.0046031496345598725
+Benign,Likely benign,139,kmer_ref_CCC,0.004545928265695029
+Benign,Likely benign,140,allofus250k_gvs_eas_an,0.004481783497175784
+Benign,Likely benign,141,kmer_diff_ATC,0.004467518424481116
+Benign,Likely benign,142,kmer_diff_CAT,0.0044538231180845855
+Benign,Likely benign,143,kmer_ref_CTC,0.004429828234008645
+Benign,Likely benign,144,kmer_ref_GGG,0.004425157348706753
+Benign,Likely benign,145,kmer_alt_GAG,0.004396615922782773
+Benign,Likely benign,146,kmer_alt_GTT,0.0043401377651917684
+Benign,Likely benign,147,kmer_alt_GAC,0.004248071913253862
+Benign,Likely benign,148,kmer_ref_AGA,0.004235748489774234
+Benign,Likely benign,149,kmer_ref_ACT,0.004231397970243789
+Benign,Likely benign,150,kmer_ref_GCC,0.004211240700886416
+Benign,Likely benign,151,kmer_alt_CGC,0.004163913540584383
+Benign,Likely benign,152,kmer_alt_AGT,0.00416377877703219
+Benign,Likely benign,153,kmer_alt_TGC,0.004162773378530052
+Benign,Likely benign,154,kmer_ref_CGA,0.004147500596632528
+Benign,Likely benign,155,kmer_ref_AGG,0.004107564350310941
+Benign,Likely benign,156,kmer_alt_GAA,0.0040934767296737
+Benign,Likely benign,157,kmer_ref_TGT,0.003948761657643815
+Benign,Likely benign,158,kmer_alt_CCA,0.003948535938972346
+Benign,Likely benign,159,kmer_alt_TCA,0.003939798628049885
+Benign,Likely benign,160,kmer_alt_AAC,0.00388721956915801
+Benign,Likely benign,161,allofus250k_gvs_sas_an,0.003868755088505876
+Benign,Likely benign,162,kmer_ref_CAA,0.0038415233374818935
+Benign,Likely benign,163,kmer_ref_CGG,0.003822197689570859
+Benign,Likely benign,164,kmer_ref_AAT,0.003805432194263161
+Benign,Likely benign,165,kmer_ref_TCG,0.00379126042683516
+Benign,Likely benign,166,kmer_alt_TTT,0.0037525875766500206
+Benign,Likely benign,167,kmer_ref_TGA,0.003709391750309646
+Benign,Likely benign,168,kmer_alt_TTC,0.003652933469035086
+Benign,Likely benign,169,kmer_alt_AGG,0.0036519346182973017
+Benign,Likely benign,170,kmer_alt_GTG,0.0034940761385581264
+Benign,Likely benign,171,kmer_alt_CAC,0.0034761529006804297
+Benign,Likely benign,172,kmer_ref_TTC,0.003467873767992977
+Benign,Likely benign,173,kmer_ref_GCT,0.0034572393950259043
+Benign,Likely benign,174,kmer_alt_ACT,0.003410830720169599
+Benign,Likely benign,175,kmer_diff_CGT,0.0033842208242952413
+Benign,Likely benign,176,kmer_diff_GCG,0.003349236548176233
+Benign,Likely benign,177,kmer_alt_ATG,0.0033116162240908226
+Benign,Likely benign,178,kmer_alt_CGT,0.0032902251582607152
+Benign,Likely benign,179,kmer_ref_CGT,0.00318257189754149
+Benign,Likely benign,180,kmer_ref_CCG,0.003176444491455939
+Benign,Likely benign,181,kmer_alt_ATC,0.003102248682141889
+Benign,Likely benign,182,kmer_alt_GCG,0.0030834147805144704
+Benign,Likely benign,183,kmer_diff_GGA,0.0030754730414562616
+Benign,Likely benign,184,kmer_ref_TTA,0.003057875117452593
+Benign,Likely benign,185,kmer_diff_CAG,0.003044892234507313
+Benign,Likely benign,186,kmer_alt_TAG,0.0030388734923398404
+Benign,Likely benign,187,kmer_ref_GTT,0.0029987611268558314
+Benign,Likely benign,188,kmer_alt_CAA,0.0029598963291012723
+Benign,Likely benign,189,kmer_alt_GCT,0.002954126417241111
+Benign,Likely benign,190,allofus250k_gvs_mid_af,0.0028384240864069536
+Benign,Likely benign,191,kmer_alt_AAT,0.0028132644802727393
+Benign,Likely benign,192,kmer_diff_TGG,0.0028123054357754034
+Benign,Likely benign,193,kmer_alt_GGT,0.0028061784399083895
+Benign,Likely benign,194,kmer_diff_GGG,0.0027847206760270196
+Benign,Likely benign,195,kmer_alt_GCC,0.0027826468246906063
+Benign,Likely benign,196,kmer_ref_GAG,0.002760225579739846
+Benign,Likely benign,197,kmer_alt_CCC,0.0026995992676216484
+Benign,Likely benign,198,kmer_alt_TGT,0.002642289444255956
+Benign,Likely benign,199,kmer_ref_GAC,0.0025751598236084363
+Benign,Likely benign,200,kmer_alt_AGC,0.002572996307688019
+Benign,Likely benign,201,kmer_diff_TGC,0.002496736186913197
+Benign,Likely benign,202,kmer_diff_GGC,0.002451934271907701
+Benign,Likely benign,203,kmer_ref_AAG,0.002439946371932053
+Benign,Likely benign,204,kmer_diff_ACG,0.0024353479105249905
+Benign,Likely benign,205,kmer_ref_TCA,0.0023901001252244905
+Benign,Likely benign,206,blast_p_pathogenic_top1,0.0023358652704715314
+Benign,Likely benign,207,kmer_alt_CTT,0.0022387913177251946
+Benign,Likely benign,208,kmer_ref_GTC,0.0018653108774816785
+Benign,Likely benign,209,kmer_diff_AAG,0.001840812735660776
+Benign,Likely benign,210,kmer_ref_TTG,0.001830346291060805
+Benign,Likely benign,211,kmer_ref_GTA,0.001806599921522699
+Benign,Likely benign,212,kmer_diff_GCC,0.0017648200437363024
+Benign,Likely benign,213,kmer_diff_GTT,0.0017574079293925938
+Benign,Likely benign,214,kmer_diff_GTC,0.001708007330638235
+Benign,Likely benign,215,alfa_latin_american_latin1_alt,0.0016273018440286571
+Benign,Likely benign,216,kmer_ref_ACA,0.0016181157850722325
+Benign,Likely benign,217,kmer_diff_TGA,0.0015507937150093273
+Benign,Likely benign,218,kmer_diff_TCA,0.001537916972313836
+Benign,Likely benign,219,kmer_diff_GAG,0.0015328545120839913
+Benign,Likely benign,220,kmer_diff_CGC,0.0015042281887715045
+Benign,Likely benign,221,kmer_ref_TAT,0.0014714412973553194
+Benign,Likely benign,222,kmer_diff_ACC,0.0013840909144193108
+Benign,Likely benign,223,kmer_alt_TTA,0.0013306989758715
+Benign,Likely benign,224,kmer_diff_CCT,0.0013306528144548236
+Benign,Likely benign,225,kmer_alt_GCA,0.0013108624057947614
+Benign,Likely benign,226,kmer_diff_CAA,0.0012490688740344797
+Benign,Likely benign,227,kmer_ref_ATG,0.0011982396007589366
+Benign,Likely benign,228,kmer_ref_AAA,0.0011730057281183785
+Benign,Likely benign,229,kmer_diff_AAC,0.0011358657925071133
+Benign,Likely benign,230,kmer_diff_CAC,0.0011171954249126483
+Benign,Likely benign,231,kmer_diff_CTT,0.0010758232164088718
+Benign,Likely benign,232,kmer_diff_TCT,0.001064091169418816
+Benign,Likely benign,233,kmer_diff_TTA,0.0010485951189390503
+Benign,Likely benign,234,kmer_diff_GCA,0.0010063837538690523
+Benign,Likely benign,235,kmer_diff_ACT,0.0009789194902073816
+Benign,Likely benign,236,kmer_diff_TCC,0.0009368235392034738
+Benign,Likely benign,237,kmer_diff_AGA,0.0009285743258650252
+Benign,Likely benign,238,kmer_diff_GCT,0.0009160080798765538
+Benign,Likely benign,239,kmer_diff_CTC,0.0008686391936324477
+Benign,Likely benign,240,kmer_diff_AGG,0.0008062121371620061
+Benign,Likely benign,241,kmer_diff_TGT,0.0007584969518408057
+Benign,Likely benign,242,kmer_diff_TTG,0.0006743828363476391
+Benign,Likely benign,243,kmer_diff_TTT,0.0005948759691688448
+Benign,Likely benign,244,kmer_diff_ACA,0.000574293377979422
+Benign,Likely benign,245,kmer_diff_GAT,0.0005738374706913699
+Benign,Likely benign,246,kmer_diff_AGT,0.0005477781962275758
+Benign,Likely benign,247,kmer_diff_CTA,0.0005359351188384362
+Benign,Likely benign,248,kmer_diff_AAA,0.00047905034331730835
+Benign,Likely benign,249,kmer_diff_TTC,0.000403647451848057
+Benign,Likely benign,250,kmer_diff_AGC,0.0003768901081110265
+Benign,Likely benign,251,kmer_diff_GGT,0.00033180378013500297
+Benign,Likely benign,252,kmer_diff_TAT,0.00028681106494029613
+Benign,Likely benign,253,kmer_diff_GTA,0.00026639720131445125
+Benign,Likely benign,254,kmer_diff_ATT,0.00023935653034063762
+Benign,Likely benign,255,kmer_alt_AGA,0.00018311834042382288
+Benign,Likely benign,256,allofus250k_gvs_mid_an,4.224720757292827e-05
+Benign,Likely benign,257,kmer_diff_ATA,2.7327626223846353e-05
+Benign,Likely benign,258,kmer_alt_TAA,3.457031424333812e-06
+Benign,Likely benign,259,kmer_diff_TAA,0.0
+Benign,Likely benign,260,kmer_diff_GAA,0.0
+Benign,Likely benign,261,blast_n_hits,0.0
+Benign,Likely benign,262,kmer_diff_TAG,0.0
+Benign,Likely benign,263,alfa_latin_american_latin2_freq,0.0
+Benign,Likely benign,264,alfa_latin_american_latin2_alt,0.0
+Benign,Likely benign,265,alfa_latin_american_latin1_freq,0.0
+Benign,Likely benign,266,kmer_diff_AAT,0.0
+Benign,Likely benign,267,kmer_diff_TAC,0.0
+Likely pathogenic,Pathogenic,1,blast_target_4_top1,0.11966918052256269
+Likely pathogenic,Pathogenic,2,gnomad_af,0.09081682739490934
+Likely pathogenic,Pathogenic,3,gnomad3_af_nfe,0.0647825290305003
+Likely pathogenic,Pathogenic,4,alfa_total_alt,0.06467777322094569
+Likely pathogenic,Pathogenic,5,alfa_total_freq,0.05353047352783138
+Likely pathogenic,Pathogenic,6,blast_top_bit,0.0498808029365794
+Likely pathogenic,Pathogenic,7,blast_mean_bit_path,0.04479210460041585
+Likely pathogenic,Pathogenic,8,gnomad3_af,0.03903271208761796
+Likely pathogenic,Pathogenic,9,original_input_pos,0.038294790232153694
+Likely pathogenic,Pathogenic,10,allofus250k_gvs_max_ac,0.0378564377718808
+Likely pathogenic,Pathogenic,11,allofus250k_gvs_max_an,0.03491189479450156
+Likely pathogenic,Pathogenic,12,kmer_diff_CCG,0.034651919108046346
+Likely pathogenic,Pathogenic,13,kmer_diff_CGG,0.03411093190195956
+Likely pathogenic,Pathogenic,14,allofus250k_gvs_eur_ac,0.03266433740529886
+Likely pathogenic,Pathogenic,15,blast_mean_bit_benign,0.0283740800912178
+Likely pathogenic,Pathogenic,16,hg19_pos,0.026476949288832707
+Likely pathogenic,Pathogenic,17,gnomad3_af_oth,0.026283759718253707
+Likely pathogenic,Pathogenic,18,phastcons_phastcons17way_primate_r,0.025925472886762228
+Likely pathogenic,Pathogenic,19,phylop_phylop100_vert_r,0.025693115057984803
+Likely pathogenic,Pathogenic,20,gnomad3_af_afr,0.023879683752368576
+Likely pathogenic,Pathogenic,21,phylop_phylop100_vert,0.023839011076772405
+Likely pathogenic,Pathogenic,22,kmer_alt_TGA,0.023549735529572808
+Likely pathogenic,Pathogenic,23,phastcons_phastcons17way_primate,0.023477639833678933
+Likely pathogenic,Pathogenic,24,kmer_diff_TCG,0.022083331541681586
+Likely pathogenic,Pathogenic,25,gerp_gerp_rs,0.021626949201458856
+Likely pathogenic,Pathogenic,26,gnomad_af_nfe,0.019667473341821246
+Likely pathogenic,Pathogenic,27,allofus250k_gvs_max_af,0.019446887550735675
+Likely pathogenic,Pathogenic,28,kmer_diff_GTG,0.018531454225499927
+Likely pathogenic,Pathogenic,29,kmer_diff_CAT,0.017819579305504003
+Likely pathogenic,Pathogenic,30,gerp_gerp_nr,0.01663619825806129
+Likely pathogenic,Pathogenic,31,allofus250k_gvs_all_ac,0.01605490315022752
+Likely pathogenic,Pathogenic,32,kmer_diff_CGA,0.015554092712976357
+Likely pathogenic,Pathogenic,33,kmer_diff_CTG,0.014899157091788339
+Likely pathogenic,Pathogenic,34,allofus250k_gvs_afr_af,0.013633713813267653
+Likely pathogenic,Pathogenic,35,gc_alt,0.013483156712682793
+Likely pathogenic,Pathogenic,36,kmer_alt_CGA,0.01344915352422559
+Likely pathogenic,Pathogenic,37,gnomad3_af_sas,0.012829212133228487
+Likely pathogenic,Pathogenic,38,kmer_diff_TGG,0.012552385434041219
+Likely pathogenic,Pathogenic,39,entropy_alt,0.012508852437850618
+Likely pathogenic,Pathogenic,40,phylop_phylop470_mamm_r,0.012220555114430954
+Likely pathogenic,Pathogenic,41,kmer_diff_GGA,0.011552810252183507
+Likely pathogenic,Pathogenic,42,blast_top_pident,0.011417818660680755
+Likely pathogenic,Pathogenic,43,kmer_ref_CGC,0.011328150558012295
+Likely pathogenic,Pathogenic,44,gnomad3_af_lat,0.011071533033636793
+Likely pathogenic,Pathogenic,45,kmer_alt_GTA,0.011006608065237629
+Likely pathogenic,Pathogenic,46,gerp_gerp_rs_rank,0.010969279631594319
+Likely pathogenic,Pathogenic,47,allofus250k_gvs_eur_af,0.010342900778379318
+Likely pathogenic,Pathogenic,48,kmer_diff_CGT,0.010095063497138134
+Likely pathogenic,Pathogenic,49,kmer_ref_TGG,0.010090723587639646
+Likely pathogenic,Pathogenic,50,kmer_diff_CCC,0.010048538236730993
+Likely pathogenic,Pathogenic,51,phylop_phylop470_mamm,0.009681875680076009
+Likely pathogenic,Pathogenic,52,allofus250k_gvs_amr_af,0.009159064075391654
+Likely pathogenic,Pathogenic,53,entropy_ref,0.009036724200113956
+Likely pathogenic,Pathogenic,54,kmer_diff_GGC,0.008850597132854044
+Likely pathogenic,Pathogenic,55,phylop_phylop17_primate,0.00884917299715207
+Likely pathogenic,Pathogenic,56,kmer_ref_ACG,0.008734937014720213
+Likely pathogenic,Pathogenic,57,blast_n_pathogenic,0.008672113759346798
+Likely pathogenic,Pathogenic,58,kmer_alt_GGC,0.008605123219641006
+Likely pathogenic,Pathogenic,59,allofus250k_gvs_all_af,0.00847464639198141
+Likely pathogenic,Pathogenic,60,phylop_phylop17_primate_r,0.008238288117537367
+Likely pathogenic,Pathogenic,61,kmer_ref_ATA,0.008128716063325906
+Likely pathogenic,Pathogenic,62,allofus250k_gvs_afr_ac,0.007935358068712412
+Likely pathogenic,Pathogenic,63,kmer_alt_CGG,0.007806981997587761
+Likely pathogenic,Pathogenic,64,kmer_ref_TCT,0.007682557908586828
+Likely pathogenic,Pathogenic,65,kmer_alt_ATT,0.007619752701762998
+Likely pathogenic,Pathogenic,66,kmer_diff_GCG,0.007531612566764117
+Likely pathogenic,Pathogenic,67,kmer_ref_CAC,0.007524536714223862
+Likely pathogenic,Pathogenic,68,kmer_alt_AAG,0.007393228161756001
+Likely pathogenic,Pathogenic,69,allofus250k_gvs_all_an,0.007391746668499125
+Likely pathogenic,Pathogenic,70,gnomad3_af_fin,0.007242116896951383
+Likely pathogenic,Pathogenic,71,kmer_diff_ACG,0.007236939833412153
+Likely pathogenic,Pathogenic,72,allofus250k_gvs_afr_an,0.007183333721583776
+Likely pathogenic,Pathogenic,73,kmer_ref_TAA,0.007153659031988827
+Likely pathogenic,Pathogenic,74,allofus250k_gvs_eur_an,0.00694197588244813
+Likely pathogenic,Pathogenic,75,kmer_alt_GTT,0.0067242558330823975
+Likely pathogenic,Pathogenic,76,kmer_alt_TCT,0.006695180575326695
+Likely pathogenic,Pathogenic,77,kmer_diff_GAC,0.006605479382010617
+Likely pathogenic,Pathogenic,78,kmer_alt_ACA,0.006520512781956963
+Likely pathogenic,Pathogenic,79,blast_n_benign,0.006486327348694559
+Likely pathogenic,Pathogenic,80,kmer_alt_TCG,0.006412660450936774
+Likely pathogenic,Pathogenic,81,kmer_ref_GGC,0.006338063191383978
+Likely pathogenic,Pathogenic,82,gc_ref,0.006287289089511481
+Likely pathogenic,Pathogenic,83,kmer_ref_GAT,0.006227307168023183
+Likely pathogenic,Pathogenic,84,kmer_alt_CAG,0.0061894128273890245
+Likely pathogenic,Pathogenic,85,phastcons_phastcons470_mamm,0.006091113913376177
+Likely pathogenic,Pathogenic,86,kmer_alt_TAT,0.006089663043578448
+Likely pathogenic,Pathogenic,87,kmer_ref_GGT,0.006051478082831465
+Likely pathogenic,Pathogenic,88,kmer_ref_CCT,0.0060425779124106
+Likely pathogenic,Pathogenic,89,allofus250k_gvs_amr_ac,0.005898709203311082
+Likely pathogenic,Pathogenic,90,allofus250k_gvs_oth_ac,0.005868713208514799
+Likely pathogenic,Pathogenic,91,kmer_ref_CAG,0.005689340193470668
+Likely pathogenic,Pathogenic,92,kmer_diff_ATG,0.005619056877591122
+Likely pathogenic,Pathogenic,93,allofus250k_gvs_oth_af,0.005305351675960721
+Likely pathogenic,Pathogenic,94,kmer_alt_CTA,0.00524514349782623
+Likely pathogenic,Pathogenic,95,gnomad3_af_eas,0.005042091407114146
+Likely pathogenic,Pathogenic,96,kmer_ref_AGT,0.004992927534013285
+Likely pathogenic,Pathogenic,97,allofus250k_gvs_eas_af,0.004837965907441355
+Likely pathogenic,Pathogenic,98,allofus250k_gvs_eas_an,0.00481687849600096
+Likely pathogenic,Pathogenic,99,phastcons_phastcons100_vert,0.004698328050127716
+Likely pathogenic,Pathogenic,100,kmer_alt_GAC,0.004639538669690307
+Likely pathogenic,Pathogenic,101,kmer_alt_ACT,0.004620844588036415
+Likely pathogenic,Pathogenic,102,kmer_alt_ATA,0.004608429729580892
+Likely pathogenic,Pathogenic,103,kmer_alt_GGG,0.004539990735486858
+Likely pathogenic,Pathogenic,104,kmer_ref_AGG,0.004516622272263173
+Likely pathogenic,Pathogenic,105,allofus250k_gvs_amr_an,0.004393169128263227
+Likely pathogenic,Pathogenic,106,kmer_alt_AAA,0.004369011354390577
+Likely pathogenic,Pathogenic,107,kmer_ref_GGA,0.004364048458564182
+Likely pathogenic,Pathogenic,108,kmer_ref_GAA,0.004276366643946425
+Likely pathogenic,Pathogenic,109,kmer_ref_CCA,0.0042697282726347
+Likely pathogenic,Pathogenic,110,blast_target_2_top1,0.004269071137245168
+Likely pathogenic,Pathogenic,111,kmer_ref_CTT,0.004265481647676892
+Likely pathogenic,Pathogenic,112,kmer_ref_CAT,0.004215131474246227
+Likely pathogenic,Pathogenic,113,kmer_ref_TGT,0.003967531071034066
+Likely pathogenic,Pathogenic,114,phastcons_phastcons100_vert_r,0.003946229728246668
+Likely pathogenic,Pathogenic,115,kmer_ref_TAC,0.0038999289549096405
+Likely pathogenic,Pathogenic,116,kmer_alt_CAA,0.0038654607702666437
+Likely pathogenic,Pathogenic,117,kmer_alt_GAT,0.0038485088903527924
+Likely pathogenic,Pathogenic,118,kmer_ref_TGC,0.003843619970056814
+Likely pathogenic,Pathogenic,119,gnomad3_af_asj,0.0038298676414426015
+Likely pathogenic,Pathogenic,120,kmer_ref_GGG,0.0036768350397802956
+Likely pathogenic,Pathogenic,121,kmer_alt_AGC,0.0036706895155601263
+Likely pathogenic,Pathogenic,122,blast_p_pathogenic_top1,0.0036399441094826595
+Likely pathogenic,Pathogenic,123,kmer_alt_GGA,0.003604347705788289
+Likely pathogenic,Pathogenic,124,kmer_alt_AGG,0.0036026032164019643
+Likely pathogenic,Pathogenic,125,kmer_ref_AAC,0.003594063695785884
+Likely pathogenic,Pathogenic,126,kmer_ref_ACT,0.003563576067829167
+Likely pathogenic,Pathogenic,127,kmer_alt_CAT,0.0035449242389120447
+Likely pathogenic,Pathogenic,128,kmer_alt_GCC,0.0035402098628617555
+Likely pathogenic,Pathogenic,129,kmer_ref_CTG,0.0035295853033798577
+Likely pathogenic,Pathogenic,130,allofus250k_gvs_sas_an,0.0035124268042180337
+Likely pathogenic,Pathogenic,131,kmer_ref_TAG,0.0035093060665127855
+Likely pathogenic,Pathogenic,132,kmer_alt_CAC,0.0034893765960878013
+Likely pathogenic,Pathogenic,133,kmer_ref_GTT,0.0034794363317162584
+Likely pathogenic,Pathogenic,134,kmer_alt_AAC,0.003464374973763297
+Likely pathogenic,Pathogenic,135,kmer_alt_TTG,0.0034471553185447287
+Likely pathogenic,Pathogenic,136,kmer_ref_GCT,0.003436685766081567
+Likely pathogenic,Pathogenic,137,kmer_alt_ACC,0.0034268586044550347
+Likely pathogenic,Pathogenic,138,kmer_ref_GCG,0.0033902668230555125
+Likely pathogenic,Pathogenic,139,kmer_alt_CCT,0.0033845300366617415
+Likely pathogenic,Pathogenic,140,kmer_diff_GGG,0.0033352613773740486
+Likely pathogenic,Pathogenic,141,kmer_ref_AGA,0.0033089828887575426
+Likely pathogenic,Pathogenic,142,kmer_ref_CTA,0.003289429358433721
+Likely pathogenic,Pathogenic,143,kmer_ref_GTG,0.003234813477279416
+Likely pathogenic,Pathogenic,144,kmer_ref_GCC,0.0032291082347870757
+Likely pathogenic,Pathogenic,145,kmer_alt_GAA,0.0031999688325730423
+Likely pathogenic,Pathogenic,146,kmer_ref_TCC,0.0031949326909807554
+Likely pathogenic,Pathogenic,147,allofus250k_gvs_eas_ac,0.0031885179409956352
+Likely pathogenic,Pathogenic,148,kmer_ref_GCA,0.0031772360860425376
+Likely pathogenic,Pathogenic,149,allofus250k_gvs_oth_an,0.003153682904202833
+Likely pathogenic,Pathogenic,150,kmer_alt_CGT,0.0031364670801818815
+Likely pathogenic,Pathogenic,151,kmer_alt_ATG,0.003109576199412382
+Likely pathogenic,Pathogenic,152,kmer_ref_CAA,0.003062682395858327
+Likely pathogenic,Pathogenic,153,kmer_diff_CCA,0.003041115328443763
+Likely pathogenic,Pathogenic,154,kmer_ref_GTA,0.0030141366152138297
+Likely pathogenic,Pathogenic,155,kmer_alt_CGC,0.002971745009930135
+Likely pathogenic,Pathogenic,156,kmer_ref_CCG,0.002967650946609528
+Likely pathogenic,Pathogenic,157,kmer_alt_GAG,0.0029211892258025865
+Likely pathogenic,Pathogenic,158,kmer_alt_TGG,0.0029110376273558426
+Likely pathogenic,Pathogenic,159,kmer_alt_TCA,0.0028535356134619804
+Likely pathogenic,Pathogenic,160,kmer_alt_CCG,0.0028311283168279155
+Likely pathogenic,Pathogenic,161,kmer_alt_TCC,0.0027808618447433494
+Likely pathogenic,Pathogenic,162,kmer_diff_TGC,0.0027773286695310533
+Likely pathogenic,Pathogenic,163,kmer_ref_ATT,0.0027769936984025404
+Likely pathogenic,Pathogenic,164,kmer_alt_TTC,0.0027741603378987037
+Likely pathogenic,Pathogenic,165,phastcons_phastcons470_mamm_r,0.0027497477157537894
+Likely pathogenic,Pathogenic,166,kmer_ref_ACC,0.0027327772041994465
+Likely pathogenic,Pathogenic,167,kmer_alt_ATC,0.002682432244461556
+Likely pathogenic,Pathogenic,168,kmer_alt_ACG,0.002681837313813132
+Likely pathogenic,Pathogenic,169,kmer_ref_TTT,0.0026781559954054735
+Likely pathogenic,Pathogenic,170,kmer_diff_TGA,0.0026373945590788114
+Likely pathogenic,Pathogenic,171,kmer_ref_AAT,0.0026219382159119895
+Likely pathogenic,Pathogenic,172,kmer_ref_CGG,0.0026172350128432437
+Likely pathogenic,Pathogenic,173,kmer_ref_TCA,0.002598482036633901
+Likely pathogenic,Pathogenic,174,kmer_ref_GAG,0.0025611502613629307
+Likely pathogenic,Pathogenic,175,kmer_alt_TGT,0.0025389980427790726
+Likely pathogenic,Pathogenic,176,kmer_ref_AAG,0.002536519945412353
+Likely pathogenic,Pathogenic,177,kmer_diff_GTC,0.00251613356740883
+Likely pathogenic,Pathogenic,178,kmer_ref_CCC,0.0024879716590167295
+Likely pathogenic,Pathogenic,179,kmer_ref_CGT,0.002463658907977054
+Likely pathogenic,Pathogenic,180,kmer_alt_TGC,0.0024288661674183674
+Likely pathogenic,Pathogenic,181,kmer_alt_CTG,0.0024248507693249584
+Likely pathogenic,Pathogenic,182,kmer_ref_ACA,0.0023862046601350615
+Likely pathogenic,Pathogenic,183,kmer_alt_GTC,0.0023439379526143263
+Likely pathogenic,Pathogenic,184,kmer_diff_ACC,0.002307441944457441
+Likely pathogenic,Pathogenic,185,kmer_alt_CCA,0.002306198718646084
+Likely pathogenic,Pathogenic,186,kmer_alt_GGT,0.002275665875191687
+Likely pathogenic,Pathogenic,187,kmer_alt_CTC,0.0022737313687601827
+Likely pathogenic,Pathogenic,188,kmer_alt_GTG,0.0022509387684063993
+Likely pathogenic,Pathogenic,189,kmer_diff_AAC,0.002181687026556561
+Likely pathogenic,Pathogenic,190,kmer_alt_AGT,0.0021621952703286705
+Likely pathogenic,Pathogenic,191,kmer_diff_CGC,0.0021469363041642445
+Likely pathogenic,Pathogenic,192,kmer_alt_TAG,0.0021161298906033975
+Likely pathogenic,Pathogenic,193,kmer_ref_AGC,0.0020956431524762694
+Likely pathogenic,Pathogenic,194,kmer_alt_TTT,0.002086442012021856
+Likely pathogenic,Pathogenic,195,kmer_diff_CAG,0.0020778137121897694
+Likely pathogenic,Pathogenic,196,kmer_ref_TGA,0.00207674288817892
+Likely pathogenic,Pathogenic,197,allofus250k_gvs_sas_af,0.0019373485816442271
+Likely pathogenic,Pathogenic,198,kmer_alt_GCG,0.0019195309246139555
+Likely pathogenic,Pathogenic,199,kmer_alt_CCC,0.0019133062227884691
+Likely pathogenic,Pathogenic,200,kmer_ref_TTC,0.0018978511341836922
+Likely pathogenic,Pathogenic,201,kmer_ref_GTC,0.0018779228560183929
+Likely pathogenic,Pathogenic,202,kmer_ref_TCG,0.001867626501470291
+Likely pathogenic,Pathogenic,203,kmer_diff_TTA,0.0018548486850491304
+Likely pathogenic,Pathogenic,204,kmer_ref_ATC,0.0018297051909975368
+Likely pathogenic,Pathogenic,205,kmer_alt_TAC,0.0018149328526654075
+Likely pathogenic,Pathogenic,206,kmer_alt_GCA,0.0017825347525960715
+Likely pathogenic,Pathogenic,207,kmer_diff_ATC,0.0017646202591550244
+Likely pathogenic,Pathogenic,208,kmer_diff_CAA,0.0017567815225088964
+Likely pathogenic,Pathogenic,209,kmer_ref_TAT,0.00171139545297028
+Likely pathogenic,Pathogenic,210,kmer_diff_TTG,0.0016904845334817233
+Likely pathogenic,Pathogenic,211,kmer_ref_CTC,0.001657414947008062
+Likely pathogenic,Pathogenic,212,kmer_diff_CCT,0.001650079868280566
+Likely pathogenic,Pathogenic,213,kmer_diff_CAC,0.0016271705394255301
+Likely pathogenic,Pathogenic,214,kmer_alt_AAT,0.001553556378184324
+Likely pathogenic,Pathogenic,215,kmer_ref_GAC,0.001436884046626336
+Likely pathogenic,Pathogenic,216,kmer_diff_TCT,0.001417265978350924
+Likely pathogenic,Pathogenic,217,kmer_ref_TTG,0.0013520458591355952
+Likely pathogenic,Pathogenic,218,kmer_diff_GAG,0.0012771449235530461
+Likely pathogenic,Pathogenic,219,kmer_alt_CTT,0.0012377551084495207
+Likely pathogenic,Pathogenic,220,kmer_diff_TCC,0.0012028782297566199
+Likely pathogenic,Pathogenic,221,kmer_ref_CGA,0.0011943215893036295
+Likely pathogenic,Pathogenic,222,kmer_diff_CTT,0.0011743397393808065
+Likely pathogenic,Pathogenic,223,kmer_diff_CTA,0.0011614023366980039
+Likely pathogenic,Pathogenic,224,kmer_diff_AGG,0.0010627649129341613
+Likely pathogenic,Pathogenic,225,allofus250k_gvs_mid_af,0.0010266098120391303
+Likely pathogenic,Pathogenic,226,kmer_diff_GCA,0.0009680621642305463
+Likely pathogenic,Pathogenic,227,kmer_diff_TTC,0.0009595856138076167
+Likely pathogenic,Pathogenic,228,allofus250k_gvs_sas_ac,0.0009483506053788901
+Likely pathogenic,Pathogenic,229,kmer_ref_ATG,0.0009388135491366668
+Likely pathogenic,Pathogenic,230,kmer_diff_ACA,0.0009037984027510093
+Likely pathogenic,Pathogenic,231,kmer_diff_ACT,0.0009025214408380595
+Likely pathogenic,Pathogenic,232,kmer_diff_CTC,0.0008969244119404449
+Likely pathogenic,Pathogenic,233,kmer_ref_TTA,0.0008696065005958049
+Likely pathogenic,Pathogenic,234,kmer_diff_GCT,0.0008525158722736983
+Likely pathogenic,Pathogenic,235,kmer_diff_AAG,0.0008423754475165104
+Likely pathogenic,Pathogenic,236,kmer_ref_AAA,0.0007786897387929389
+Likely pathogenic,Pathogenic,237,kmer_diff_AGA,0.0007505495333750793
+Likely pathogenic,Pathogenic,238,kmer_diff_GCC,0.0007081157859187673
+Likely pathogenic,Pathogenic,239,kmer_diff_TCA,0.0006926772276310456
+Likely pathogenic,Pathogenic,240,kmer_diff_GAT,0.0006458856323900572
+Likely pathogenic,Pathogenic,241,kmer_diff_TGT,0.0006297035053301782
+Likely pathogenic,Pathogenic,242,kmer_diff_AAA,0.0006019163206530954
+Likely pathogenic,Pathogenic,243,kmer_alt_GCT,0.0005925492727127087
+Likely pathogenic,Pathogenic,244,kmer_alt_TTA,0.0005412566501571278
+Likely pathogenic,Pathogenic,245,kmer_diff_TAT,0.0005239363107856357
+Likely pathogenic,Pathogenic,246,kmer_diff_GTT,0.0004673928132483746
+Likely pathogenic,Pathogenic,247,allofus250k_gvs_mid_ac,0.0004654164931543119
+Likely pathogenic,Pathogenic,248,kmer_diff_GGT,0.0004428115585241418
+Likely pathogenic,Pathogenic,249,kmer_diff_AGT,0.00040340960327322134
+Likely pathogenic,Pathogenic,250,kmer_diff_TTT,0.0003996673243520976
+Likely pathogenic,Pathogenic,251,kmer_diff_GTA,0.0003797472775182909
+Likely pathogenic,Pathogenic,252,kmer_diff_AGC,0.0003470936678695678
+Likely pathogenic,Pathogenic,253,kmer_alt_AGA,0.0002253716907013711
+Likely pathogenic,Pathogenic,254,kmer_diff_ATT,0.00019944190291300572
+Likely pathogenic,Pathogenic,255,alfa_latin_american_latin1_alt,4.8129662355687726e-05
+Likely pathogenic,Pathogenic,256,kmer_diff_ATA,3.1441749153806846e-05
+Likely pathogenic,Pathogenic,257,kmer_alt_TAA,6.007706996509559e-06
+Likely pathogenic,Pathogenic,258,allofus250k_gvs_mid_an,2.571112114341798e-06
+Likely pathogenic,Pathogenic,259,kmer_diff_TAG,0.0
+Likely pathogenic,Pathogenic,260,kmer_diff_GAA,0.0
+Likely pathogenic,Pathogenic,261,kmer_diff_TAA,0.0
+Likely pathogenic,Pathogenic,262,kmer_diff_AAT,0.0
+Likely pathogenic,Pathogenic,263,blast_n_hits,0.0
+Likely pathogenic,Pathogenic,264,alfa_latin_american_latin2_freq,0.0
+Likely pathogenic,Pathogenic,265,alfa_latin_american_latin2_alt,0.0
+Likely pathogenic,Pathogenic,266,alfa_latin_american_latin1_freq,0.0
+Likely pathogenic,Pathogenic,267,kmer_diff_TAC,0.0
+Benign,Pathogenic,1,allofus250k_gvs_max_af,0.6897700166663009
+Benign,Pathogenic,2,gnomad_af,0.6552393655283619
+Benign,Pathogenic,3,blast_mean_bit_path,0.5421253019947909
+Benign,Pathogenic,4,allofus250k_gvs_max_ac,0.33057417728961264
+Benign,Pathogenic,5,phylop_phylop100_vert,0.2938515446991134
+Benign,Pathogenic,6,phylop_phylop100_vert_r,0.27266138993342176
+Benign,Pathogenic,7,allofus250k_gvs_afr_af,0.23294748393318523
+Benign,Pathogenic,8,allofus250k_gvs_afr_ac,0.213602872479438
+Benign,Pathogenic,9,allofus250k_gvs_max_an,0.20943186385082357
+Benign,Pathogenic,10,blast_top_bit,0.18322678609586865
+Benign,Pathogenic,11,blast_target_4_top1,0.15498204486370706
+Benign,Pathogenic,12,blast_mean_bit_benign,0.15376267446547842
+Benign,Pathogenic,13,allofus250k_gvs_amr_af,0.15058174713289119
+Benign,Pathogenic,14,gnomad3_af,0.14113463519085392
+Benign,Pathogenic,15,allofus250k_gvs_all_af,0.14033602447381965
+Benign,Pathogenic,16,gnomad3_af_afr,0.13214497304371728
+Benign,Pathogenic,17,phylop_phylop470_mamm_r,0.12070431718048621
+Benign,Pathogenic,18,allofus250k_gvs_oth_af,0.11340251261101929
+Benign,Pathogenic,19,allofus250k_gvs_all_ac,0.10858666267908444
+Benign,Pathogenic,20,hg19_pos,0.10631164306092823
+Benign,Pathogenic,21,gerp_gerp_rs,0.10525813047017357
+Benign,Pathogenic,22,phastcons_phastcons470_mamm,0.10465323216778807
+Benign,Pathogenic,23,phylop_phylop470_mamm,0.09328034763802628
+Benign,Pathogenic,24,gerp_gerp_nr,0.08789299567109947
+Benign,Pathogenic,25,phastcons_phastcons100_vert,0.083724895683669
+Benign,Pathogenic,26,gnomad3_af_oth,0.08314885236286895
+Benign,Pathogenic,27,gnomad3_af_nfe,0.08154042433748518
+Benign,Pathogenic,28,allofus250k_gvs_eur_ac,0.0774197419349539
+Benign,Pathogenic,29,allofus250k_gvs_amr_ac,0.06851307980484836
+Benign,Pathogenic,30,gnomad3_af_lat,0.06719889046982276
+Benign,Pathogenic,31,entropy_ref,0.06406808388012895
+Benign,Pathogenic,32,gnomad3_af_sas,0.06404486120622649
+Benign,Pathogenic,33,gnomad3_af_fin,0.061762850976399435
+Benign,Pathogenic,34,blast_target_2_top1,0.05883625384346638
+Benign,Pathogenic,35,original_input_pos,0.057672804391383066
+Benign,Pathogenic,36,kmer_diff_CCG,0.05655890606944857
+Benign,Pathogenic,37,allofus250k_gvs_sas_af,0.05573956692101606
+Benign,Pathogenic,38,allofus250k_gvs_oth_ac,0.05568957391294009
+Benign,Pathogenic,39,phastcons_phastcons100_vert_r,0.05487567993624432
+Benign,Pathogenic,40,allofus250k_gvs_all_an,0.05433858623366861
+Benign,Pathogenic,41,alfa_total_freq,0.05322409767303617
+Benign,Pathogenic,42,allofus250k_gvs_eas_af,0.05248655447744688
+Benign,Pathogenic,43,gerp_gerp_rs_rank,0.04404692628429936
+Benign,Pathogenic,44,kmer_diff_CGG,0.043455840551338956
+Benign,Pathogenic,45,phastcons_phastcons470_mamm_r,0.042401120175608285
+Benign,Pathogenic,46,gnomad3_af_asj,0.0421439071310056
+Benign,Pathogenic,47,blast_n_pathogenic,0.035645864129179035
+Benign,Pathogenic,48,allofus250k_gvs_eas_ac,0.035621292252412666
+Benign,Pathogenic,49,gc_ref,0.034700980044613416
+Benign,Pathogenic,50,phastcons_phastcons17way_primate_r,0.03468427032903109
+Benign,Pathogenic,51,phastcons_phastcons17way_primate,0.033461558574245695
+Benign,Pathogenic,52,gnomad_af_nfe,0.03230750713505567
+Benign,Pathogenic,53,entropy_alt,0.03228245732027468
+Benign,Pathogenic,54,gnomad3_af_eas,0.03122921447478288
+Benign,Pathogenic,55,blast_n_benign,0.03087495849179607
+Benign,Pathogenic,56,gc_alt,0.030760843376732856
+Benign,Pathogenic,57,kmer_ref_CGC,0.02994507288796905
+Benign,Pathogenic,58,allofus250k_gvs_amr_an,0.02818757208766549
+Benign,Pathogenic,59,allofus250k_gvs_eur_an,0.025957056403097745
+Benign,Pathogenic,60,kmer_diff_CTG,0.02419257502367941
+Benign,Pathogenic,61,allofus250k_gvs_eur_af,0.02327228305236707
+Benign,Pathogenic,62,allofus250k_gvs_afr_an,0.022068966629884983
+Benign,Pathogenic,63,kmer_diff_TCG,0.022026868934781795
+Benign,Pathogenic,64,kmer_ref_CCA,0.021250672702340417
+Benign,Pathogenic,65,kmer_ref_GCG,0.020371447136151178
+Benign,Pathogenic,66,phylop_phylop17_primate,0.020077138228960525
+Benign,Pathogenic,67,allofus250k_gvs_oth_an,0.019448021256398888
+Benign,Pathogenic,68,kmer_ref_ACG,0.018544287430350016
+Benign,Pathogenic,69,kmer_ref_TCT,0.01813017107672382
+Benign,Pathogenic,70,alfa_total_alt,0.01798156988628053
+Benign,Pathogenic,71,kmer_ref_AAC,0.017674236833251478
+Benign,Pathogenic,72,kmer_alt_ATT,0.01712080764126443
+Benign,Pathogenic,73,blast_p_pathogenic_top1,0.01675880765513137
+Benign,Pathogenic,74,kmer_alt_TGA,0.01611750130437621
+Benign,Pathogenic,75,kmer_diff_CAT,0.015773133457992503
+Benign,Pathogenic,76,kmer_ref_ACC,0.015570950079815299
+Benign,Pathogenic,77,allofus250k_gvs_sas_ac,0.015341040678341042
+Benign,Pathogenic,78,kmer_ref_CAC,0.015028211994599309
+Benign,Pathogenic,79,kmer_alt_CTA,0.014718543221683505
+Benign,Pathogenic,80,allofus250k_gvs_eas_an,0.014643835163282201
+Benign,Pathogenic,81,kmer_alt_CGA,0.014234890575111053
+Benign,Pathogenic,82,kmer_ref_AGT,0.013628748657720926
+Benign,Pathogenic,83,kmer_alt_TCT,0.01341114544058976
+Benign,Pathogenic,84,kmer_alt_ACG,0.012754486943170431
+Benign,Pathogenic,85,kmer_diff_CGA,0.012205951329160915
+Benign,Pathogenic,86,kmer_ref_GCA,0.011732958478876926
+Benign,Pathogenic,87,kmer_alt_ACC,0.011422838189547714
+Benign,Pathogenic,88,kmer_diff_GTG,0.01093864434583765
+Benign,Pathogenic,89,kmer_ref_TAC,0.010935153156695444
+Benign,Pathogenic,90,kmer_ref_AGA,0.010227997425030631
+Benign,Pathogenic,91,kmer_alt_TCG,0.010173386418868318
+Benign,Pathogenic,92,allofus250k_gvs_mid_af,0.010157848847678619
+Benign,Pathogenic,93,kmer_ref_GGA,0.010105835176755909
+Benign,Pathogenic,94,kmer_diff_TGG,0.010048098041915214
+Benign,Pathogenic,95,allofus250k_gvs_sas_an,0.009724064344374906
+Benign,Pathogenic,96,kmer_ref_GGC,0.009716799094428543
+Benign,Pathogenic,97,kmer_alt_CGC,0.009612318189313712
+Benign,Pathogenic,98,kmer_alt_GTA,0.009610750343026457
+Benign,Pathogenic,99,kmer_diff_GCG,0.009436203445329926
+Benign,Pathogenic,100,kmer_ref_CCT,0.009283611545685222
+Benign,Pathogenic,101,kmer_alt_GAG,0.009237137850810477
+Benign,Pathogenic,102,phylop_phylop17_primate_r,0.009062588379454986
+Benign,Pathogenic,103,kmer_alt_CCT,0.00890172719830789
+Benign,Pathogenic,104,kmer_ref_TGG,0.00858115719472363
+Benign,Pathogenic,105,kmer_alt_ACA,0.00852755586897091
+Benign,Pathogenic,106,kmer_ref_TCC,0.008461985033220142
+Benign,Pathogenic,107,kmer_ref_AGC,0.008289501884397086
+Benign,Pathogenic,108,kmer_ref_CAG,0.008153780877632232
+Benign,Pathogenic,109,kmer_alt_CAC,0.008147055504117456
+Benign,Pathogenic,110,kmer_ref_TAA,0.00805801618297938
+Benign,Pathogenic,111,kmer_alt_GCC,0.00792638665429075
+Benign,Pathogenic,112,kmer_ref_GAT,0.007886008267240192
+Benign,Pathogenic,113,kmer_alt_GGC,0.007763576572223808
+Benign,Pathogenic,114,kmer_ref_TTT,0.007697634092532893
+Benign,Pathogenic,115,allofus250k_gvs_mid_ac,0.007591125482720024
+Benign,Pathogenic,116,blast_top_pident,0.007198166272312666
+Benign,Pathogenic,117,kmer_ref_GTA,0.006966020144112441
+Benign,Pathogenic,118,kmer_ref_CAT,0.006928219318733869
+Benign,Pathogenic,119,kmer_alt_GGG,0.0068063325766441855
+Benign,Pathogenic,120,kmer_alt_CAG,0.006776211654265208
+Benign,Pathogenic,121,kmer_alt_AAC,0.006774295643352922
+Benign,Pathogenic,122,kmer_alt_CCA,0.006760810299429118
+Benign,Pathogenic,123,kmer_ref_GCC,0.0067047206479254
+Benign,Pathogenic,124,kmer_diff_ATG,0.006433375337865349
+Benign,Pathogenic,125,kmer_ref_ACT,0.006393474922006827
+Benign,Pathogenic,126,kmer_ref_CGG,0.0063488708829291945
+Benign,Pathogenic,127,kmer_ref_GTG,0.006282742140812234
+Benign,Pathogenic,128,kmer_diff_ACG,0.006279109069948206
+Benign,Pathogenic,129,kmer_alt_TCC,0.006226444950068955
+Benign,Pathogenic,130,kmer_alt_TAC,0.00615000675566553
+Benign,Pathogenic,131,kmer_ref_CTA,0.006126745854946353
+Benign,Pathogenic,132,kmer_ref_CAA,0.006110341991349675
+Benign,Pathogenic,133,kmer_ref_ATT,0.006076506346486132
+Benign,Pathogenic,134,kmer_ref_CTG,0.006072017641417501
+Benign,Pathogenic,135,kmer_ref_GAG,0.005883784873377389
+Benign,Pathogenic,136,kmer_alt_CCG,0.005882750033206465
+Benign,Pathogenic,137,kmer_ref_CTT,0.005842797466397063
+Benign,Pathogenic,138,kmer_alt_CGG,0.005837440299459727
+Benign,Pathogenic,139,kmer_alt_AGT,0.005771985237668126
+Benign,Pathogenic,140,kmer_ref_AGG,0.00568767669021092
+Benign,Pathogenic,141,kmer_diff_ATC,0.005530957692130258
+Benign,Pathogenic,142,kmer_ref_GGT,0.00539040263744272
+Benign,Pathogenic,143,kmer_ref_TGC,0.0053843261409484335
+Benign,Pathogenic,144,kmer_alt_CAA,0.005383350619626097
+Benign,Pathogenic,145,kmer_diff_CCA,0.005356528773095911
+Benign,Pathogenic,146,kmer_alt_GAC,0.005240040750922769
+Benign,Pathogenic,147,kmer_diff_CGT,0.005183203020348845
+Benign,Pathogenic,148,kmer_ref_CCC,0.005098194843909535
+Benign,Pathogenic,149,kmer_diff_GGC,0.004896182643668542
+Benign,Pathogenic,150,kmer_ref_ATA,0.004872848746409756
+Benign,Pathogenic,151,kmer_alt_CTC,0.004864958699864845
+Benign,Pathogenic,152,kmer_alt_GTC,0.004824494799713239
+Benign,Pathogenic,153,kmer_alt_AAG,0.004750127708436889
+Benign,Pathogenic,154,kmer_alt_ACT,0.0047417163989360725
+Benign,Pathogenic,155,kmer_alt_CGT,0.004684969118963793
+Benign,Pathogenic,156,kmer_ref_CCG,0.004645866444013796
+Benign,Pathogenic,157,kmer_ref_CGA,0.004396376948648858
+Benign,Pathogenic,158,kmer_alt_GGT,0.004350958031937337
+Benign,Pathogenic,159,kmer_ref_ACA,0.004270911976387799
+Benign,Pathogenic,160,kmer_alt_TGC,0.004266118425854041
+Benign,Pathogenic,161,kmer_alt_TTC,0.004199979542208968
+Benign,Pathogenic,162,kmer_diff_CCT,0.004163468006260369
+Benign,Pathogenic,163,kmer_ref_CGT,0.004134427499925514
+Benign,Pathogenic,164,kmer_alt_TTG,0.004099535664651453
+Benign,Pathogenic,165,kmer_alt_AGG,0.00406411188328315
+Benign,Pathogenic,166,kmer_alt_CAT,0.0040556525998954205
+Benign,Pathogenic,167,kmer_alt_CTG,0.004036807781206896
+Benign,Pathogenic,168,kmer_alt_GAT,0.004025543301100555
+Benign,Pathogenic,169,kmer_ref_CTC,0.004009677531347845
+Benign,Pathogenic,170,kmer_alt_GGA,0.003978560135018495
+Benign,Pathogenic,171,kmer_diff_CCC,0.0038523442715550672
+Benign,Pathogenic,172,kmer_ref_TAG,0.003807584433208445
+Benign,Pathogenic,173,kmer_diff_CAG,0.0037317170658668387
+Benign,Pathogenic,174,kmer_alt_GCG,0.0037033993280799027
+Benign,Pathogenic,175,kmer_ref_GAC,0.00366473785550601
+Benign,Pathogenic,176,kmer_ref_GCT,0.0036540663087109644
+Benign,Pathogenic,177,kmer_alt_TAT,0.003625937867699606
+Benign,Pathogenic,178,kmer_alt_TTT,0.003620472815098047
+Benign,Pathogenic,179,kmer_alt_AAA,0.003620187018163722
+Benign,Pathogenic,180,kmer_alt_GAA,0.003614948216794604
+Benign,Pathogenic,181,kmer_alt_TGG,0.003538514664829388
+Benign,Pathogenic,182,kmer_alt_CCC,0.003489422772858481
+Benign,Pathogenic,183,kmer_alt_GTT,0.0034755326993979336
+Benign,Pathogenic,184,kmer_alt_ATC,0.003460610050941651
+Benign,Pathogenic,185,kmer_ref_AAT,0.0034442149011566906
+Benign,Pathogenic,186,kmer_ref_TCA,0.0034319995161652904
+Benign,Pathogenic,187,kmer_ref_ATC,0.003384255086020219
+Benign,Pathogenic,188,kmer_alt_TCA,0.0033739667403024395
+Benign,Pathogenic,189,kmer_ref_GAA,0.0033723026068983725
+Benign,Pathogenic,190,kmer_ref_GGG,0.0033493211813963994
+Benign,Pathogenic,191,kmer_ref_GTT,0.0032728325560167832
+Benign,Pathogenic,192,kmer_alt_AGC,0.003261226029634667
+Benign,Pathogenic,193,kmer_alt_ATG,0.003174999063271326
+Benign,Pathogenic,194,kmer_diff_TCT,0.0031738154466800857
+Benign,Pathogenic,195,kmer_ref_TTC,0.0030718116182743217
+Benign,Pathogenic,196,kmer_diff_GCC,0.003001269811656923
+Benign,Pathogenic,197,kmer_diff_GGA,0.002955818469600454
+Benign,Pathogenic,198,kmer_diff_CGC,0.002954119750166699
+Benign,Pathogenic,199,kmer_alt_ATA,0.0028934978723212258
+Benign,Pathogenic,200,kmer_diff_GTC,0.00287983033477586
+Benign,Pathogenic,201,kmer_alt_GTG,0.0028533239956330713
+Benign,Pathogenic,202,kmer_ref_TCG,0.002819276705718289
+Benign,Pathogenic,203,kmer_ref_TGA,0.0028050467555320543
+Benign,Pathogenic,204,kmer_ref_GTC,0.002779985273365005
+Benign,Pathogenic,205,kmer_ref_TGT,0.002641587558614719
+Benign,Pathogenic,206,kmer_alt_AAT,0.0024393267287487336
+Benign,Pathogenic,207,kmer_ref_AAG,0.002401801963768293
+Benign,Pathogenic,208,kmer_ref_TAT,0.0023170096659142067
+Benign,Pathogenic,209,kmer_diff_AAC,0.0022316872382587816
+Benign,Pathogenic,210,kmer_ref_TTA,0.0022221050104626197
+Benign,Pathogenic,211,kmer_alt_GCA,0.0022140100211685216
+Benign,Pathogenic,212,kmer_alt_CTT,0.002210491275231879
+Benign,Pathogenic,213,kmer_diff_TGA,0.0021807175079084787
+Benign,Pathogenic,214,kmer_diff_ACC,0.0021417455610515624
+Benign,Pathogenic,215,kmer_diff_TGC,0.0020721857168559737
+Benign,Pathogenic,216,kmer_alt_TAG,0.002068235055539696
+Benign,Pathogenic,217,kmer_ref_AAA,0.002042126816540356
+Benign,Pathogenic,218,kmer_diff_GAC,0.002008584215970932
+Benign,Pathogenic,219,kmer_diff_GGG,0.001987529291935363
+Benign,Pathogenic,220,kmer_alt_GCT,0.0019252898789208284
+Benign,Pathogenic,221,kmer_alt_TGT,0.0018811647307968966
+Benign,Pathogenic,222,kmer_ref_TTG,0.0017272873964734089
+Benign,Pathogenic,223,kmer_diff_GAG,0.0017172119989421121
+Benign,Pathogenic,224,kmer_diff_CAC,0.0015527962072059986
+Benign,Pathogenic,225,kmer_diff_CTT,0.0015421608882052933
+Benign,Pathogenic,226,kmer_diff_AAG,0.0015162037465509073
+Benign,Pathogenic,227,kmer_diff_ACT,0.0014892422789529582
+Benign,Pathogenic,228,kmer_diff_GAT,0.001467349643728457
+Benign,Pathogenic,229,kmer_diff_CTA,0.001373257452990056
+Benign,Pathogenic,230,kmer_diff_TCC,0.0013724613885393432
+Benign,Pathogenic,231,kmer_diff_CAA,0.0012701264318327582
+Benign,Pathogenic,232,alfa_latin_american_latin1_alt,0.0011208016803581097
+Benign,Pathogenic,233,kmer_diff_AGA,0.0010852681819347823
+Benign,Pathogenic,234,kmer_diff_TTG,0.0010685301673692665
+Benign,Pathogenic,235,kmer_diff_GCA,0.0010399657417696957
+Benign,Pathogenic,236,kmer_diff_CTC,0.0010117871446427493
+Benign,Pathogenic,237,kmer_diff_AGC,0.0009578258265504039
+Benign,Pathogenic,238,kmer_diff_GCT,0.0009209748513057773
+Benign,Pathogenic,239,kmer_diff_AGG,0.0008814793870404068
+Benign,Pathogenic,240,kmer_diff_TGT,0.0008784450399954426
+Benign,Pathogenic,241,kmer_alt_TTA,0.0008618054945081486
+Benign,Pathogenic,242,kmer_diff_TTC,0.0008452311664465323
+Benign,Pathogenic,243,kmer_ref_ATG,0.0007928110540058797
+Benign,Pathogenic,244,kmer_diff_TCA,0.000772375614634309
+Benign,Pathogenic,245,kmer_alt_AGA,0.0006486743148116192
+Benign,Pathogenic,246,kmer_diff_GGT,0.0006479599828887803
+Benign,Pathogenic,247,kmer_diff_ATT,0.0006372985275210116
+Benign,Pathogenic,248,kmer_diff_TAT,0.0006123637590019822
+Benign,Pathogenic,249,kmer_diff_TTA,0.0006069192728202341
+Benign,Pathogenic,250,kmer_diff_TTT,0.0005891783176470102
+Benign,Pathogenic,251,kmer_diff_GTT,0.0005019701469066266
+Benign,Pathogenic,252,kmer_diff_AAA,0.0004306767381154942
+Benign,Pathogenic,253,kmer_diff_AGT,0.0003884194238362954
+Benign,Pathogenic,254,kmer_diff_ACA,0.0003842094246108923
+Benign,Pathogenic,255,kmer_diff_GTA,0.00011777801678463313
+Benign,Pathogenic,256,allofus250k_gvs_mid_an,5.4972470768317376e-05
+Benign,Pathogenic,257,kmer_diff_ATA,2.375102367393251e-05
+Benign,Pathogenic,258,kmer_alt_TAA,4.781667456670364e-06
+Benign,Pathogenic,259,alfa_latin_american_latin2_freq,0.0
+Benign,Pathogenic,260,alfa_latin_american_latin1_freq,0.0
+Benign,Pathogenic,261,alfa_latin_american_latin2_alt,0.0
+Benign,Pathogenic,262,kmer_diff_TAG,0.0
+Benign,Pathogenic,263,blast_n_hits,0.0
+Benign,Pathogenic,264,kmer_diff_GAA,0.0
+Benign,Pathogenic,265,kmer_diff_TAA,0.0
+Benign,Pathogenic,266,kmer_diff_TAC,0.0
+Benign,Pathogenic,267,kmer_diff_AAT,0.0

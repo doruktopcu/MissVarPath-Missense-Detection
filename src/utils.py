@@ -87,9 +87,13 @@ def metrics_summary(
     }
     if y_proba is not None:
         try:
-            out["roc_auc_ovr_macro"] = float(
-                roc_auc_score(y_true, y_proba, multi_class="ovr", average="macro")
-            )
+            proba = np.asarray(y_proba)
+            if proba.ndim == 2 and proba.shape[1] == 2:
+                out["roc_auc_ovr_macro"] = float(roc_auc_score(y_true, proba[:, 1]))
+            else:
+                out["roc_auc_ovr_macro"] = float(
+                    roc_auc_score(y_true, proba, multi_class="ovr", average="macro")
+                )
         except ValueError:
             out["roc_auc_ovr_macro"] = float("nan")
     return out

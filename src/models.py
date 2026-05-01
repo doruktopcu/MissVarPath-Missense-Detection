@@ -43,10 +43,9 @@ class ModelSpec:
 
 def _logreg(_n_classes: int):
     return Pipeline([
-        ("scaler", StandardScaler(with_mean=False)),  # robust if any sparse-like inputs
-        ("clf", LogisticRegression(max_iter=2000, solver="lbfgs",
-                                    multi_class="auto", n_jobs=-1,
-                                    random_state=RANDOM_STATE)),
+        ("scaler", StandardScaler()),
+        ("clf", LogisticRegression(max_iter=5000, solver="lbfgs",
+                                    n_jobs=-1, random_state=RANDOM_STATE)),
     ])
 
 

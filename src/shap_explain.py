@@ -87,6 +87,16 @@ def _as_underlying_estimator(model):
     return model
 
 
+def _pipeline_preprocessor(model):
+    """If `model` is a Pipeline, return the prefix that transforms inputs (everything
+    except the final step). Returns None for bare estimators."""
+    from sklearn.pipeline import Pipeline
+    if isinstance(model, Pipeline) and len(model.steps) > 1:
+        prefix = Pipeline(model.steps[:-1])
+        return prefix
+    return None
+
+
 def run(task: str, model_name: str, variant: str = "base",
         cv_mode: str = "kfold", drop_prefixes: list[str] | None = None,
         tag: str = "shap", n_explain: int = 1000) -> None:
@@ -107,16 +117,32 @@ def run(task: str, model_name: str, variant: str = "base",
     model.fit(X_tr, y_tr)
 
     explainer_input = _as_underlying_estimator(model)
+    preprocessor = _pipeline_preprocessor(model)
 
     # Sample test rows for explanation (1000 keeps SHAP fast and the plots clear).
     rng = np.random.default_rng(RANDOM_STATE)
     sample_idx = rng.choice(len(X_te), size=min(n_explain, len(X_te)), replace=False)
     X_explain = X_te[sample_idx]
     y_explain = y_te[sample_idx]
-    LOG.info("Explaining %d held-out rows with TreeExplainer...", len(X_explain))
 
-    explainer = shap.TreeExplainer(explainer_input)
-    raw = explainer.shap_values(X_explain)
+    # Linear models (LogReg, etc.): use LinearExplainer with a scaled background.
+    is_linear = hasattr(explainer_input, "coef_")
+    if is_linear:
+        bg_idx = rng.choice(len(X_tr), size=min(200, len(X_tr)), replace=False)
+        X_bg = X_tr[bg_idx]
+        if preprocessor is not None:
+            X_bg = preprocessor.transform(X_bg)
+            X_explain_for_shap = preprocessor.transform(X_explain)
+        else:
+            X_explain_for_shap = X_explain
+        LOG.info("Explaining %d rows with LinearExplainer (background=%d)...",
+                 len(X_explain), len(X_bg))
+        explainer = shap.LinearExplainer(explainer_input, X_bg)
+        raw = explainer.shap_values(X_explain_for_shap)
+    else:
+        LOG.info("Explaining %d held-out rows with TreeExplainer...", len(X_explain))
+        explainer = shap.TreeExplainer(explainer_input)
+        raw = explainer.shap_values(X_explain)
     shap_arr = _to_per_class_array(raw, n_classes, len(X_explain), len(feature_cols))
     LOG.info("SHAP values shape: %s  (classes, samples, features)", shap_arr.shape)
 

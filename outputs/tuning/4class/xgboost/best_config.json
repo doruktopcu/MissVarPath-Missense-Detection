@@ -1,0 +1,30 @@
+{
+  "model": "XGBoost",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "n_estimators",
+    "max_depth"
+  ],
+  "best_params": {
+    "n_estimators": "500",
+    "max_depth": "6"
+  },
+  "best_cv_macro_f1_mean": 0.7982789521032739,
+  "best_cv_macro_f1_std": 0.007066345476860357,
+  "holdout": {
+    "accuracy": 0.7963428571428571,
+    "macro_f1": 0.7962783306393817,
+    "weighted_f1": 0.7962490068483989,
+    "f1_per_class": {
+      "Benign": 0.9350403034613561,
+      "Likely benign": 0.9245699161887958,
+      "Likely pathogenic": 0.6714031971580817,
+      "Pathogenic": 0.6540999057492931
+    },
+    "mcc": 0.7289985143183287,
+    "roc_auc_ovr_macro": 0.948806067642076,
+    "fit_seconds": 15.675352096557617
+  }
+}
