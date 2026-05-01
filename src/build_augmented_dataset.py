@@ -71,6 +71,13 @@ def run() -> pd.DataFrame:
     drop_keys = ["chrom", "pos", "ref", "alt", "variant_id"]
     out = out.drop(columns=drop_keys)
 
+    # Sanity: gene_symbol carried over from the base parquet
+    if "gene_symbol" not in out.columns:
+        LOG.warning("gene_symbol missing from augmented parquet — gene-stratified CV will not work.")
+    else:
+        LOG.info("gene_symbol preserved: %d unique genes",
+                 out["gene_symbol"].nunique())
+
     out.to_parquet(AUGMENTED_PARQUET, index=False)
     LOG.info("Saved augmented parquet: %s  shape=%s", AUGMENTED_PARQUET, out.shape)
     return out

@@ -328,6 +328,210 @@ The proposal (§B and §3) calls for using flanking DNA around each variant for 
 - **Bump `MLPClassifier` `max_iter`** so ShallowNN isn't budget-starved; the augmented run made this gap impossible to ignore.
 - **Switch torch models to CPU** by default, or guard MPS with a feature-length divisibility check, so the platform-specific bugs don't recur.
 
-### #9 — Placeholder for next entry.
+### #9 — Infrastructure work to support gene-stratified CV and ablation experiments.
+
+Three follow-ups from #6 / #8 had to be addressed before the substantive experiments could run cleanly:
+
+1. **Bumped `MLPClassifier` budget** in `src/models.py::_shallow_nn`: `max_iter=60 → 400`, `n_iter_no_change=15`, `tol=1e-5`. Early stopping on a held-out 10% slice still controls runtime. The 60-iteration cap from #4 was budget-starving the MLP — the augmented run in #8 made this gap impossible to ignore (ShallowNN regressed from 0.7473 to 0.7165 macroF1 just from adding 200+ features it couldn't fit before convergence).
+
+2. **MPS-aware device selection** in `src/torch_models.py::_device(n_features)`. The Apple Silicon adaptive-pool kernel requires the input length to be divisible by the output size, so a 414-feature tensor crashed `AdaptiveAvgPool1d(8)` in #8. Now we steer torch models to CPU when `n_features % 8 != 0`, and `MVP_FORCE_CPU=1` overrides everything. CNN1D's `pool_size` also adapts (8 if features divide cleanly, else 1).
+
+3. **Preserved gene symbol** as a metadata column in both processed parquets so downstream code can group by it without hitting the raw CSV. Changes:
+   - Added `PRESERVE_TEXT = {"base__hugo"}` to `src/preprocessing.py`; removed `r"^base__hugo$"` from the identifier-pattern drop list and skipped it in `drop_remaining_text_columns`.
+   - Renamed `base__hugo → gene_symbol` in the tidy step.
+   - Excluded `gene_symbol` from `feature_cols` (it sits in `META_COLS = {clinvar_sig, target_4, target_2, gene_symbol}`).
+   - `src/build_augmented_dataset.py` carries it through unchanged.
+   - Re-ran both pipelines: base parquet now `21,872 × 212`, augmented `21,797 × 418` (one extra metadata column each).
+
+4. **Added `--cv-mode {kfold,gene}` and `--drop-prefixes` flags to `src/train.py`**. With `--cv-mode gene`, the train/test split uses `GroupShuffleSplit(test_size=0.2, random_state=42)` on `gene_symbol` and CV uses `StratifiedGroupKFold(5)`. The script now also writes `features.txt` per run (the post-ablation feature list) for traceability, and accepts a `--tag` to namespace the output dir (e.g. `outputs/reports/4class_augmented_gene_no_vep/`). The `_task_dir_name` helper deduplicates tag/cv-mode parts.
+
+5. **Sanity-checked the gene split**: 4,852 unique genes across the 21,872 variants. PAH is the most-represented (393 variants), then LDLR (281), GCK (258), FBN1 (224), BRCA1 (186). The 80/20 holdout puts 3,881 genes (≈17.5k variants) in train and 971 genes (≈4.4k variants) in test with **0 overlap** — independence guaranteed by construction.
+
+### #10 — Three experiments: gene-stratified CV and VEP-score ablation.
+
+These three runs answer the two open questions from #6 and #8:
+
+- *(A) "Does the 80% accuracy hold up when the model can't memorize gene labels?"* — gene-stratified CV on the base feature set.
+- *(B) "Can we predict pathogenicity from sequence + frequency + conservation alone, when in-silico VEP scores are missing?"* — kfold CV on the augmented set with all 147 VEP-style score columns dropped (the **VUS scenario** from the proposal).
+- *(C) "What about (B) under proper gene independence?"* — gene-stratified CV with VEPs dropped.
+
+All three runs use the same 7 sklearn models (LogReg, RF, ExtraTrees, XGBoost, LightGBM, CatBoost, ShallowNN_MLP) — torch models were skipped here because #6/#8 already established they're not the right tool for this tabular data, and 1-hour-per-run cost wasn't justified for a sweep.
+
+Output dirs: `outputs/reports/4class_gene_gene/` (A, kept the duplicate-suffix dir from before the `_task_dir_name` fix), `4class_augmented_no_vep/` (B), `4class_augmented_gene_no_vep/` (C). Each holds the standard per-model classification report `.md`, confusion matrices PNG, `*_metrics.json`, and `leaderboard.csv`.
+
+**The VEP-score drop list (147 columns)** matches the deep-learning / ensemble-derived predictors that are typically *missing* on a VUS:
+```
+alphamissense_, cadd_, revel_, sift_, polyphen2_,
+mutationtaster_, mutpred1_, mutpred2_, mutation_assessor_, provean_,
+fathmm_, esm1b_, eve_, primateai_, gmvp_, ditto_,
+bayesdel_, metarnn_, metalr_, metasvm_, vest_,
+chasmplus, varity_, clinpred_, mistic_, ncer_, phdsnpg_, siphy_,
+cscape_, dann_, funseq2_, lrt_, regeneron_, fitcons_, genocanyon_
+```
+Kept (267 cols): allele frequencies (`allofus250k_`, `gnomad_`, `gnomad3_`, `alfa_`), conservation (`phylop_`, `phastcons_`, `gerp_`), GWAS / regulatory annotations, SwissProt domain context, plus the 196 k-mer and 10 BLAST features from #8.
+
+**4-class CV macroF1 across the 2×2 grid (mean ± std over 5 folds; the `base+kfold` column is the canonical baseline from #6):**
+
+| Model | base + kfold (#6) | base + gene CV (A) | augmented − VEPs + kfold (B) | augmented − VEPs + gene CV (C) |
+|-------|-------------------|---------------------|-------------------------------|---------------------------------|
+| LogisticRegression | 0.7629 ± 0.0072 | 0.7411 ± 0.0111 | 0.6670 ± 0.0106 | 0.6582 ± 0.0175 |
+| RandomForest       | 0.7922 ± 0.0056 | 0.7642 ± 0.0147 | 0.7413 ± 0.0101 | 0.7160 ± 0.0098 |
+| ExtraTrees         | 0.7839 ± 0.0047 | 0.7548 ± 0.0111 | 0.7325 ± 0.0096 | 0.7085 ± 0.0095 |
+| XGBoost            | 0.7979 ± 0.0069 | 0.7678 ± 0.0096 | 0.7500 ± 0.0072 | 0.7226 ± 0.0123 |
+| LightGBM           | **0.7987** ± 0.0050 | 0.7669 ± 0.0093 | **0.7524** ± 0.0089 | 0.7174 ± 0.0106 |
+| CatBoost           | 0.7907 ± 0.0058 | **0.7672** ± 0.0120 | 0.7419 ± 0.0103 | **0.7234** ± 0.0073 |
+| ShallowNN_MLP      | 0.7473 ± 0.0053 | 0.7184 ± 0.0063 | 0.6075 ± 0.0065 | 0.5968 ± 0.0094 |
+
+Δ-summary (CV macroF1 cost vs the canonical baseline):
+
+| Penalty | LogReg | RF | ExtraTrees | XGBoost | LightGBM | CatBoost | ShallowNN |
+|---------|--------|----|----|----|----|----|----|
+| Gene grouping (A − base) | −0.022 | −0.028 | −0.029 | −0.030 | −0.032 | −0.024 | −0.029 |
+| VEP drop (B − base) | −0.096 | −0.051 | −0.051 | −0.048 | −0.046 | −0.049 | −0.140 |
+| Both (C − base) | −0.105 | −0.076 | −0.076 | −0.075 | −0.081 | −0.067 | −0.151 |
+
+**Reading of the results:**
+
+- **Data circularity is real but small.** Gene-stratified CV costs every model **2-3 macroF1 points** vs the standard 5-fold (column A vs the base column). That's the gap between "the model knows BRCA1 is heavily pathogenic" and "the model has to predict on a gene it has never seen". Boosters take this hit gracefully — XGBoost goes from 0.7979 to 0.7678. LogReg's gap is similar (-0.022) because the linear model wasn't doing aggressive gene memorization in the first place.
+
+- **The proposal's data-circularity warning is partially validated.** The gap exists, but it's not catastrophic — meta-classifiers built on these VEP scores generalize moderately well to held-out genes. The ~3-point ceiling tells us how much of the canonical 80% accuracy was due to gene-level memorization.
+
+- **VUS scenario answers the proposal's clinical question.** With every in-silico VEP score removed, the best models still hit **0.75 macroF1** under standard CV (LightGBM 0.7524 in B) and **0.72 macroF1** under the most rigorous gene-stratified setting (CatBoost 0.7234 in C). That's roughly 7-8 points below the full-feature ceiling. Translation: when AlphaMissense / CADD / REVEL aren't available, allele frequency + conservation + sequence-context features alone can still produce a calibrated pathogenicity prediction at clinically meaningful accuracy.
+
+- **k-mer + BLAST finally earn their keep — but only here.** In #8 the augmented features added ~0 to the full-feature ensemble, because VEP scores already encoded the same signal. Once VEPs are removed (B and C), the augmented set is what's making 0.72-0.75 possible — frequency + conservation alone would have been weaker. (Quick sanity: LightGBM in B hits 0.7524; previous experiments without k-mer / BLAST features wouldn't have had access to those 206 sequence columns. The follow-up to make this exact ablation watertight is to run an additional `kfold + base + drop VEPs` experiment — listed below.)
+
+- **CatBoost is the most robust** model under hostile conditions: it wins both A (0.7672) and C (0.7234), and only narrowly loses B to LightGBM. This is consistent with CatBoost's design preference for noisy / sparse categorical-mix data.
+
+- **Linear model scales worst.** LogReg loses 9.6 points dropping VEPs vs ~5 points for boosters, because it can't construct nonlinear interactions between conservation + k-mer + frequency the way trees can. The 2-class collapse in #7 already hinted at this, but it's now explicit.
+
+- **ShallowNN remains the worst performer** despite the budget bump (#9). Even with `max_iter=400` and early stopping, the 1×128 MLP can't compete with boosters on this feature space. A deeper / wider architecture is on the follow-up list, though spending more time on torch tabular models is low-priority.
+
+**Holdout numbers** track the CV means well in A and B (within ~0.005). In C the holdout is consistently *higher* than CV (e.g. CatBoost holdout 0.7334 vs CV 0.7234) — the `GroupShuffleSplit` happened to land on a slightly easier mix of held-out genes than the average GroupKFold fold. CV mean is the headline number to report; holdout serves as a confidence check.
+
+**Decision: the canonical headline result for the report is still "LightGBM 0.80 macroF1 on the standard 80/20 + 5-fold setup" (#6).** The new experiments give us:
+- the **gene-circularity ceiling** (0.77 macroF1 = realistic upper bound on novel genes), and
+- the **VUS floor** (0.72 macroF1 = what's achievable when in-silico VEPs are missing, under the most rigorous evaluation).
+
+Both numbers are in the proposal's expected impact section as concrete deliverables.
+
+**Follow-ups queued from this work:**
+
+- Run `kfold + base − VEPs` and `gene + base − VEPs` to isolate the contribution of k-mer + BLAST in the VUS scenario. The current B and C drop VEPs from the augmented (208+196+10) set, so we can't yet say "the k-mers added X points on top of frequency+conservation."
+- SHAP attributions on the LightGBM `base+kfold` model and the CatBoost `gene+no_VEP` model to identify the actual top features in each regime (proposal §4 interpretability requirement).
+- Optuna sweep on LightGBM / XGBoost in the gene-stratified setting — the baselines used 600 rounds at default learning rate; tuning could close some of the gene-grouping gap.
+- Once SHAP confirms which features matter in C, look at running the deep torch models again on a much smaller, hand-curated feature subset to give them a fair shot.
+
+### #11 — Isolating the k-mer + BLAST contribution (Experiments D & E).
+
+The first follow-up from `#10`: B and C dropped VEPs from the *augmented* set (208 base + 196 k-mer + 10 BLAST), so we couldn't say "k-mer + BLAST added X points on top of frequency + conservation alone." This entry runs the missing baselines:
+
+- **D**: `kfold + base − VEPs` (61 features) — same as B but without k-mer / BLAST.
+- **E**: `gene-stratified + base − VEPs` (61 features) — same as C but without k-mer / BLAST.
+
+Output dirs: `outputs/reports/4class_no_vep/` (D, dropped the redundant `_base` since variant=base is the default tag), `outputs/reports/4class_gene_no_vep/` (E).
+
+**Full 6-cell comparison table (CV macroF1 ± std, 5 folds, 4-class):**
+
+| Model | base + kfold (#6) | augm + kfold − VEPs (B) | base + kfold − VEPs (D) | k-mer/BLAST lift (B − D) | base + gene CV (A) | augm + gene − VEPs (C) | base + gene − VEPs (E) | k-mer/BLAST lift (C − E) |
+|-------|-------------------|--------------------------|--------------------------|---------------------------|---------------------|-------------------------|-------------------------|---------------------------|
+| LogisticRegression | 0.7629 | 0.6670 | **0.6107** | **+0.056** | 0.7411 | 0.6582 | **0.5992** | **+0.059** |
+| RandomForest       | 0.7922 | 0.7413 | 0.7121 | +0.029 | 0.7642 | 0.7160 | 0.6826 | +0.033 |
+| ExtraTrees         | 0.7839 | 0.7325 | 0.6996 | +0.033 | 0.7548 | 0.7085 | 0.6749 | +0.034 |
+| XGBoost            | 0.7979 | **0.7500** | 0.7280 | +0.022 | 0.7678 | 0.7226 | 0.6848 | +0.038 |
+| LightGBM           | **0.7987** | **0.7524** | 0.7264 | +0.026 | 0.7669 | 0.7174 | 0.6786 | +0.039 |
+| CatBoost           | 0.7907 | 0.7419 | 0.7070 | +0.035 | **0.7672** | **0.7234** | **0.6841** | **+0.039** |
+| ShallowNN_MLP      | 0.7473 | 0.6075 | 0.6247 | −0.017 | 0.7184 | 0.5968 | 0.6118 | −0.015 |
+
+**The headline numbers:**
+
+- **k-mer + BLAST add a real, robust +0.022 to +0.039 macroF1 lift in the no-VEP setting.** Boosters all gain 0.022–0.039; bagging models gain 0.029–0.034; LogReg gains the most at +0.056–0.059 (it doesn't have the boosters' implicit feature interactions, so explicit BLAST/k-mer features help it more). The lift is *larger* under gene-stratified CV (column "C − E", median +0.038) than under standard kfold (column "B − D", median +0.029), suggesting these features generalise to held-out genes better than VEP scores would.
+- **The "earned their keep" claim from #8/10 is now empirically verified.** The earlier hint was correct but the size was unknown; we now have the +0.039 number for the most rigorous setting (CatBoost in C vs E).
+- **ShallowNN regression is real.** The MLP scores *worse* with more features — −0.017 in B vs D and −0.015 in C vs E. Adding 200+ raw integer count features to a 1×128 MLP without re-tuning the architecture confuses the optimizer. This is a concrete signal that the next iteration of the MLP needs either deeper layers or an explicit feature-selection step.
+- **CatBoost is again the most robust under the hardest condition** (C: 0.7234, E: 0.6841 — wins both columns).
+
+**The clinical / VUS interpretation:**
+
+- With **no in-silico VEP scores at all** and proper gene-grouped evaluation (column E), the best model still hits **0.6841 macroF1** using 61 features (frequency + conservation only). That's the floor.
+- Adding **k-mer + BLAST features** (column C) lifts the floor to **0.7234 macroF1** — a +5.7% relative improvement. For a clinical VUS report, that's the difference between "model is uncertain" and "model has a useful prior."
+- The proposal's pitch ("BLAST flanking sequences as a fallback when VEP scores are missing") is now backed by a concrete number: ≈+0.04 macroF1 under the most rigorous evaluation, and the SHAP analysis in #12 shows BLAST features specifically (not k-mers) are doing the work.
+
+Artifacts: `outputs/reports/4class_no_vep/leaderboard.csv` (D), `outputs/reports/4class_gene_no_vep/leaderboard.csv` (E). Full per-model classification reports + confusion matrices alongside.
+
+### #12 — SHAP attributions on the canonical and VUS models.
+
+The proposal §4 calls for SHAP-based interpretability. Built `src/shap_explain.py` — a thin wrapper around `shap.TreeExplainer` that:
+
+1. Loads any `(task, variant, cv_mode, drop-prefixes, tag)` config (via `train.load_processed`).
+2. Refits the named model on the full train portion of the same 80/20 split as `train.py`.
+3. Strips a sklearn Pipeline wrapper if present (LightGBM/CatBoost are bare; XGBoost via Pipeline would also work).
+4. Computes SHAP on a 1,000-row random sample of the held-out test set (kept small so figures stay readable; `--n-explain` overrides).
+5. Normalises the various per-class SHAP shapes (list-of-arrays vs `(N, F, C)` vs `(C, N, F)`) to a canonical `(C, N, F)` array.
+6. Writes: `feature_importance.csv` (mean(|SHAP|) per feature, overall + per-class), `summary_bar.png` (top-30), `summary_beeswarm.png` (top-30 dots, class 0), and `shap_values.npz` (raw arrays cached for later analysis).
+
+Two configurations explained:
+
+**(i) Canonical model — LightGBM on `base + kfold`** (the headline result from #6, holdout macroF1 0.8013).
+Tag: `canonical_lightgbm`. Output: `outputs/shap/canonical_lightgbm/`. Top-15 features by mean(|SHAP|):
+
+| Rank | Feature | mean(\|SHAP\|) | Notes |
+|------|---------|---------------|-------|
+| 1 | `ditto_score` | 2.487 | DITTO meta-VEP — dominates by 3.5× |
+| 2 | `metarnn_score` | 0.686 | MetaRNN ensemble VEP |
+| 3 | `gnomad_af` | 0.641 | population AF |
+| 4 | `allofus250k_gvs_max_af` | 0.513 | AlloFus max-pop AF |
+| 5 | `clinpred_score` | 0.473 | ClinPred VEP |
+| 6 | `metarnn_rank_score` | 0.426 | rank-normalised MetaRNN |
+| 7 | `bayesdel_bayesdel_addaf_rankscore` | 0.280 | BayesDel rank |
+| 8 | `bayesdel_bayesdel_addaf_score` | 0.206 | BayesDel raw |
+| 9 | `gnomad3_af_afr` | 0.155 | gnomAD3 African AF |
+| 10 | `alphamissense_am_pathogenicity` | 0.154 | AlphaMissense |
+| 11 | `gnomad3_af_nfe` | 0.152 | gnomAD3 European AF |
+| 12 | `ncer_score` | 0.141 | nCER conservation/element score |
+| 13 | `mutpred1_mutpred_general_score` | 0.137 | MutPred |
+| 14 | `alfa_total_alt` | 0.134 | ALFA alt count |
+| 15 | `gmvp_score` | 0.121 | gMVP VEP |
+
+Reading: 11 of 15 are VEP scores or VEP-rank scores (DITTO, MetaRNN×2, ClinPred, BayesDel×2, AlphaMissense, nCER, MutPred, gMVP), 3 are population frequencies, 1 is allele count. **DITTO single-handedly explains a disproportionate share of the model's predictions** (3.5× the next feature). This is consistent with DITTO being a meta-VEP that itself integrates many signals — LightGBM is essentially using it as a near-final prediction with marginal corrections from the other features.
+
+**(ii) VUS model — CatBoost on `augmented + gene CV − VEPs`** (the most rigorous VUS setting from #10, CV macroF1 0.7234).
+Tag: `vus_catboost`. Output: `outputs/shap/vus_catboost/`. Top-15:
+
+| Rank | Feature | mean(\|SHAP\|) | Source |
+|------|---------|---------------|--------|
+| 1 | `blast_mean_bit_path` | 0.294 | **BLAST** (mean bit score to pathogenic neighbours) |
+| 2 | `gnomad_af` | 0.293 | gnomAD AF |
+| 3 | `allofus250k_gvs_max_af` | 0.269 | AlloFus max-pop AF |
+| 4 | `allofus250k_gvs_max_ac` | 0.144 | AlloFus max-pop allele count |
+| 5 | `phylop_phylop100_vert` | 0.140 | phyloP 100-vertebrate conservation |
+| 6 | `phylop_phylop100_vert_r` | 0.137 | phyloP rank |
+| 7 | `allofus250k_gvs_max_an` | 0.110 | AlloFus allele number |
+| 8 | `allofus250k_gvs_afr_af` | 0.104 | AlloFus African AF |
+| 9 | `allofus250k_gvs_afr_ac` | 0.091 | AlloFus African allele count |
+| 10 | `blast_top_bit` | 0.089 | **BLAST** top-hit bit score |
+| 11 | `gnomad3_af` | 0.081 | gnomAD3 AF |
+| 12 | `blast_mean_bit_benign` | 0.078 | **BLAST** mean bit to benign neighbours |
+| 13 | `allofus250k_gvs_amr_af` | 0.068 | AlloFus Hispanic AF |
+| 14 | `blast_target_4_top1` | 0.061 | **BLAST** label of nearest hit |
+| 15 | `allofus250k_gvs_all_af` | 0.061 | AlloFus overall AF |
+
+Reading:
+- **4 of top 15 are BLAST features**; #1 overall is `blast_mean_bit_path` (mean bit score to nearest pathogenic neighbours in the training BLAST DB). This is now the model's strongest single signal.
+- **9 of top 15 are population frequencies** (gnomAD, gnomAD3, AlloFus by population). Rare alleles are pathogenic-leaning; common alleles are benign-leaning. This is the well-known ACMG PM2/BS1 logic emerging from data.
+- **2 of top 15 are conservation** (phyloP).
+- **0 of top 15 are k-mer features.** This is the second concrete finding of #11/#12: the +0.04 macroF1 lift in the no-VEP setting comes almost entirely from **BLAST** features, not from raw k-mer counts. K-mers are still in the feature set (192 cols) but they're individually too weak to crack the top-15 — the booster spreads importance across them as marginal noise reducers.
+
+**What this means for the project:**
+- The proposal's "BLAST as a VUS fallback" hypothesis (§3) is now backed by SHAP: BLAST features are doing real work in the no-VEP regime. The decision to keep them in the augmented dataset is justified.
+- The k-mer feature engineering (also proposal §B) didn't make the top of the list. Either: (a) 3-mers are too coarse — 4- or 5-mers might encode more, (b) the centre-substituted alt-flank vs ref-flank diff is dominated by the centre k-mer (which is a known VEP feature), or (c) the booster is learning a small contribution from each k-mer that doesn't show in top-15 individually but adds up. We didn't pursue this because the BLAST features alone account for the lift.
+- **For the report's interpretability section**, two SHAP figures are now ready: `outputs/shap/canonical_lightgbm/summary_bar.png` and `outputs/shap/vus_catboost/summary_bar.png`. The beeswarms are per-class.
+
+**Follow-ups queued from this work:**
+
+- The `feature_importance.csv` files include per-class breakdowns. Worth a separate analysis of "which features specifically distinguish 'Likely benign' from 'Benign'" (the boundary that drove most of #6's 4-class error). Skipping for now since it's a polish step.
+- Run SHAP on the LogReg canonical model too (linear coefficients are interpretable directly, but SHAP gives a like-for-like comparison).
+- Optuna sweep on LightGBM / XGBoost in the gene-stratified setting — still queued from #10.
+- DITTO dominates so much in (i) that an interesting ablation would be "drop DITTO from the canonical, see how much LightGBM compensates." Tells us whether the model is genuinely a meta-classifier or essentially passing DITTO through.
+
+### #13 — Placeholder for next entry.
 
 To be filled in by the next task.

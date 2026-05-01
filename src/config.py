@@ -46,3 +46,6 @@ AUGMENTED_PARQUET = PREPROC_DIR / "missense_augmented.parquet"
 FLANK_SIZE = 25  # bp on each side of the variant
 ENSEMBL_REST = "https://rest.ensembl.org"
 ENSEMBL_ASSEMBLY = "GRCh38"  # gnomAD v4 / OpenCRAVAT default
+
+SHAP_DIR = OUTPUTS_DIR / "shap"
+SHAP_DIR.mkdir(parents=True, exist_ok=True)
