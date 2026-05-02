@@ -1,0 +1,109 @@
+[12:16:36] INFO train: Ablation keep: 414 → 245 features (kept 245 by prefix)
+[12:16:36] INFO train: Task=4class  variant=augmented  cv_mode=kfold  tag=raw_only  X=(21797, 245)  features=245  unique_genes=4846
+[12:16:36] INFO train: Train: (17437, 245)  Test: (4360, 245)
+[12:16:36] INFO train: ======================================================================
+[12:16:36] INFO train: Model: LogisticRegression  (family=sklearn)
+[12:16:41] INFO train:   fold 1/5  acc=0.6184  macroF1=0.6238  (5.4s)
+[12:16:45] INFO train:   fold 2/5  acc=0.5955  macroF1=0.6018  (3.4s)
+[12:16:47] INFO train:   fold 3/5  acc=0.5896  macroF1=0.5967  (2.7s)
+[12:16:51] INFO train:   fold 4/5  acc=0.6048  macroF1=0.6110  (3.8s)
+[12:16:55] INFO train:   fold 5/5  acc=0.6074  macroF1=0.6132  (3.9s)
+[12:16:55] INFO train:   CV: acc=0.6031±0.0111  macroF1=0.6093±0.0105
+[12:16:59] INFO train: ======================================================================
+[12:16:59] INFO train: Model: RandomForest  (family=sklearn)
+[12:17:03] INFO train:   fold 1/5  acc=0.7317  macroF1=0.7274  (3.5s)
+[12:17:06] INFO train:   fold 2/5  acc=0.7144  macroF1=0.7132  (3.5s)
+[12:17:09] INFO train:   fold 3/5  acc=0.7052  macroF1=0.7054  (3.1s)
+[12:17:12] INFO train:   fold 4/5  acc=0.7215  macroF1=0.7203  (3.1s)
+[12:17:16] INFO train:   fold 5/5  acc=0.7169  macroF1=0.7162  (3.1s)
+[12:17:16] INFO train:   CV: acc=0.7180±0.0097  macroF1=0.7165±0.0082
+[12:17:20] INFO train: ======================================================================
+[12:17:20] INFO train: Model: ExtraTrees  (family=sklearn)
+[12:17:23] INFO train:   fold 1/5  acc=0.7251  macroF1=0.7197  (2.9s)
+[12:17:27] INFO train:   fold 2/5  acc=0.7142  macroF1=0.7116  (3.4s)
+[12:17:29] INFO train:   fold 3/5  acc=0.7038  macroF1=0.7012  (2.9s)
+[12:17:32] INFO train:   fold 4/5  acc=0.7161  macroF1=0.7131  (3.0s)
+[12:17:35] INFO train:   fold 5/5  acc=0.7138  macroF1=0.7115  (2.9s)
+[12:17:35] INFO train:   CV: acc=0.7146±0.0076  macroF1=0.7114±0.0066
+[12:17:40] INFO train: ======================================================================
+[12:17:40] INFO train: Model: XGBoost  (family=sklearn)
+[12:17:49] INFO train:   fold 1/5  acc=0.7443  macroF1=0.7428  (8.7s)
+[12:17:58] INFO train:   fold 2/5  acc=0.7374  macroF1=0.7372  (8.9s)
+[12:18:07] INFO train:   fold 3/5  acc=0.7141  macroF1=0.7140  (9.8s)
+[12:18:18] INFO train:   fold 4/5  acc=0.7310  macroF1=0.7310  (10.1s)
+[12:18:27] INFO train:   fold 5/5  acc=0.7250  macroF1=0.7251  (9.3s)
+[12:18:27] INFO train:   CV: acc=0.7303±0.0116  macroF1=0.7300±0.0111
+[12:18:37] INFO train: ======================================================================
+[12:18:37] INFO train: Model: LightGBM  (family=sklearn)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[12:19:12] INFO train:   fold 1/5  acc=0.7463  macroF1=0.7456  (34.4s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[12:19:45] INFO train:   fold 2/5  acc=0.7357  macroF1=0.7359  (33.6s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[12:20:20] INFO train:   fold 3/5  acc=0.7264  macroF1=0.7275  (34.3s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[12:20:54] INFO train:   fold 4/5  acc=0.7342  macroF1=0.7348  (34.3s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[12:21:28] INFO train:   fold 5/5  acc=0.7304  macroF1=0.7314  (34.2s)
+[12:21:28] INFO train:   CV: acc=0.7346±0.0075  macroF1=0.7350±0.0067
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[12:22:04] INFO train: ======================================================================
+[12:22:04] INFO train: Model: CatBoost  (family=sklearn)
+[12:22:15] INFO train:   fold 1/5  acc=0.7196  macroF1=0.7139  (11.4s)
+[12:22:26] INFO train:   fold 2/5  acc=0.7136  macroF1=0.7116  (10.7s)
+[12:22:37] INFO train:   fold 3/5  acc=0.6969  macroF1=0.6936  (10.9s)
+[12:22:47] INFO train:   fold 4/5  acc=0.7244  macroF1=0.7220  (10.8s)
+[12:22:58] INFO train:   fold 5/5  acc=0.7026  macroF1=0.7003  (10.7s)
+[12:22:58] INFO train:   CV: acc=0.7114±0.0115  macroF1=0.7083±0.0113
+[12:23:11] INFO train: ======================================================================
+[12:23:11] INFO train: Model: ShallowNN_MLP  (family=sklearn)
+[12:23:18] INFO train:   fold 1/5  acc=0.5430  macroF1=0.5441  (6.7s)
+[12:23:21] INFO train:   fold 2/5  acc=0.5232  macroF1=0.5325  (2.9s)
+[12:23:26] INFO train:   fold 3/5  acc=0.5369  macroF1=0.5429  (5.3s)
+[12:23:32] INFO train:   fold 4/5  acc=0.5406  macroF1=0.5427  (6.2s)
+[12:23:38] INFO train:   fold 5/5  acc=0.5414  macroF1=0.5464  (6.1s)
+[12:23:38] INFO train:   CV: acc=0.5370±0.0080  macroF1=0.5417±0.0053
+[12:23:45] INFO train: ======================================================================
+[12:23:45] INFO train: Model: CNN1D  (family=torch)
+[12:27:12] INFO train:   fold 1/5  acc=0.5439  macroF1=0.4829  (207.2s)
+[12:30:37] INFO train:   fold 2/5  acc=0.5507  macroF1=0.5472  (204.5s)
+[12:34:00] INFO train:   fold 3/5  acc=0.5515  macroF1=0.5095  (203.4s)
+[12:37:24] INFO train:   fold 4/5  acc=0.5572  macroF1=0.5422  (203.8s)
+[12:40:46] INFO train:   fold 5/5  acc=0.5667  macroF1=0.5327  (201.6s)
+[12:40:46] INFO train:   CV: acc=0.5540±0.0085  macroF1=0.5229±0.0266
+[12:44:56] INFO train: ======================================================================
+[12:44:56] INFO train: Model: LSTM  (family=torch)
+[12:50:49] INFO train:   fold 1/5  acc=0.3615  macroF1=0.3133  (352.5s)
+[12:56:50] INFO train:   fold 2/5  acc=0.3836  macroF1=0.3493  (361.0s)
+[13:02:43] INFO train:   fold 3/5  acc=0.4170  macroF1=0.4015  (352.9s)
+[13:08:40] INFO train:   fold 4/5  acc=0.3785  macroF1=0.3733  (357.0s)
+[13:14:34] INFO train:   fold 5/5  acc=0.4973  macroF1=0.4359  (354.1s)
+[13:14:34] INFO train:   CV: acc=0.4076±0.0540  macroF1=0.3747±0.0471
+[13:22:09] INFO train: ======================================================================
+[13:22:09] INFO train: Model: RNN  (family=torch)
+[13:23:04] INFO train:   fold 1/5  acc=0.4819  macroF1=0.4426  (55.6s)
+[13:23:57] INFO train:   fold 2/5  acc=0.2655  macroF1=0.1304  (53.2s)
+[13:24:49] INFO train:   fold 3/5  acc=0.3031  macroF1=0.1926  (51.7s)
+[13:26:07] INFO train:   fold 4/5  acc=0.2831  macroF1=0.1613  (77.9s)
+[13:27:24] INFO train:   fold 5/5  acc=0.3467  macroF1=0.2934  (76.6s)
+[13:27:24] INFO train:   CV: acc=0.3361±0.0870  macroF1=0.2441±0.1267
