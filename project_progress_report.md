@@ -776,6 +776,120 @@ The only open follow-up that could shift a headline number is the gene-stratifie
 
 Artifact: `midway_report.md` at the repo root. Sections: executive summary, what was built, performance across scenarios (matrix view + 5 anchor numbers + 2-class table + scenario commentary), strongest model, SHAP analysis, ready-for-report assessment, and a suggested final-report skeleton.
 
-### #19 — Placeholder for next entry.
+### #19 — Raw-only ablation: predict pathogenicity without any model/tool/algorithm-derived feature.
+
+The strictest possible ablation. Drops *all* features that are themselves outputs of
+another model, tool, or algorithm — pathogenicity predictors (AlphaMissense, DITTO,
+REVEL, CADD, BayesDel, ChasmPlus, ClinPred, CScape, DANN, ESM1b, EVE, FATHMM, FitCons,
+FunSeq2, GenoCanyon, GMVP, LRT, MetaLR, MetaRNN, MetaSVM, MisTIC, MutationAssessor,
+MutationTaster, MutPred1/2, nCER, PhDSNPg, PolyPhen2, PrimateAI, PROVEAN, SIFT,
+VARITY, VEST), conservation scores (GERP, PhastCons, PhyloP, SIPHY), and label-aware
+BLAST features (`blast_n_pathogenic`, `blast_n_benign`, `blast_p_pathogenic_top1`,
+`blast_mean_bit_path`, `blast_mean_bit_benign`, `blast_target_{2,4}_top1`).
+
+**Kept (245 features):** ALFA / AllOfUs250k / gnomAD / gnomAD3 / Regeneron allele
+frequencies, `hg19_pos`, `original_input_pos`, k-mer counts (ref/alt/diff for all 64
+3-mers = 192 cols), GC content (ref + alt), Shannon entropy (ref + alt). Filter is
+implemented through `train.py`'s existing `--keep-prefixes` flag (no code change).
+
+**Reproduce:**
+
+```bash
+python -m src.train --task 4class --variant augmented \
+    --keep-prefixes alfa_ allofus250k_ gnomad_ gnomad3_ regeneron_ \
+                    hg19_pos original_input_pos kmer_ gc_ entropy_ \
+    --tag raw_only
+
+python -m src.train --task 2class --variant augmented \
+    --keep-prefixes alfa_ allofus250k_ gnomad_ gnomad3_ regeneron_ \
+                    hg19_pos original_input_pos kmer_ gc_ entropy_ \
+    --tag raw_only
+```
+
+**4-class raw-only leaderboard (held-out 20%, sorted by macro-F1):**
+
+| Rank | Model | CV macroF1 (mean ± std) | Holdout macroF1 | MCC | ROC-AUC | Δ vs canonical (#6) |
+|------|-------|-------------------------|-----------------|------|---------|----------------------|
+| 1 | LightGBM | 0.7350 ± 0.0067 | **0.7297** | 0.6404 | 0.9149 | −0.072 |
+| 2 | XGBoost | 0.7300 ± 0.0111 | 0.7262 | 0.6371 | 0.9153 | −0.072 |
+| 3 | RandomForest | 0.7165 ± 0.0082 | 0.7099 | 0.6193 | 0.9103 | −0.080 |
+| 4 | ExtraTrees | 0.7114 ± 0.0066 | 0.7047 | 0.6145 | 0.9076 | −0.082 |
+| 5 | CatBoost | 0.7083 ± 0.0113 | 0.7029 | 0.6125 | 0.9086 | −0.084 |
+| 6 | LogisticRegression | 0.6093 ± 0.0105 | 0.6099 | 0.4725 | 0.8355 | −0.147 |
+| 7 | CNN1D | 0.5229 ± 0.0266 | 0.5613 | 0.4542 | 0.8375 | −0.155 |
+| 8 | ShallowNN_MLP | 0.5417 ± 0.0053 | 0.5559 | 0.4062 | 0.8033 | −0.191 |
+| 9 | LSTM | 0.3747 ± 0.0471 | 0.3832 | 0.2111 | 0.6659 | −0.230 |
+| 10 | RNN | 0.2441 ± 0.1267 | 0.1849 | 0.1836 | 0.6044 | −0.439 |
+
+**2-class raw-only leaderboard (8 of 10; LSTM/RNN cut for runtime):**
+
+| Rank | Model | CV macroF1 | Holdout macroF1 | ROC-AUC | MCC | Δ vs canonical (#16) |
+|------|-------|------------|------------------|---------|------|----------------------|
+| 1 | XGBoost | 0.9385 ± 0.0034 | **0.9401** | 0.9857 | 0.8803 | −0.048 |
+| 2 | LightGBM | 0.9381 ± 0.0021 | 0.9390 | 0.9859 | 0.8780 | −0.049 |
+| 3 | CatBoost | 0.9363 ± 0.0017 | 0.9335 | 0.9842 | 0.8670 | −0.056 |
+| 4 | RandomForest | 0.9291 ± 0.0022 | 0.9257 | 0.9805 | 0.8514 | −0.060 |
+| 5 | ExtraTrees | 0.9286 ± 0.0026 | 0.9245 | 0.9797 | 0.8491 | −0.061 |
+| 6 | LogisticRegression | 0.8309 ± 0.0075 | 0.8473 | 0.9063 | 0.7158 | −0.139 |
+| 7 | CNN1D | 0.8152 ± 0.0192 | 0.8247 | 0.9266 | 0.6564 | −0.158 |
+| 8 | ShallowNN_MLP | 0.7852 ± 0.0050 | 0.8102 | 0.8867 | 0.6214 | −0.176 |
+
+**Reading:**
+
+- **Boosters lose only ~0.07 on 4-class and ~0.05 on 2-class.** The classifier
+  extracts a substantial signal from raw allele-frequency, position, and k-mer
+  features alone — the in-silico predictor scores carry the headline numbers but
+  are not the only signal in the data.
+- **LogReg collapses (−0.147 / −0.139).** The linear model relies heavily on the
+  precomputed VEP scores as ready-made interaction features; without them it cannot
+  construct nonlinear combinations the way boosters do.
+- **Deep torch models lose more.** CNN1D drops to 0.561 on 4-class; LSTM/RNN end up
+  below 0.40 macro-F1. The recurrent architectures are fundamentally mismatched to
+  unordered tabular features. RNN CV variance (σ = 0.127) reflects fold-by-fold
+  divergence, consistent with poor optimization on this input shape.
+- **Population-frequency + sequence-composition is enough for clinically meaningful
+  binary calls.** The 0.94 binary macro-F1 ceiling on the raw-only set is a
+  surprising result given that no in-silico predictor or conservation score is
+  involved — and it places a firm floor on what the pure-data signal can support.
+
+**LSTM/RNN runtime caveat (2-class).** CNN1D ran to completion (~3.5 min/fold).
+LSTM took ~9 min/fold and was killed mid-run after fold 2 of 5 produced wildly
+unstable metrics (0.80, 0.53). RNN was not run. Given LSTM/RNN already underperformed
+at <0.40 macro-F1 on 4-class raw-only, the missing 2-class entries are not
+load-bearing for any headline number. Note in the report: 8 of 10 models for 2-class
+raw-only.
+
+**Process note (rate-limit / env).** The first invocation crashed at CatBoost (and
+all torch models) with `ModuleNotFoundError`. Root cause: pyenv's `python` (3.11.9)
+doesn't have `catboost` or `torch` installed; only the system `python3.12` does. All
+prior progress-report runs (#0–#18) used `python3.12` implicitly. Re-launched with
+`python3.12 -m src.train ...` and all sklearn + CNN1D ran cleanly. Logged in
+`outputs/reports/train_4class_raw_only.log` and `outputs/reports/train_2class_raw_only.log`
+(plus `train_2class_raw_only_torch.log` for the torch-only re-run). Artifacts under
+`outputs/reports/{4class,2class}_augmented_raw_only/`.
+
+**Decision and report integration.** This raw-only experiment becomes a new section
+in the final report: "Raw-only experiment — predicting from data, not from
+predictors." It complements the no-VEP / VUS scenario from #10–#11 (which kept
+conservation and BLAST features) by stripping out *every* model/tool output. The
+five anchor numbers expand from five to six:
+
+| Anchor | Model | macro-F1 |
+|--------|-------|----------|
+| 4-class canonical (kfold, all features) | LightGBM | **0.8013** |
+| 4-class gene-stratified (data-circularity ceiling) | CatBoost | 0.7672 |
+| 4-class no-VEP + gene-CV (clinical floor) | CatBoost | 0.7234 |
+| **4-class raw-only (no model/tool outputs) — NEW** | LightGBM | **0.7297** |
+| 2-class canonical (kfold, all features) | CatBoost | **0.9895** |
+| **2-class raw-only — NEW** | XGBoost | **0.9401** |
+
+**Final-report deliverable.** `final_report.tex` written at the repo root and
+compiled to `final_report.pdf` (8 pages). Sections: Abstract, Introduction (3
+research questions including raw-only), Data, Methods, Results (canonical 4-class /
+2-class, gene-stratified, no-VEP/VUS, DITTO ablation, tuning, raw-only experiment,
+anchor-number summary), Interpretability (canonical SHAP, per-class contrastive,
+linear-vs-nonlinear), Discussion (clinical implications, meta-classifier behavior,
+what the raw-only result teaches), Limitations, Conclusion, Reproducibility.
+
 
 To be filled in by the next task.

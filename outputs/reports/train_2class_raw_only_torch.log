@@ -1,0 +1,15 @@
+[14:31:01] INFO train: Ablation keep: 414 → 245 features (kept 245 by prefix)
+[14:31:01] INFO train: Task=2class  variant=augmented  cv_mode=kfold  tag=raw_only  X=(21797, 245)  features=245  unique_genes=4846
+[14:31:01] INFO train: Train: (17437, 245)  Test: (4360, 245)
+[14:31:01] INFO train: ======================================================================
+[14:31:01] INFO train: Model: CNN1D  (family=torch)
+[14:34:40] INFO train:   fold 1/5  acc=0.8268  macroF1=0.8268  (219.4s)
+[14:38:18] INFO train:   fold 2/5  acc=0.8013  macroF1=0.8013  (218.1s)
+[14:41:57] INFO train:   fold 3/5  acc=0.8288  macroF1=0.8284  (218.9s)
+[14:46:17] INFO train:   fold 4/5  acc=0.7944  macroF1=0.7884  (259.9s)
+[14:50:36] INFO train:   fold 5/5  acc=0.8314  macroF1=0.8310  (258.6s)
+[14:50:36] INFO train:   CV: acc=0.8165±0.0173  macroF1=0.8152±0.0192
+[14:56:02] INFO train: ======================================================================
+[14:56:02] INFO train: Model: LSTM  (family=torch)
+[15:05:02] INFO train:   fold 1/5  acc=0.8007  macroF1=0.8006  (540.9s)
+[15:14:02] INFO train:   fold 2/5  acc=0.5636  macroF1=0.5266  (539.4s)
