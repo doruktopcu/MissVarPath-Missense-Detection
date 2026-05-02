@@ -1,0 +1,64 @@
+{
+  "model": "CatBoost",
+  "task": "4class",
+  "variant": "augmented",
+  "cv_mode": "gene",
+  "tag": "no_vep",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.7327868852459016,
+      "macro_f1": 0.7358145246852844,
+      "weighted_f1": 0.731141360065963,
+      "fit_seconds": 13.58
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.724907063197026,
+      "macro_f1": 0.7193569971491215,
+      "weighted_f1": 0.7222913915466603,
+      "fit_seconds": 11.85
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.7151623625671184,
+      "macro_f1": 0.7207583315745305,
+      "weighted_f1": 0.7146751845787129,
+      "fit_seconds": 13.25
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.706399609184172,
+      "macro_f1": 0.7172281289581208,
+      "weighted_f1": 0.7062490344523225,
+      "fit_seconds": 14.24
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.7383026782833172,
+      "macro_f1": 0.7239416798667122,
+      "weighted_f1": 0.7372595944076944,
+      "fit_seconds": 15.27
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.7235117196955071,
+    "cv_acc_std": 0.012935264067949002,
+    "cv_macro_f1_mean": 0.723419932446754,
+    "cv_macro_f1_std": 0.007345545078605303
+  },
+  "holdout": {
+    "accuracy": 0.7490144546649146,
+    "macro_f1": 0.7333677180711426,
+    "weighted_f1": 0.7473924138933782,
+    "f1_per_class": {
+      "Benign": 0.9360845495722194,
+      "Likely benign": 0.8505643340857788,
+      "Likely pathogenic": 0.5931428571428572,
+      "Pathogenic": 0.5536791314837153
+    },
+    "mcc": 0.6647323826120768,
+    "roc_auc_ovr_macro": 0.9283801734112944,
+    "fit_seconds": 17.27
+  }
+}

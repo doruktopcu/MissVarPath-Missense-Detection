@@ -85,7 +85,6 @@ ID_PATTERNS = [
     r"^base__achange$",
     r"^base__so$",
     r"^base__exonno$",
-    r"^base__hugo$",        # gene symbol -> identifier-ish; keep as encoded later if useful
     r"^base__chrom$",
     r"^base__pos$",
     r"^base__ref_base$",
@@ -98,6 +97,10 @@ ID_PATTERNS = [
 # Anything from the clinvar annotator besides the label leaks the target.
 LABEL_LEAK_PREFIXES = ("clinvar__", "clinvar_acmg__")
 LABEL_LEAK_KEEP = {LABEL_COL}
+
+# Object/text columns we preserve all the way through because they are
+# metadata used as grouping keys (not features). Excluded from feature_cols.
+PRESERVE_TEXT = {"base__hugo"}
 
 
 @dataclass
@@ -156,7 +159,8 @@ def coerce_numeric_objects(df: pd.DataFrame, threshold: float = 0.95) -> tuple[p
 
 
 def drop_remaining_text_columns(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
-    text_cols = [c for c in df.columns if c != LABEL_COL and df[c].dtype == object]
+    text_cols = [c for c in df.columns
+                 if c != LABEL_COL and c not in PRESERVE_TEXT and df[c].dtype == object]
     LOG.info("Dropping %d remaining object-typed columns (free text / JSON-ish).",
              len(text_cols))
     return df.drop(columns=text_cols), text_cols
@@ -234,9 +238,12 @@ def run() -> PreprocessResult:
     rename_map[LABEL_COL] = "clinvar_sig"
     rename_map["target_4"] = "target_4"
     rename_map["target_2"] = "target_2"
+    if "base__hugo" in df.columns:
+        rename_map["base__hugo"] = "gene_symbol"
     df = df.rename(columns=rename_map)
 
-    feature_cols = [c for c in df.columns if c not in {"clinvar_sig", "target_4", "target_2"}]
+    META_COLS = {"clinvar_sig", "target_4", "target_2", "gene_symbol"}
+    feature_cols = [c for c in df.columns if c not in META_COLS]
 
     LOG.info("Final shape: %s × %s   (features: %d)",
              df.shape[0], df.shape[1], len(feature_cols))

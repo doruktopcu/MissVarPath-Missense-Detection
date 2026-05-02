@@ -1,0 +1,62 @@
+{
+  "model": "LogisticRegression",
+  "task": "2class",
+  "variant": "augmented",
+  "cv_mode": "kfold",
+  "tag": "raw_only",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.8388761467889908,
+      "macro_f1": 0.8370624534524949,
+      "weighted_f1": 0.8370525964234922,
+      "fit_seconds": 3.81
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.8334288990825688,
+      "macro_f1": 0.8312870914554524,
+      "weighted_f1": 0.8312761916710905,
+      "fit_seconds": 1.89
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.8348150272440493,
+      "macro_f1": 0.8326457560517133,
+      "weighted_f1": 0.8326293635741893,
+      "fit_seconds": 1.68
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.8201892744479495,
+      "macro_f1": 0.8179819148193102,
+      "weighted_f1": 0.8179646698222114,
+      "fit_seconds": 0.79
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.8373960424433611,
+      "macro_f1": 0.8353147993358047,
+      "weighted_f1": 0.8352988714548795,
+      "fit_seconds": 1.02
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.832941078001384,
+    "cv_acc_std": 0.007440260390766286,
+    "cv_macro_f1_mean": 0.830858403022955,
+    "cv_macro_f1_std": 0.007542082983328069
+  },
+  "holdout": {
+    "accuracy": 0.8490825688073395,
+    "macro_f1": 0.8472620809088036,
+    "weighted_f1": 0.8472467826911688,
+    "f1_per_class": {
+      "Benign/Likely benign": 0.8305870236869207,
+      "Pathogenic/Likely pathogenic": 0.8639371381306865
+    },
+    "mcc": 0.7157851494928775,
+    "roc_auc_ovr_macro": 0.9063312484902352,
+    "fit_seconds": 2.29
+  }
+}

@@ -43,10 +43,9 @@ class ModelSpec:
 
 def _logreg(_n_classes: int):
     return Pipeline([
-        ("scaler", StandardScaler(with_mean=False)),  # robust if any sparse-like inputs
-        ("clf", LogisticRegression(max_iter=2000, solver="lbfgs",
-                                    multi_class="auto", n_jobs=-1,
-                                    random_state=RANDOM_STATE)),
+        ("scaler", StandardScaler()),
+        ("clf", LogisticRegression(max_iter=5000, solver="lbfgs",
+                                    n_jobs=-1, random_state=RANDOM_STATE)),
     ])
 
 
@@ -121,7 +120,9 @@ def _shallow_nn(_n_classes: int):
             alpha=1e-4,
             batch_size=256,
             learning_rate_init=1e-3,
-            max_iter=60,
+            max_iter=400,
+            n_iter_no_change=15,
+            tol=1e-5,
             early_stopping=True,
             random_state=RANDOM_STATE,
         )),

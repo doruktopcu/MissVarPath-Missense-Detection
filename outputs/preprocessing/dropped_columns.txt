@@ -47,7 +47,6 @@ base__ref_base
 base__alt_base
 base__note_variant
 base__coding
-base__hugo
 base__transcript
 base__so
 base__exonno

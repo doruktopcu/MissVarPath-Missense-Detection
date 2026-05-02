@@ -1,0 +1,154 @@
+[16:32:10] INFO train: Ablation drop: 208 → 61 features (dropped 147 by prefix)
+[16:32:10] INFO train: Task=4class  variant=base  cv_mode=kfold  tag=no_vep  X=(21872, 61)  features=61  unique_genes=4852
+[16:32:10] INFO train: Train: (17497, 61)  Test: (4375, 61)
+[16:32:10] INFO train: ======================================================================
+[16:32:10] INFO train: Model: LogisticRegression  (family=sklearn)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1247: FutureWarning: 'multi_class' was deprecated in version 1.5 and will be removed in 1.7. From then on, it will always use 'multinomial'. Leave it to its default value to avoid this warning.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[16:32:17] INFO train:   fold 1/5  acc=0.6040  macroF1=0.6087  (6.7s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1247: FutureWarning: 'multi_class' was deprecated in version 1.5 and will be removed in 1.7. From then on, it will always use 'multinomial'. Leave it to its default value to avoid this warning.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[16:32:22] INFO train:   fold 2/5  acc=0.6049  macroF1=0.6090  (5.0s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1247: FutureWarning: 'multi_class' was deprecated in version 1.5 and will be removed in 1.7. From then on, it will always use 'multinomial'. Leave it to its default value to avoid this warning.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[16:32:27] INFO train:   fold 3/5  acc=0.6136  macroF1=0.6172  (5.2s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1247: FutureWarning: 'multi_class' was deprecated in version 1.5 and will be removed in 1.7. From then on, it will always use 'multinomial'. Leave it to its default value to avoid this warning.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[16:32:32] INFO train:   fold 4/5  acc=0.6059  macroF1=0.6073  (4.8s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1247: FutureWarning: 'multi_class' was deprecated in version 1.5 and will be removed in 1.7. From then on, it will always use 'multinomial'. Leave it to its default value to avoid this warning.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[16:32:37] INFO train:   fold 5/5  acc=0.6079  macroF1=0.6113  (4.8s)
+[16:32:37] INFO train:   CV: acc=0.6072±0.0038  macroF1=0.6107±0.0039
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1247: FutureWarning: 'multi_class' was deprecated in version 1.5 and will be removed in 1.7. From then on, it will always use 'multinomial'. Leave it to its default value to avoid this warning.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+[16:32:43] INFO train: ======================================================================
+[16:32:43] INFO train: Model: RandomForest  (family=sklearn)
+[16:32:46] INFO train:   fold 1/5  acc=0.7211  macroF1=0.7200  (3.5s)
+[16:32:50] INFO train:   fold 2/5  acc=0.7129  macroF1=0.7115  (3.4s)
+[16:32:53] INFO train:   fold 3/5  acc=0.7162  macroF1=0.7155  (3.4s)
+[16:32:57] INFO train:   fold 4/5  acc=0.7033  macroF1=0.7023  (3.4s)
+[16:33:00] INFO train:   fold 5/5  acc=0.7119  macroF1=0.7113  (3.5s)
+[16:33:00] INFO train:   CV: acc=0.7131±0.0065  macroF1=0.7121±0.0065
+[16:33:06] INFO train: ======================================================================
+[16:33:06] INFO train: Model: ExtraTrees  (family=sklearn)
+[16:33:08] INFO train:   fold 1/5  acc=0.7114  macroF1=0.7093  (1.8s)
+[16:33:09] INFO train:   fold 2/5  acc=0.7000  macroF1=0.6976  (1.7s)
+[16:33:11] INFO train:   fold 3/5  acc=0.7013  macroF1=0.7000  (1.6s)
+[16:33:13] INFO train:   fold 4/5  acc=0.6959  macroF1=0.6944  (1.8s)
+[16:33:15] INFO train:   fold 5/5  acc=0.6982  macroF1=0.6964  (1.7s)
+[16:33:15] INFO train:   CV: acc=0.7014±0.0060  macroF1=0.6996±0.0058
+[16:33:17] INFO train: ======================================================================
+[16:33:17] INFO train: Model: XGBoost  (family=sklearn)
+[16:33:27] INFO train:   fold 1/5  acc=0.7406  macroF1=0.7390  (9.4s)
+[16:33:35] INFO train:   fold 2/5  acc=0.7249  macroF1=0.7237  (8.8s)
+[16:33:44] INFO train:   fold 3/5  acc=0.7345  macroF1=0.7339  (8.3s)
+[16:33:52] INFO train:   fold 4/5  acc=0.7239  macroF1=0.7231  (8.1s)
+[16:34:00] INFO train:   fold 5/5  acc=0.7205  macroF1=0.7204  (8.3s)
+[16:34:00] INFO train:   CV: acc=0.7289±0.0084  macroF1=0.7280±0.0080
+[16:34:09] INFO train: ======================================================================
+[16:34:09] INFO train: Model: LightGBM  (family=sklearn)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[16:34:44] INFO train:   fold 1/5  acc=0.7351  macroF1=0.7343  (35.2s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[16:35:19] INFO train:   fold 2/5  acc=0.7311  macroF1=0.7302  (35.1s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[16:35:55] INFO train:   fold 3/5  acc=0.7302  macroF1=0.7304  (35.5s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[16:36:30] INFO train:   fold 4/5  acc=0.7185  macroF1=0.7181  (35.0s)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[16:37:10] INFO train:   fold 5/5  acc=0.7185  macroF1=0.7189  (39.7s)
+[16:37:10] INFO train:   CV: acc=0.7267±0.0077  macroF1=0.7264±0.0074
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/utils/deprecation.py:151: FutureWarning: 'force_all_finite' was renamed to 'ensure_all_finite' in 1.6 and will be removed in 1.8.
+  warnings.warn(
+[16:37:46] INFO train: ======================================================================
+[16:37:46] INFO train: Model: CatBoost  (family=sklearn)
+[16:37:53] INFO train:   fold 1/5  acc=0.7229  macroF1=0.7209  (7.0s)
+[16:38:00] INFO train:   fold 2/5  acc=0.7020  macroF1=0.6990  (6.7s)
+[16:38:07] INFO train:   fold 3/5  acc=0.6999  macroF1=0.6978  (6.7s)
+[16:38:13] INFO train:   fold 4/5  acc=0.7131  macroF1=0.7113  (6.5s)
+[16:38:20] INFO train:   fold 5/5  acc=0.7073  macroF1=0.7059  (6.8s)
+[16:38:20] INFO train:   CV: acc=0.7090±0.0093  macroF1=0.7070±0.0095
+[16:38:28] INFO train: ======================================================================
+[16:38:28] INFO train: Model: ShallowNN_MLP  (family=sklearn)
+[16:38:31] INFO train:   fold 1/5  acc=0.6323  macroF1=0.6308  (3.2s)
+[16:38:38] INFO train:   fold 2/5  acc=0.6223  macroF1=0.6256  (7.0s)
+[16:38:42] INFO train:   fold 3/5  acc=0.6313  macroF1=0.6347  (4.4s)
+[16:38:46] INFO train:   fold 4/5  acc=0.6222  macroF1=0.6178  (3.6s)
+[16:38:50] INFO train:   fold 5/5  acc=0.6305  macroF1=0.6144  (3.8s)
+[16:38:50] INFO train:   CV: acc=0.6277±0.0050  macroF1=0.6247±0.0086
+[16:38:53] INFO train: Leaderboard:
+             model  family  cv_acc_mean  cv_acc_std  cv_macro_f1_mean  cv_macro_f1_std  holdout_acc  holdout_macro_f1  holdout_weighted_f1  holdout_mcc  holdout_roc_auc_macro  fit_seconds
+           XGBoost sklearn     0.728867    0.008357          0.727995         0.008020     0.737143          0.737142             0.737117     0.649959               0.924770         8.79
+          LightGBM sklearn     0.726695    0.007715          0.726391         0.007385     0.726400          0.726355             0.726328     0.635645               0.920028        36.19
+      RandomForest sklearn     0.713093    0.006538          0.712120         0.006543     0.718400          0.718395             0.718370     0.625215               0.914364         5.22
+          CatBoost sklearn     0.709035    0.009257          0.706991         0.009509     0.713371          0.712369             0.712343     0.618914               0.915206         7.38
+        ExtraTrees sklearn     0.701377    0.005977          0.699553         0.005807     0.705600          0.705038             0.705012     0.608359               0.904598         2.00
+     ShallowNN_MLP sklearn     0.627708    0.005040          0.624651         0.008562     0.636114          0.633664             0.633649     0.517018               0.870593         3.64
+LogisticRegression sklearn     0.607247    0.003838          0.610689         0.003917     0.603657          0.608855             0.608842     0.472353               0.854733         5.72

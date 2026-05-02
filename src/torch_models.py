@@ -20,10 +20,16 @@ from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
 
-def _device() -> torch.device:
+def _device(n_features: int = 0) -> torch.device:
+    """CUDA when available; MPS only when feature count is divisible by 8 to
+    dodge the AdaptiveAvgPool input-divisibility crash on Apple Silicon. Other-
+    wise fall back to CPU. Set MVP_FORCE_CPU=1 to force CPU regardless."""
+    import os
+    if os.environ.get("MVP_FORCE_CPU") == "1":
+        return torch.device("cpu")
     if torch.cuda.is_available():
         return torch.device("cuda")
-    if torch.backends.mps.is_available():
+    if torch.backends.mps.is_available() and (n_features == 0 or n_features % 8 == 0):
         return torch.device("mps")
     return torch.device("cpu")
 
@@ -31,14 +37,20 @@ def _device() -> torch.device:
 class CNN1D(nn.Module):
     def __init__(self, n_features: int, n_classes: int):
         super().__init__()
+        # Use a fixed pool target of 8 only when input divides cleanly; else
+        # fall back to global pooling. The MPS device guard already steers
+        # off-divisible inputs to CPU, but this keeps the architecture sane
+        # in either case.
+        pool_size = 8 if n_features % 8 == 0 else 1
+        flat_dim = 64 * pool_size
         self.net = nn.Sequential(
             nn.Conv1d(1, 32, kernel_size=7, padding=3),
             nn.ReLU(),
             nn.Conv1d(32, 64, kernel_size=5, padding=2),
             nn.ReLU(),
-            nn.AdaptiveAvgPool1d(8),
+            nn.AdaptiveAvgPool1d(pool_size),
             nn.Flatten(),
-            nn.Linear(64 * 8, 128),
+            nn.Linear(flat_dim, 128),
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(128, n_classes),
@@ -122,7 +134,7 @@ class TorchClassifier(BaseEstimator, ClassifierMixin):
         X_np = self.scaler_.fit_transform(X.numpy())
         X = torch.as_tensor(X_np, dtype=torch.float32)
 
-        self.device_ = _device()
+        self.device_ = _device(n_features=n_features)
         self.model_ = self.model_factory(n_features, n_classes).to(self.device_)
         opt = torch.optim.Adam(self.model_.parameters(), lr=self.lr,
                                weight_decay=self.weight_decay)
@@ -152,12 +164,15 @@ class TorchClassifier(BaseEstimator, ClassifierMixin):
     def _forward(self, X) -> np.ndarray:
         X = self._to_tensor(X).numpy()
         X = self.scaler_.transform(X)
-        X = torch.as_tensor(X, dtype=torch.float32, device=self.device_)
+        X = torch.as_tensor(X, dtype=torch.float32)
         self.model_.eval()
+        out_chunks: list[np.ndarray] = []
         with torch.no_grad():
-            logits = self.model_(X)
-            proba = torch.softmax(logits, dim=-1).cpu().numpy()
-        return proba
+            for i in range(0, X.shape[0], self.batch_size):
+                xb = X[i:i + self.batch_size].to(self.device_)
+                logits = self.model_(xb)
+                out_chunks.append(torch.softmax(logits, dim=-1).cpu().numpy())
+        return np.concatenate(out_chunks, axis=0)
 
     def predict_proba(self, X) -> np.ndarray:
         return self._forward(X)

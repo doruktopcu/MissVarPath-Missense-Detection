@@ -1,0 +1,30 @@
+{
+  "model": "ShallowNN_MLP",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "batch_size",
+    "hidden_layer_sizes"
+  ],
+  "best_params": {
+    "batch_size": "64",
+    "hidden_layer_sizes": "(64,)"
+  },
+  "best_cv_macro_f1_mean": 0.7485512478918548,
+  "best_cv_macro_f1_std": 0.00411172898670418,
+  "holdout": {
+    "accuracy": 0.7547428571428572,
+    "macro_f1": 0.7537690949699605,
+    "weighted_f1": 0.7537418641813287,
+    "f1_per_class": {
+      "Benign": 0.8812915479582146,
+      "Likely benign": 0.8729037952338923,
+      "Likely pathogenic": 0.6584953508030431,
+      "Pathogenic": 0.6023856858846919
+    },
+    "mcc": 0.6747757238535289,
+    "roc_auc_ovr_macro": 0.9343355582026651,
+    "fit_seconds": 8.035507917404175
+  }
+}
