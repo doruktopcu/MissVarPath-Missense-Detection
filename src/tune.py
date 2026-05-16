@@ -1,26 +1,19 @@
 """Tight grid-search hyperparameter tuning (no Optuna).
 
-Sweeps small grids for the four model families that respond meaningfully to
-their main capacity knobs:
-
-    XGBoost        n_estimators x max_depth        (LR fixed at 0.05)
-    LightGBM       n_estimators x num_leaves       (LR fixed at 0.05)
-    CatBoost       iterations   x depth            (LR fixed at 0.05)
-    ShallowNN_MLP  batch_size   x hidden_layer_sizes
-
-Each combination is scored by 5-fold StratifiedKFold (or StratifiedGroupKFold
-under --cv-mode gene) macro-F1 mean on the 80%% train portion, mirroring the
-baseline setup in src/train.py. The winning config per model is refit on the
-full train portion and evaluated on the held-out 20%%.
+Generic runner that sweeps a per-model grid by 5-fold StratifiedKFold (or
+StratifiedGroupKFold under --cv-mode gene) macro-F1 on the 80% train portion,
+then refits the winning combination on the full train portion and evaluates
+on the held-out 20%.
 
 Outputs (under outputs/tuning/<task>[_<cv_mode>]/<model>/):
     grid_results.csv      every (combo, fold) — cv_acc, cv_macro_f1, fit_seconds
     grid_summary.csv      one row per combo — cv_macro_f1 mean/std + ranks
     best_config.json      winning hyperparameters + holdout metrics
 
-Usage:
-    python -m src.tune --task 4class --models XGBoost LightGBM CatBoost ShallowNN_MLP
-    python -m src.tune --task 4class --cv-mode gene --models LightGBM XGBoost
+Grids are defined in the ``GRIDS`` dict at the bottom of this module — refill
+for whichever models you want to tune, then call:
+
+    python -m src.tune --task 4class --models <name1> <name2> ...
 """
 from __future__ import annotations
 
@@ -39,9 +32,6 @@ from sklearn.model_selection import (
     StratifiedKFold,
     train_test_split,
 )
-from sklearn.neural_network import MLPClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 
 from .config import (
     CLASS_2_NAMES,
@@ -60,75 +50,14 @@ TUNE_DIR = OUTPUTS_DIR / "tuning"
 
 
 # -------------------- Grids --------------------------------------------------
+# Each entry: name -> callable returning (grid, param_names, builder).
+#   grid:          list of parameter tuples
+#   param_names:   tuple of names, same length as each tuple in `grid`
+#   builder:       fn(n_classes, params_tuple) -> sklearn-compatible estimator
+#
+# Refill this dict per the active model suite before invoking the runner.
 
-def _xgb_grid():
-    from xgboost import XGBClassifier
-    grid = list(product([100, 300, 500], [4, 6, 8]))
-    def builder(n_classes, params):
-        n_estimators, max_depth = params
-        return XGBClassifier(
-            n_estimators=n_estimators, max_depth=max_depth,
-            learning_rate=0.05, subsample=0.9, colsample_bytree=0.9,
-            objective="multi:softprob" if n_classes > 2 else "binary:logistic",
-            num_class=n_classes if n_classes > 2 else None,
-            tree_method="hist",
-            eval_metric="mlogloss" if n_classes > 2 else "logloss",
-            n_jobs=-1, random_state=RANDOM_STATE,
-        )
-    return grid, ("n_estimators", "max_depth"), builder
-
-
-def _lgb_grid():
-    from lightgbm import LGBMClassifier
-    grid = list(product([100, 300, 500], [31, 63, 127]))
-    def builder(n_classes, params):
-        n_estimators, num_leaves = params
-        return LGBMClassifier(
-            n_estimators=n_estimators, num_leaves=num_leaves,
-            learning_rate=0.05, max_depth=-1,
-            subsample=0.9, colsample_bytree=0.9,
-            objective="multiclass" if n_classes > 2 else "binary",
-            num_class=n_classes if n_classes > 2 else 1,
-            n_jobs=-1, random_state=RANDOM_STATE, verbose=-1,
-        )
-    return grid, ("n_estimators", "num_leaves"), builder
-
-
-def _cat_grid():
-    from catboost import CatBoostClassifier
-    grid = list(product([100, 300, 500], [4, 6, 8]))
-    def builder(n_classes, params):
-        iterations, depth = params
-        return CatBoostClassifier(
-            iterations=iterations, depth=depth, learning_rate=0.05,
-            loss_function="MultiClass" if n_classes > 2 else "Logloss",
-            random_seed=RANDOM_STATE, verbose=False, thread_count=-1,
-        )
-    return grid, ("iterations", "depth"), builder
-
-
-def _mlp_grid():
-    grid = list(product([64, 128, 256], [(64,), (128,), (256,)]))
-    def builder(_n_classes, params):
-        batch_size, hidden = params
-        return Pipeline([
-            ("scaler", StandardScaler()),
-            ("clf", MLPClassifier(
-                hidden_layer_sizes=hidden, activation="relu", solver="adam",
-                alpha=1e-4, batch_size=batch_size, learning_rate_init=1e-3,
-                max_iter=400, n_iter_no_change=15, tol=1e-5,
-                early_stopping=True, random_state=RANDOM_STATE,
-            )),
-        ])
-    return grid, ("batch_size", "hidden_layer_sizes"), builder
-
-
-GRIDS = {
-    "XGBoost": _xgb_grid,
-    "LightGBM": _lgb_grid,
-    "CatBoost": _cat_grid,
-    "ShallowNN_MLP": _mlp_grid,
-}
+GRIDS: dict[str, callable] = {}
 
 
 # -------------------- CV runner ---------------------------------------------
@@ -154,6 +83,12 @@ def _cv_iter(X_tr, y_tr, groups_tr, cv_mode):
 
 
 def tune_model(model_name, task, variant, cv_mode):
+    if model_name not in GRIDS:
+        raise KeyError(
+            f"No tuning grid defined for {model_name!r}. "
+            f"Add an entry to GRIDS in src/tune.py."
+        )
+
     X, y, groups, feature_cols, class_names = load_processed(
         task, variant=variant, drop_prefixes=None)
     n_classes = len(class_names)
@@ -246,8 +181,8 @@ def parse_args():
     p.add_argument("--task", choices=["4class", "2class"], default="4class")
     p.add_argument("--variant", choices=["base", "augmented"], default="base")
     p.add_argument("--cv-mode", choices=["kfold", "gene"], default="kfold")
-    p.add_argument("--models", nargs="+", default=list(GRIDS.keys()),
-                   choices=list(GRIDS.keys()))
+    p.add_argument("--models", nargs="+", required=True,
+                   help="Model names to tune (must each have an entry in GRIDS).")
     return p.parse_args()
 
 
