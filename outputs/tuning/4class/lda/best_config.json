@@ -1,0 +1,30 @@
+{
+  "model": "LDA",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "solver",
+    "shrinkage"
+  ],
+  "best_params": {
+    "solver": "lsqr",
+    "shrinkage": "auto"
+  },
+  "best_cv_macro_f1_mean": 0.7053063908903411,
+  "best_cv_macro_f1_std": 0.003998224571271751,
+  "holdout": {
+    "accuracy": 0.7003428571428572,
+    "macro_f1": 0.7014133224641242,
+    "weighted_f1": 0.7013946462870655,
+    "f1_per_class": {
+      "Benign": 0.8047058823529412,
+      "Likely benign": 0.7831215970961888,
+      "Likely pathogenic": 0.6102308736985061,
+      "Pathogenic": 0.6075949367088608
+    },
+    "mcc": 0.6005687063049829,
+    "roc_auc_ovr_macro": 0.9182365792425671,
+    "fit_seconds": 0.27645182609558105
+  }
+}

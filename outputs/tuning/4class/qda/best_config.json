@@ -1,0 +1,28 @@
+{
+  "model": "QDA",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "reg_param"
+  ],
+  "best_params": {
+    "reg_param": "0.01"
+  },
+  "best_cv_macro_f1_mean": 0.6276425917666402,
+  "best_cv_macro_f1_std": 0.005114369887022413,
+  "holdout": {
+    "accuracy": 0.6436571428571428,
+    "macro_f1": 0.6178040521058193,
+    "weighted_f1": 0.617771738133756,
+    "f1_per_class": {
+      "Benign": 0.6987104337631888,
+      "Likely benign": 0.7591776798825257,
+      "Likely pathogenic": 0.6463068181818182,
+      "Pathogenic": 0.3670212765957447
+    },
+    "mcc": 0.5521843526302204,
+    "roc_auc_ovr_macro": 0.9072550037056181,
+    "fit_seconds": 0.3377108573913574
+  }
+}

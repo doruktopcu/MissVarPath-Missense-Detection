@@ -1,0 +1,32 @@
+{
+  "model": "KNN",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "n_neighbors",
+    "weights",
+    "metric"
+  ],
+  "best_params": {
+    "n_neighbors": "30",
+    "weights": "distance",
+    "metric": "cosine"
+  },
+  "best_cv_macro_f1_mean": 0.656589768710233,
+  "best_cv_macro_f1_std": 0.004006206303106805,
+  "holdout": {
+    "accuracy": 0.6601142857142858,
+    "macro_f1": 0.6597909745251019,
+    "weighted_f1": 0.6597853062828618,
+    "f1_per_class": {
+      "Benign": 0.7452538631346578,
+      "Likely benign": 0.6845895343254921,
+      "Likely pathogenic": 0.6074600355239786,
+      "Pathogenic": 0.6018604651162791
+    },
+    "mcc": 0.5472367518734153,
+    "roc_auc_ovr_macro": 0.9029483079741075,
+    "fit_seconds": 0.021844148635864258
+  }
+}

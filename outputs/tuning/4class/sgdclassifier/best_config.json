@@ -1,0 +1,32 @@
+{
+  "model": "SGDClassifier",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "alpha",
+    "penalty",
+    "max_iter"
+  ],
+  "best_params": {
+    "alpha": "0.001",
+    "penalty": "elasticnet",
+    "max_iter": "5000"
+  },
+  "best_cv_macro_f1_mean": 0.7196548566545726,
+  "best_cv_macro_f1_std": 0.005746729886797367,
+  "holdout": {
+    "accuracy": 0.7254857142857143,
+    "macro_f1": 0.7182084960604684,
+    "weighted_f1": 0.7181798629713693,
+    "f1_per_class": {
+      "Benign": 0.8871415356151712,
+      "Likely benign": 0.8434782608695652,
+      "Likely pathogenic": 0.6345218800648298,
+      "Pathogenic": 0.5076923076923077
+    },
+    "mcc": 0.6390677434757477,
+    "roc_auc_ovr_macro": 0.9216481598553021,
+    "fit_seconds": 0.295259952545166
+  }
+}

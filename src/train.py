@@ -35,6 +35,7 @@ import argparse
 import time
 from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, f1_score
@@ -49,6 +50,7 @@ from .config import (
     AUGMENTED_PARQUET,
     CLASS_2_NAMES,
     CLASS_4_NAMES,
+    MODELS_DIR,
     N_SPLITS,
     PROCESSED_PARQUET,
     RANDOM_STATE,
@@ -160,7 +162,7 @@ def cv_evaluate(spec: ModelSpec, X: np.ndarray, y: np.ndarray, groups: np.ndarra
 
 def evaluate_holdout(spec: ModelSpec, X_tr, y_tr, X_te, y_te,
                      class_names: list[str], task_dir: Path,
-                     n_classes: int) -> dict:
+                     n_classes: int, model_path: Path | None = None) -> dict:
     model = spec.builder(n_classes)
     t0 = time.time()
     model.fit(X_tr, y_tr)
@@ -175,6 +177,9 @@ def evaluate_holdout(spec: ModelSpec, X_tr, y_tr, X_te, y_te,
     summary["fit_seconds"] = fit_s
 
     slug = slugify(spec.name)
+    if model_path is not None:
+        model_path.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump(model, model_path)
     write_classification_report(y_te, y_pred, class_names,
                                 title=f"{spec.name} — held-out test set",
                                 save_path=task_dir / f"{slug}_classification_report.md")
@@ -217,9 +222,12 @@ def run(task: str, model_names: list[str] | None = None,
 
     task_dir = REPORTS_DIR / _task_dir_name(task, variant, cv_mode, tag)
     task_dir.mkdir(parents=True, exist_ok=True)
+    model_dir = MODELS_DIR / _task_dir_name(task, variant, cv_mode, tag)
+    model_dir.mkdir(parents=True, exist_ok=True)
 
     # Persist the feature manifest so it's traceable later.
     (task_dir / "features.txt").write_text("\n".join(feature_cols))
+    (model_dir / "features.txt").write_text("\n".join(feature_cols))
 
     specs = [get_model(n) for n in model_names] if model_names else MODEL_SPECS
     leaderboard_rows = []
@@ -242,8 +250,10 @@ def run(task: str, model_names: list[str] | None = None,
                  cv_summary["cv_acc_mean"], cv_summary["cv_acc_std"],
                  cv_summary["cv_macro_f1_mean"], cv_summary["cv_macro_f1_std"])
         try:
+            model_path = model_dir / f"{slugify(spec.name)}.joblib"
             holdout = evaluate_holdout(spec, X_tr, y_tr, X_te, y_te,
-                                       class_names, task_dir, n_classes)
+                                       class_names, task_dir, n_classes,
+                                       model_path=model_path)
         except Exception as e:
             LOG.exception("Holdout eval failed for %s: %s", spec.name, e)
             continue
@@ -257,6 +267,7 @@ def run(task: str, model_names: list[str] | None = None,
             "cv": cv,
             "cv_summary": cv_summary,
             "holdout": holdout,
+            "model_path": str(model_path),
         }, task_dir / f"{slugify(spec.name)}_metrics.json")
 
         leaderboard_rows.append({

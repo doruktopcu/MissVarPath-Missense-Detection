@@ -40,6 +40,7 @@ data/                missense_dataset.csv
 outputs/
   eda/               EDA figures + summary CSVs/JSON
   preprocessing/     missense_processed.parquet, final_features.txt, dropped_columns.txt
+  models/<task>/     fitted sklearn estimators (.joblib) + feature manifests
   reports/<task>/    per-model classification report (md), confusion matrices (png),
                      metrics (json), and the leaderboard.csv
 ```
@@ -88,6 +89,7 @@ python -m src.train --task 4class --models KNN HistGradientBoosting LDA
 
 Each training run produces, per model and per task:
 
+- `outputs/models/<task>/<model>.joblib` (fitted held-out estimator)
 - `outputs/reports/<task>/<model>_classification_report.md`
 - `outputs/reports/<task>/<model>_confusion_matrix.png` (counts + row-normalized)
 - `outputs/reports/<task>/<model>_metrics.json` (per-fold CV + holdout)
