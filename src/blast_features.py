@@ -1,18 +1,66 @@
-"""BLAST-based k-NN-style features.
+"""BLAST-derived "same-locus neighbour-label" features.
 
-Idea: for each variant, BLAST its alt-flank against a database built from the
-*training* set's ref-flanks. Use the labels of the top-K BLAST hits as
-features (label distribution, mean bit score, etc.). This gives the model an
-explicit "neighbours in sequence space" signal without leaking test labels.
+Honest framing — please read before interpreting these features:
 
-Critical: the BLAST DB is built only from training-set variants. Test-set
-variants are queried against it but never indexed.
+This script runs ``blastn`` with ``word_size=7``, ``evalue=10`` on the 51 bp
+flanks fetched in ``src.sequence_fetch`` (±25 bp around each variant). The
+database is built from the *training* set's ref-flanks; each variant's
+alt-flank is queried against it, the top-K hits are pulled, and their
+training-set labels are aggregated into features (counts of pathogenic-tier
+vs. benign-tier hits, mean bit score, nearest-hit label, etc.).
 
-This script produces TWO feature tables -- one for each of the 5 OOF (out-of-fold)
-sets of a `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)` run, plus
-a final 80/20 holdout. For simplicity we only generate features for the 80/20
-holdout split here; CV folds can be regenerated with
-``--mode kfold`` if needed later.
+This is *not* a homology-based feature engineering step in the biologically
+meaningful sense of the word, for two structural reasons:
+
+  1. **The query substrate is too short and too narrow.** 51 bp DNA windows
+     with ``word_size=7`` and ``evalue=10`` are well below the regime where
+     BLAST produces statistically meaningful homology calls. The search
+     space is tiny and the parameters are permissive; a "hit" largely
+     reflects local 7-mer matching, not orthology or paralogy.
+
+  2. **The hits are dominated by same-locus / same-gene proximity, not
+     biology.** ClinVar has many variants per gene. Two variants 10 bp apart
+     share ~80% of their flank sequence by construction, so they will trivially
+     be each other's top BLAST hits regardless of any biological similarity.
+     The ``blast_n_pathogenic`` / ``blast_n_benign`` features therefore behave
+     mostly as a *neighbour-label proxy for the surrounding locus* — useful
+     signal, but not "homology" in the usual sense. Under gene-stratified CV
+     (``--cv-mode gene``) this signal should largely collapse, which is the
+     empirical test for what the features actually encode.
+
+A *properly* homology-driven version of this idea would need substantially
+more infrastructure than fits this course project:
+
+  - **A large protein reference database** — e.g., UniRef50/90 or a curated
+    pathogenic/benign variant corpus — millions of sequences rather than the
+    ~17.5k train-set flanks we use here.
+  - **Protein-level BLAST (``blastp``)** on a window of amino acids around the
+    variant (with the substitution applied), so that cross-gene paralog hits
+    can contribute, instead of DNA flanks where the only neighbours that match
+    are positionally adjacent ClinVar entries.
+  - **Tighter cutoffs** (e.g., ``evalue ≤ 1e-3``, ``pident ≥ 90``) and length
+    filters so only meaningful hits feed the feature aggregator.
+
+We chose the DNA-flank / train-DB formulation deliberately because the
+project does not assume access to a UniRef-scale reference DB, and because
+even this proxy is informative as long as it is reported honestly. The
+report frames these as **label-aware locus-neighbour features**, not as
+homology features, and the no-VEP / gene-stratified ablations are designed
+to quantify how much of the lift survives once same-gene leakage is removed.
+
+Implementation notes (kept from earlier revisions):
+
+  - The BLAST DB is built only from training-set variants (stratified 80/20
+    split with ``RANDOM_STATE``=42, matched to ``src.train``). Test-set
+    variants are queried against it but never indexed.
+  - Self-hits are excluded via the ``qseqid != sseqid`` filter in
+    ``_aggregate_hits``, but a train variant queried during k-fold CV would
+    still see *other in-fold* train variants in the DB. BLAST features are
+    therefore clean for the held-out test rows but mildly optimistic on
+    training rows; the augmented leaderboard reads them under the same
+    80/20 holdout used for training. OOF BLAST features for the 5-fold CV
+    would require rebuilding the DB inside each fold and are not generated
+    by this script.
 
 Feature schema (per variant, top-K=10 hits):
     blast_n_hits             - number of BLAST hits (>=1 e-value threshold)

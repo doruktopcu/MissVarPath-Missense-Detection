@@ -366,7 +366,7 @@ vista_enhancer__element
 vista_enhancer__features
 tagsampler__samples
 
-## High-missingness (>95%)
+## High-missingness (>50%)
 abraom__allele_freq
 alfa_african__american_alt
 alfa_african__american_freq

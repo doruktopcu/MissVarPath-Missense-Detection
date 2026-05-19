@@ -1,0 +1,63 @@
+{
+  "model": "KNN",
+  "task": "2class",
+  "variant": "base",
+  "cv_mode": "gene",
+  "tag": "gene",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.9587093245829915,
+      "macro_f1": 0.9585854554893413,
+      "weighted_f1": 0.9587384338199993,
+      "fit_seconds": 0.63
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.9637199795605519,
+      "macro_f1": 0.9633331820360116,
+      "weighted_f1": 0.9636853409762647,
+      "fit_seconds": 0.58
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.9720258223178604,
+      "macro_f1": 0.9720080357172407,
+      "weighted_f1": 0.9720238701299875,
+      "fit_seconds": 0.52
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.9657342657342657,
+      "macro_f1": 0.9639397902054356,
+      "weighted_f1": 0.965796144200777,
+      "fit_seconds": 0.5
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.9695028190671451,
+      "macro_f1": 0.9689140593958654,
+      "weighted_f1": 0.9694973371335205,
+      "fit_seconds": 0.58
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.965938442252563,
+    "cv_acc_std": 0.005171662817283484,
+    "cv_macro_f1_mean": 0.965356104568779,
+    "cv_macro_f1_std": 0.005216490234385191
+  },
+  "holdout": {
+    "accuracy": 0.9608026131591227,
+    "macro_f1": 0.9608026131591227,
+    "weighted_f1": 0.9608026131591227,
+    "f1_per_class": {
+      "Benign/Likely benign": 0.9608026131591227,
+      "Pathogenic/Likely pathogenic": 0.9608026131591227
+    },
+    "mcc": 0.9220337912521712,
+    "roc_auc_ovr_macro": 0.9884969263355058,
+    "fit_seconds": 0.02
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\2class_gene\\knn.joblib"
+}

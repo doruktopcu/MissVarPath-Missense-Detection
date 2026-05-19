@@ -10,8 +10,10 @@ Outputs (under outputs/tuning/<task>[_<cv_mode>]/<model>/):
     grid_summary.csv      one row per combo — cv_macro_f1 mean/std + ranks
     best_config.json      winning hyperparameters + holdout metrics
 
-Grids are defined in the ``GRIDS`` dict at the bottom of this module — refill
-for whichever models you want to tune, then call:
+Grids are defined in the ``GRIDS`` dict at the bottom of this module (already
+populated for all 10 tunable models). Bad parameter combinations are caught
+per-combo: the offending combo is logged and skipped, and the run continues
+with the remaining combos rather than aborting.
 
     python -m src.tune --task 4class --models <name1> <name2> ...
 """

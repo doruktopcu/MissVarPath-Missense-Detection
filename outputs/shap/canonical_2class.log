@@ -1,0 +1,23 @@
+﻿[03:32:52] INFO shap: Task=2class model=HistGradientBoosting variant=base cv_mode=kfold features=208 classes=2
+[03:32:52] INFO shap: Train: (17497, 208)  Test: (4375, 208)
+[03:32:52] INFO shap: Fitting HistGradientBoosting on full train portion...
+[03:32:59] INFO shap: Explaining 1000 held-out rows with TreeExplainer...
+[03:33:01] INFO shap: SHAP values shape: (2, 1000, 208)  (classes, samples, features)
+[03:33:01] INFO shap: Top-15 features by mean(|SHAP|):
+                                feature  mean_abs_shap_overall  mean_abs_shap_Benign/Likely benign  mean_abs_shap_Pathogenic/Likely pathogenic
+                            ditto_score               4.263208                            4.263208                                    4.263208
+                          metarnn_score               1.116224                            1.116224                                    1.116224
+          bayesdel_bayesdel_addaf_score               0.499088                            0.499088                                    0.499088
+                         clinpred_score               0.180744                            0.180744                                    0.180744
+                              gnomad_af               0.135121                            0.135121                                    0.135121
+                             gmvp_score               0.094492                            0.094492                                    0.094492
+                             vest_score               0.052021                            0.052021                                    0.052021
+                         mutpred2_score               0.048377                            0.048377                                    0.048377
+                 allofus250k_gvs_max_af               0.039202                            0.039202                                    0.039202
+                 allofus250k_gvs_max_an               0.038698                            0.038698                                    0.038698
+         alphamissense_am_pathogenicity               0.032207                            0.032207                                    0.032207
+                       regeneron_all_an               0.030392                            0.030392                                    0.030392
+fathmm_xf_coding_fathmm_xf_coding_score               0.030319                            0.030319                                    0.030319
+                          gnomad_af_nfe               0.027935                            0.027935                                    0.027935
+                 allofus250k_gvs_afr_ac               0.027641                            0.027641                                    0.027641
+[03:33:02] INFO shap: SHAP artifacts saved under C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection\outputs\shap\canonical_2class

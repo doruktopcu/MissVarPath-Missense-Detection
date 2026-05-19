@@ -385,6 +385,18 @@ Recommended report structure:
    - `HistGradientBoosting` remains headline model.
    - `DecisionTree` and `QDA` gained most from tuning, but trail HistGB.
    - AdaBoost was excluded from tuning due runtime cost.
+   - BLAST features are framed honestly as **label-aware locus-neighbour
+     features**, not homology features. The 51 bp DNA-flank substrate plus
+     `word_size=7`/`evalue=10` is too short/permissive for true homology;
+     hits are dominated by same-gene proximity in ClinVar. A real
+     homology-based version would need a UniRef-scale reference DB and
+     `blastp` on an amino-acid window — out of scope here. The
+     gene-stratified ablation is the empirical test for how much of the
+     augmented lift survives once same-gene leakage is removed. See the
+     [src/blast_features.py](src/blast_features.py) docstring,
+     `## BLAST caveat` in [README.md](README.md), and
+     `\S BLAST features: scope and honest framing` in
+     [final_report.tex](final_report.tex) for the long-form framing.
 9. Limitations and future work:
    - Try AdaBoost later only if compute budget permits.
    - Consider feature work only if the user later wants deeper error analysis.
@@ -413,3 +425,18 @@ Recommended report structure:
 - Created this `checkpoint.md` file as the project save-game handoff.
 - Captured completed baseline training, completed non-AdaBoost 4class tuning, stopped AdaBoost tuning, model persistence changes, and roadmap from current state to report generation.
 - Next recommended action: apply selected tuned defaults in `src/models.py`, rerun final no-AdaBoost training, verify saved `.joblib` models, then generate report materials.
+
+### 2026-05-19 — Full-scope chain completed
+
+- Applied checkpoint-recommended tuned defaults to `src/models.py` (DecisionTree, QDA, SGD, KNN, NearestCentroid, HistGradientBoosting). LDA was switched to `solver=svd` after `lsqr+auto` proved unstable under sklearn 1.7 on Windows (fold-2/3 fold collapse).
+- Reran the final no-AdaBoost suite for both 4-class and 2-class. Headline: HistGradientBoosting macro-F1 = 0.7950 (4-class) / 0.9872 (2-class).
+- Ran the full ablation chain (`run_full_chain.ps1` — 11 experiments, ~31 min wall-clock): gene-stratified, augmented (k-mer + BLAST), augmented-raw-only, augmented-no-vep (kfold + gene), no-ditto. All leaderboards landed under `outputs/reports/`.
+- Ran SHAP on the canonical 4-class and 2-class tuned HistGB. Top features (4-class): DITTO, MetaRNN, AllOfUs max AF, gnomAD AF, BayesDel. Per-class asymmetry: Benign-class is population-frequency driven; Pathogenic-class is DITTO-driven; Likely-pathogenic boundary is MetaRNN-driven.
+- DITTO removal cost only $-0.0017$ on 4-class — the suite is doing genuine ensembling and is not bottlenecked on any single learned predictor.
+- Refilled all TODOs in [final_report.tex](final_report.tex); the LaTeX is the deliverable report and compiles cleanly on Overleaf / MiKTeX / TeX Live.
+- README and project_progress_report updated to point at the new final state.
+
+Pending for delivery (per [project_delivery_instructions.md](project_delivery_instructions.md), due 2026-05-24 23:59):
+- compile `final_report.tex` → PDF;
+- prepare source-code bundle (zip or repo link);
+- record demo video (≤10 minutes, screen + voice).

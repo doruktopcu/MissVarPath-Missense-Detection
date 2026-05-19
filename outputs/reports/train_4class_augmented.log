@@ -1,0 +1,94 @@
+﻿[03:02:31] INFO train: Task=4class  variant=augmented  cv_mode=kfold  tag=augmented  X=(21797, 414)  features=414  unique_genes=4846
+[03:02:31] INFO train: Train: (17437, 414)  Test: (4360, 414)
+[03:02:31] INFO train: ======================================================================
+[03:02:31] INFO train: Model: KNN  (family=sklearn)
+[03:02:32] INFO train:   fold 1/5  acc=0.5986  macroF1=0.5958  (0.6s)
+[03:02:32] INFO train:   fold 2/5  acc=0.6130  macroF1=0.6117  (0.6s)
+[03:02:33] INFO train:   fold 3/5  acc=0.5979  macroF1=0.5965  (0.6s)
+[03:02:34] INFO train:   fold 4/5  acc=0.6108  macroF1=0.6097  (0.6s)
+[03:02:34] INFO train:   fold 5/5  acc=0.6123  macroF1=0.6110  (0.6s)
+[03:02:34] INFO train:   CV: acc=0.6065�0.0076  macroF1=0.6050�0.0081
+[03:02:36] INFO train: ======================================================================
+[03:02:36] INFO train: Model: NearestCentroid  (family=sklearn)
+[03:02:38] INFO train:   fold 1/5  acc=0.5510  macroF1=0.5529  (1.8s)
+[03:02:38] INFO train:   fold 2/5  acc=0.5674  macroF1=0.5683  (0.1s)
+[03:02:38] INFO train:   fold 3/5  acc=0.5802  macroF1=0.5814  (0.1s)
+[03:02:38] INFO train:   fold 4/5  acc=0.5518  macroF1=0.5533  (0.1s)
+[03:02:39] INFO train:   fold 5/5  acc=0.5718  macroF1=0.5732  (0.1s)
+[03:02:39] INFO train:   CV: acc=0.5644�0.0128  macroF1=0.5658�0.0125
+[03:02:39] INFO train: ======================================================================
+[03:02:39] INFO train: Model: CosineSimilarity  (family=sklearn)
+[03:02:39] INFO train:   fold 1/5  acc=0.5780  macroF1=0.5748  (0.1s)
+[03:02:39] INFO train:   fold 2/5  acc=0.5771  macroF1=0.5697  (0.1s)
+[03:02:39] INFO train:   fold 3/5  acc=0.5836  macroF1=0.5788  (0.1s)
+[03:02:39] INFO train:   fold 4/5  acc=0.5658  macroF1=0.5601  (0.1s)
+[03:02:39] INFO train:   fold 5/5  acc=0.5888  macroF1=0.5820  (0.1s)
+[03:02:39] INFO train:   CV: acc=0.5787�0.0086  macroF1=0.5731�0.0086
+[03:02:39] INFO train: ======================================================================
+[03:02:39] INFO train: Model: DecisionTree  (family=sklearn)
+[03:02:41] INFO train:   fold 1/5  acc=0.7589  macroF1=0.7588  (1.4s)
+[03:02:42] INFO train:   fold 2/5  acc=0.7615  macroF1=0.7619  (1.4s)
+[03:02:44] INFO train:   fold 3/5  acc=0.7528  macroF1=0.7523  (1.4s)
+[03:02:45] INFO train:   fold 4/5  acc=0.7499  macroF1=0.7494  (1.4s)
+[03:02:46] INFO train:   fold 5/5  acc=0.7539  macroF1=0.7539  (1.4s)
+[03:02:46] INFO train:   CV: acc=0.7554�0.0047  macroF1=0.7552�0.0050
+[03:02:48] INFO train: ======================================================================
+[03:02:48] INFO train: Model: LDA  (family=sklearn)
+[03:02:48] INFO train:   fold 1/5  acc=0.7150  macroF1=0.7154  (0.1s)
+[03:02:48] INFO train:   fold 2/5  acc=0.7084  macroF1=0.7094  (0.2s)
+[03:02:49] INFO train:   fold 3/5  acc=0.7141  macroF1=0.7147  (0.2s)
+[03:02:49] INFO train:   fold 4/5  acc=0.7020  macroF1=0.7029  (0.2s)
+[03:02:49] INFO train:   fold 5/5  acc=0.7095  macroF1=0.7101  (0.2s)
+[03:02:49] INFO train:   CV: acc=0.7098�0.0052  macroF1=0.7105�0.0050
+[03:02:49] INFO train: ======================================================================
+[03:02:49] INFO train: Model: QDA  (family=sklearn)
+[03:02:50] INFO train:   fold 1/5  acc=0.6835  macroF1=0.6742  (0.3s)
+[03:02:50] INFO train:   fold 2/5  acc=0.6726  macroF1=0.6618  (0.2s)
+[03:02:50] INFO train:   fold 3/5  acc=0.6805  macroF1=0.6728  (0.2s)
+[03:02:50] INFO train:   fold 4/5  acc=0.6659  macroF1=0.6575  (0.2s)
+[03:02:51] INFO train:   fold 5/5  acc=0.6602  macroF1=0.6519  (0.2s)
+[03:02:51] INFO train:   CV: acc=0.6725�0.0098  macroF1=0.6637�0.0097
+[03:02:51] INFO train: ======================================================================
+[03:02:51] INFO train: Model: LinearSVC  (family=sklearn)
+[03:03:10] INFO train:   fold 1/5  acc=0.7761  macroF1=0.7761  (19.3s)
+[03:03:25] INFO train:   fold 2/5  acc=0.7603  macroF1=0.7609  (14.6s)
+[03:03:43] INFO train:   fold 3/5  acc=0.7691  macroF1=0.7695  (17.7s)
+[03:03:59] INFO train:   fold 4/5  acc=0.7560  macroF1=0.7567  (16.5s)
+[03:04:13] INFO train:   fold 5/5  acc=0.7617  macroF1=0.7621  (13.6s)
+[03:04:13] INFO train:   CV: acc=0.7646�0.0080  macroF1=0.7651�0.0077
+[03:04:46] INFO train: ======================================================================
+[03:04:46] INFO train: Model: RidgeClassifier  (family=sklearn)
+[03:04:46] INFO train:   fold 1/5  acc=0.7167  macroF1=0.7169  (0.1s)
+[03:04:46] INFO train:   fold 2/5  acc=0.7073  macroF1=0.7079  (0.1s)
+[03:04:46] INFO train:   fold 3/5  acc=0.7126  macroF1=0.7130  (0.1s)
+[03:04:46] INFO train:   fold 4/5  acc=0.7023  macroF1=0.7028  (0.1s)
+[03:04:46] INFO train:   fold 5/5  acc=0.7095  macroF1=0.7099  (0.1s)
+[03:04:46] INFO train:   CV: acc=0.7097�0.0054  macroF1=0.7101�0.0053
+[03:04:46] INFO train: ======================================================================
+[03:04:46] INFO train: Model: SGDClassifier  (family=sklearn)
+[03:04:47] INFO train:   fold 1/5  acc=0.7423  macroF1=0.7369  (0.2s)
+[03:04:47] INFO train:   fold 2/5  acc=0.7170  macroF1=0.7040  (0.2s)
+[03:04:47] INFO train:   fold 3/5  acc=0.7324  macroF1=0.7291  (0.2s)
+[03:04:47] INFO train:   fold 4/5  acc=0.7310  macroF1=0.7294  (0.2s)
+[03:04:48] INFO train:   fold 5/5  acc=0.7278  macroF1=0.7239  (0.2s)
+[03:04:48] INFO train:   CV: acc=0.7301�0.0091  macroF1=0.7247�0.0124
+[03:04:48] INFO train: ======================================================================
+[03:04:48] INFO train: Model: HistGradientBoosting  (family=sklearn)
+[03:05:16] INFO train:   fold 1/5  acc=0.8048  macroF1=0.8043  (27.7s)
+[03:05:47] INFO train:   fold 2/5  acc=0.8007  macroF1=0.8010  (31.4s)
+[03:06:20] INFO train:   fold 3/5  acc=0.7927  macroF1=0.7923  (33.4s)
+[03:06:49] INFO train:   fold 4/5  acc=0.7961  macroF1=0.7959  (28.5s)
+[03:07:17] INFO train:   fold 5/5  acc=0.7958  macroF1=0.7955  (28.0s)
+[03:07:17] INFO train:   CV: acc=0.7980�0.0047  macroF1=0.7978�0.0048
+[03:07:45] INFO train: Leaderboard:
+               model  family  cv_acc_mean  cv_acc_std  cv_macro_f1_mean  cv_macro_f1_std  holdout_acc  holdout_macro_f1  holdout_weighted_f1  holdout_mcc  holdout_roc_auc_macro  fit_seconds
+HistGradientBoosting sklearn     0.798015    0.004747          0.797796         0.004772     0.795183          0.794783             0.794912     0.727099               0.947742        27.87
+           LinearSVC sklearn     0.764638    0.007973          0.765068         0.007688     0.765596          0.765710             0.765828     0.688158                    NaN        32.97
+        DecisionTree sklearn     0.755405    0.004686          0.755249         0.005040     0.758486          0.757364             0.757505     0.679299               0.925284         1.74
+       SGDClassifier sklearn     0.730114    0.009083          0.724659         0.012435     0.727982          0.720928             0.721061     0.643073               0.920627         0.28
+                 LDA sklearn     0.709812    0.005193          0.710494         0.005027     0.710780          0.711134             0.711208     0.614439               0.926709         0.19
+     RidgeClassifier sklearn     0.709698    0.005445          0.710091         0.005310     0.703211          0.703349             0.703416     0.604356                    NaN         0.08
+                 QDA sklearn     0.672535    0.009757          0.663657         0.009701     0.675000          0.662059             0.662126     0.584460               0.912848         0.24
+                 KNN sklearn     0.606526    0.007571          0.604955         0.008051     0.615596          0.614581             0.614638     0.488265               0.880636         0.04
+    CosineSimilarity sklearn     0.578655    0.008575          0.573079         0.008604     0.580046          0.574708             0.574718     0.447805                    NaN         0.06
+     NearestCentroid sklearn     0.564433    0.012755          0.565798         0.012528     0.559404          0.560668             0.560721     0.413606               0.870649         0.08

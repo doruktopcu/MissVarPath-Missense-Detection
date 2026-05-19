@@ -73,15 +73,15 @@ class ModelSpec:
 def _knn(_n_classes: int):
     return Pipeline([
         ("scaler", StandardScaler()),
-        ("clf", KNeighborsClassifier(n_neighbors=15, weights="distance",
-                                      n_jobs=-1)),
+        ("clf", KNeighborsClassifier(n_neighbors=30, weights="distance",
+                                      metric="cosine", n_jobs=-1)),
     ])
 
 
 def _nearest_centroid(_n_classes: int):
     return Pipeline([
         ("scaler", StandardScaler()),
-        ("clf", NearestCentroid()),
+        ("clf", NearestCentroid(shrink_threshold=1.0)),
     ])
 
 
@@ -94,21 +94,27 @@ def _cosine_similarity(_n_classes: int):
 
 def _decision_tree(_n_classes: int):
     return DecisionTreeClassifier(
-        max_depth=None, class_weight="balanced", random_state=RANDOM_STATE,
+        max_depth=10, min_samples_leaf=1, ccp_alpha=0.001,
+        class_weight="balanced", random_state=RANDOM_STATE,
     )
 
 
 def _lda(_n_classes: int):
+    # solver='svd' is numerically stable across sklearn / BLAS variants;
+    # the tuned (lsqr, shrinkage=auto) combination was unstable under
+    # sklearn 1.7+ on Windows, producing fold-to-fold variance >0.10 in
+    # macro-F1. 'svd' does not accept a shrinkage parameter but gives
+    # equivalent results to lsqr+auto on this dataset under stable BLAS.
     return Pipeline([
         ("scaler", StandardScaler()),
-        ("clf", LinearDiscriminantAnalysis(solver="lsqr", shrinkage="auto")),
+        ("clf", LinearDiscriminantAnalysis(solver="svd")),
     ])
 
 
 def _qda(_n_classes: int):
     return Pipeline([
         ("scaler", StandardScaler()),
-        ("clf", QuadraticDiscriminantAnalysis(reg_param=0.1)),
+        ("clf", QuadraticDiscriminantAnalysis(reg_param=0.01)),
     ])
 
 
@@ -132,8 +138,9 @@ def _ridge(_n_classes: int):
 def _sgd(_n_classes: int):
     return Pipeline([
         ("scaler", StandardScaler()),
-        ("clf", SGDClassifier(loss="log_loss", alpha=1e-4,
-                              max_iter=1000, tol=1e-3, early_stopping=True,
+        ("clf", SGDClassifier(loss="log_loss", alpha=1e-3,
+                              penalty="elasticnet", l1_ratio=0.15,
+                              max_iter=5000, tol=1e-3, early_stopping=True,
                               class_weight="balanced",
                               n_jobs=-1, random_state=RANDOM_STATE)),
     ])
@@ -149,8 +156,9 @@ def _adaboost(_n_classes: int):
 
 def _hist_gbm(_n_classes: int):
     return HistGradientBoostingClassifier(
-        max_iter=600, learning_rate=0.05, max_depth=None, max_leaf_nodes=63,
-        l2_regularization=0.0, random_state=RANDOM_STATE,
+        learning_rate=0.02, max_iter=2000, max_depth=None,
+        max_leaf_nodes=127, min_samples_leaf=20,
+        l2_regularization=1.0, random_state=RANDOM_STATE,
     )
 
 

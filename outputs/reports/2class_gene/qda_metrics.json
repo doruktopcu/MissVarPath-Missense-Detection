@@ -1,0 +1,63 @@
+{
+  "model": "QDA",
+  "task": "2class",
+  "variant": "base",
+  "cv_mode": "gene",
+  "tag": "gene",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.9447634673229423,
+      "macro_f1": 0.9446788784710781,
+      "weighted_f1": 0.9448249864879344,
+      "fit_seconds": 0.08
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.9580991313234543,
+      "macro_f1": 0.9576568881768113,
+      "weighted_f1": 0.9580615406559896,
+      "fit_seconds": 0.1
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.9591146633876422,
+      "macro_f1": 0.9590492630033443,
+      "weighted_f1": 0.959085987834527,
+      "fit_seconds": 0.08
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.9573426573426573,
+      "macro_f1": 0.9553650695210917,
+      "weighted_f1": 0.9575331890596851,
+      "fit_seconds": 0.09
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.9566888774987186,
+      "macro_f1": 0.9557343205384877,
+      "weighted_f1": 0.956620575866311,
+      "fit_seconds": 0.08
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.9552017593750829,
+    "cv_acc_std": 0.005904627156004524,
+    "cv_macro_f1_mean": 0.9544968839421626,
+    "cv_macro_f1_std": 0.005687442501672272
+  },
+  "holdout": {
+    "accuracy": 0.9514699020065329,
+    "macro_f1": 0.9514660868868368,
+    "weighted_f1": 0.9514596614220852,
+    "f1_per_class": {
+      "Benign/Likely benign": 0.9510357815442562,
+      "Pathogenic/Likely pathogenic": 0.9518963922294172
+    },
+    "mcc": 0.9040107031357253,
+    "roc_auc_ovr_macro": 0.9680697169179503,
+    "fit_seconds": 0.1
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\2class_gene\\qda.joblib"
+}
