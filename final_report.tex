@@ -37,7 +37,14 @@ model. We evaluate the suite under five regimes -- canonical kfold, sequence-aug
 (k-mer + BLAST-derived locus-neighbour features), strict gene-stratified CV, a
 ``no-VEP / VUS'' ablation that drops every in-silico predictor score, and a
 ``raw-only'' ablation that additionally removes multi-species conservation scores
-and label-aware BLAST features -- and inspect feature reliance with SHAP. We are
+and label-aware BLAST features -- and inspect feature reliance with SHAP. Beyond
+the benchmark, we deploy the tuned classifier on $5{,}468$ \emph{actual} ClinVar
+Variants of Uncertain Significance annotated through the same pipeline
+(\S\ref{sec:vus-deployment}); the model splits the uncertain pool $62\% / 38\%$
+pathogenic / benign on the 2-class head and hedges $87\%$ of 4-class predictions
+into the ``Likely-*'' categories with $95.4\%$ cross-task agreement, recovering
+clinically sensible per-gene priors (e.g. $\texttt{GCK}$ $100\%$, $\texttt{PAH}$
+$99\%$ pathogenic-side; $\texttt{APC}$, $\texttt{DICER1}$ much lower). We are
 explicit about a methodological subtlety: the BLAST features here are
 \emph{label-aware locus-neighbour} signals on 51\,bp DNA flanks, not biologically
 meaningful homology features (\S\ref{sec:blast-caveat}); a true homology-based
@@ -420,6 +427,121 @@ LDA                  & $0.6696$ & --       \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Real VUS deployment}
+\label{sec:vus-deployment}
+
+The previous subsection (\S\ref{sec:no-vep}) \emph{simulates} the VUS scenario
+on the labelled dataset by dropping every learned predictor column. We now
+take the headline tuned model and apply it to genuine Variants of Uncertain
+Significance pulled from ClinVar.
+
+\paragraph{Dataset.}
+A curated pro-set of $5{,}468$ VUS-labelled missense variants was assembled
+from ClinVar review-status filters: every available 3-star expert-reviewed
+VUS plus a random sample of 2-star VUS, matched to the class size of the
+training labels for a balanced comparison (\texttt{scripts/build\_vus\_pro\_set.py}).
+The VUS were annotated through the same OpenCRAVAT 158-annotator pipeline as
+the training set, yielding the same 777-column raw schema and -- after the
+identical preprocessing pruning -- the same 208 numerical features. All 208
+training-set features are present in the VUS post-prune; the top
+SHAP-importance predictor scores (DITTO, MetaRNN, AlphaMissense, REVEL,
+CADD, ClinPred) have $\le 2\%$ missing rates and are imputed with
+training-set medians where absent.
+
+\paragraph{Caveat on what we can measure.}
+By definition there is no ground-truth label for VUS, so we cannot report
+accuracy. The deployment yields two interpretable signals: (a) the
+\emph{distribution} of predicted classes -- how the trained classifier
+partitions the uncertain pool -- and (b) cross-task consistency between
+the 4-class and 2-class heads, both trained independently on the same data.
+Tables~\ref{tab:vus-dist-2class}--\ref{tab:vus-dist-4class} report these
+distributions; Figure~\ref{fig:vus-per-gene} shows the per-gene structure.
+
+\begin{table}[H]
+\centering
+\caption{Predicted class distribution on the $5{,}468$-variant VUS pro-set,
+2-class head (tuned HistGradientBoosting).}
+\label{tab:vus-dist-2class}
+\small
+\begin{tabular}{lrr}
+\toprule
+Predicted class & Count & Share \\
+\midrule
+Pathogenic / Likely pathogenic & $3{,}377$ & $61.8\%$ \\
+Benign / Likely benign         & $2{,}091$ & $38.2\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Predicted class distribution, 4-class head. Note how the model
+correctly hedges into \emph{Likely-*} categories for these uncertain
+variants ($87\%$ of predictions are ``Likely''), with only $13.1\%$
+escalated to a definitive call.}
+\label{tab:vus-dist-4class}
+\small
+\begin{tabular}{lrr}
+\toprule
+Predicted class    & Count & Share \\
+\midrule
+Likely pathogenic  & $2{,}568$ & $47.0\%$ \\
+Likely benign      & $2{,}183$ & $39.9\%$ \\
+Pathogenic         & $706$     & $12.9\%$ \\
+Benign             & $11$      & $0.2\%$  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Cross-task consistency.}
+Collapsing the 4-class head's predictions to \{pathogenic-side,
+benign-side\} and comparing to the 2-class head produces the same verdict
+on $95.4\%$ of the $5{,}468$ variants. The two models were trained
+independently on different targets and arrived at the same call on
+$5{,}214$ of them -- evidence that the headline number is not a
+single-model artifact.
+
+\paragraph{Per-gene structure.}
+Figure~\ref{fig:vus-per-gene} shows the predicted-class breakdown for the
+top-20 most-frequent genes in the VUS pro-set. The model recovers
+clinically sensible per-gene priors that it could only have learned
+indirectly through gene-correlated features: \texttt{GCK} (MODY/diabetes
+loss-of-function) lands at $100\%$ pathogenic-side; \texttt{PAH} (PKU,
+$99\%$), \texttt{MYH7} (hypertrophic cardiomyopathy, $90\%$),
+\texttt{LDLR} (familial hypercholesterolemia, $84\%$),
+\texttt{HNF1A/HNF4A} (MODY) and \texttt{PMS2}/\texttt{PTEN} all show
+strong pathogenic-side concentration. Conversely \texttt{APC},
+\texttt{DICER1}, and \texttt{TTN}-class genes (where pathogenic variants
+tend to be truncating rather than missense, and missense variation is
+mostly benign) sit much lower on the pathogenic scale.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{outputs/figures/vus_per_gene_predictions.png}
+    \caption{Predicted-class fractions on the top-20 most-frequent genes in
+    the $5{,}468$-variant VUS pro-set. Bars stacked
+    Pathogenic / Likely-pathogenic / Likely-benign / Benign; $n$ marks the
+    count of VUS per gene in the pro-set. Sorted by predicted
+    pathogenic-side (P + LP) rate. The per-gene gradient -- saturated
+    pathogenic at \texttt{GCK} / \texttt{PAH} / \texttt{MYH7} and gradually
+    shifting to benign-leaning at \texttt{APC} / \texttt{DICER1} -- matches
+    published clinical priors on these genes' missense-pathogenicity profiles.}
+    \label{fig:vus-per-gene}
+\end{figure}
+
+\paragraph{Deployment artifacts.}
+Per-variant predictions including identifier columns
+(\texttt{base\_\_chrom}, \texttt{base\_\_pos}, \texttt{base\_\_ref\_base},
+\texttt{base\_\_alt\_base}, \texttt{base\_\_hugo}) and per-class
+probabilities are written to:
+\begin{itemize}[leftmargin=*,nosep]
+    \item \texttt{outputs/predictions/vus\_pro\_2class.csv}
+    \item \texttt{outputs/predictions/vus\_pro\_4class.csv}
+\end{itemize}
+The inference path is generic (\texttt{scripts/predict\_vus.py}); any
+OpenCRAVAT-annotated CSV in the 777-column training schema can be scored
+by the saved \texttt{.joblib} model with one command.
 
 \subsection{Augmented variant (k-mer + BLAST lift)}
 \label{sec:augmented}

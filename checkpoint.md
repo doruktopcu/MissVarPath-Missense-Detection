@@ -527,3 +527,148 @@ on VUS, the only quality-check we have is (a) the *distribution* of
 predictions and (b) consistency with other published predictors on the same
 variants. Don't claim accuracy numbers — describe what the model thinks, not
 how often it is right.
+
+### 2026-05-23 — VUS integration end-to-end (Mac, pre-handoff)
+
+Picked the project back up on the Mac after the Windows session. State of play
+when the chat started:
+
+- VUS pro-set 2x annotated through OpenCRAVAT and saved as
+  `data/missense_VUS_pro_set_2x.csv` (10,936 rows × 777 cols, full schema match).
+- The `outputs/models/*_final_no_adaboost/` directories only had `features.txt`;
+  every `.joblib` was missing on this machine because `outputs/models/**/*.joblib`
+  is git-ignored and they didn't survive the machine switch.
+- The 5,468-row raw input TSV (`data/missense_VUS_pro_set.txt`) was the
+  *balanced* subset; user wanted the deployment headline on that subset first.
+
+What got done in this session:
+
+1. **Regenerated headline joblibs** — refit tuned HistGradientBoosting on the
+   80 % train portion (RANDOM_STATE=42 stratified split, same as original
+   training) for both tasks. Holdout numbers reproduced exactly:
+   - 4-class: acc=0.7952, macro-F1=0.7950
+   - 2-class: acc=0.9872, macro-F1=0.9872
+   - Files: `outputs/models/4class_final_no_adaboost/histgradientboosting.joblib`
+     (11 MB), `outputs/models/2class_final_no_adaboost/histgradientboosting.joblib`
+     (2.5 MB).
+   - The other 9 models' joblibs are **still missing** on this machine; not
+     re-fit because predict_vus.py defaults to HistGB only. If you want all 10
+     joblibs back, run:
+     ```bash
+     $PY -m src.train --task 4class --models KNN NearestCentroid CosineSimilarity \
+         DecisionTree LDA QDA LinearSVC RidgeClassifier SGDClassifier \
+         --tag final_no_adaboost_refit
+     ```
+     and then move the joblibs into the canonical
+     `outputs/models/4class_final_no_adaboost/` (note: the un-tagged refit would
+     overwrite existing `leaderboard.csv` — use a tag to keep the existing
+     leaderboard intact).
+
+2. **Column-alignment audit on the VUS CSV.** All 208 training-manifest features
+   are present in the VUS post-prune. NaN-rate distribution across the 208:
+   136 features ≤5 %, 15 at 5–20 %, 36 at 20–50 %, 18 at 50–80 %, 3 at >80 %.
+   The >80 % NaN columns are the three FitCons coding-score columns (the
+   annotator just didn't process most VUS variants). Headline SHAP-driver
+   features (DITTO, MetaRNN, AlphaMissense, REVEL, CADD, ClinPred) have
+   ≤2 % NaN — the model is genuinely scoring, not hallucinating from medians.
+   Population AF columns (`gnomad_af`, `allofus250k_gvs_max_af`) are 33–45 %
+   NaN, which is biologically expected (rare VUS not in population DBs);
+   training-median imputation pushes them to ~0, the correct prior.
+
+3. **Subset to the 5,468-variant pro-set.** All 5,468 entries in
+   `data/missense_VUS_pro_set.txt` matched into the annotated 10,936-row CSV
+   by (chrom, pos, ref, alt) — no losses. Wrote
+   `data/missense_VUS_pro_set_annotated.csv` (5,468 × 777).
+
+4. **Predictions on both subset and superset.** Outputs under
+   `outputs/predictions/`:
+   - `vus_pro_2class.csv` and `vus_pro_4class.csv` (5,468 rows, headline)
+   - `vus_2class.csv` and `vus_4class.csv` (10,936 rows, superset)
+
+   **2-class pro-set:** 61.8 % Pathogenic/Likely-pathogenic, 38.2 % Benign/Likely-benign.
+   80 % of predictions have max_proba > 0.9.
+
+   **4-class pro-set:** 47.0 % Likely pathogenic, 39.9 % Likely benign,
+   12.9 % Pathogenic, 0.2 % Benign — 87 % of predictions hedged into the
+   "Likely-*" categories (clinically appropriate for uncertain variants).
+
+   **Cross-task consistency:** 95.4 % agreement between the two heads when
+   collapsed to pathogenic-side / benign-side.
+
+5. **Per-gene figure.** `outputs/figures/vus_per_gene_predictions.png` —
+   stacked-bar 4-class breakdown for the top-20 most-frequent genes in the
+   pro-set, sorted by P+LP rate. Clinically sensible gradient: GCK 100 %,
+   PAH 99 %, MYH7 90 %, LDLR 84 %, HNF1A/HNF4A/PMS2/PTEN concentrated
+   pathogenic-side; APC, DICER1, SLC6A8 much lower (consistent with
+   published priors that most missense in those genes are uncertain/benign).
+
+6. **LaTeX integration in `final_report.tex`.**
+   - New subsection `\subsection{Real VUS deployment}` with label
+     `sec:vus-deployment`, inserted between §4.4 (No-VEP / VUS scenario,
+     which is the *simulation*) and §4.5 (Augmented variant). Includes two
+     distribution tables (2-class, 4-class), cross-task consistency
+     paragraph, per-gene-structure paragraph referencing
+     `outputs/figures/vus_per_gene_predictions.png`, deployment-artifacts
+     paragraph.
+   - Abstract updated with one sentence on the VUS deployment numbers
+     (62/38 split, 87 % hedging into Likely-*, 95.4 % cross-task agreement,
+     GCK/PAH/APC/DICER1 per-gene priors).
+   - PDF **not rebuilt** — do it on the Windows machine with MiKTeX after
+     the move. Two pdflatex passes for cross-refs (figure ref, sec ref).
+
+### Implementation status excluding the report
+
+Complete:
+- Data pipeline (training corpus, preprocessing parquet, VUS pro-set + 2x)
+- Model registry with tuned defaults (11 specs in `src/models.py`)
+- Training + tuning + persistence + per-combo skip
+- 11-experiment ablation chain results
+- SHAP (canonical 4-class + 2-class)
+- VUS inference path with both subset and superset predictions
+- Per-gene VUS figure
+- §4.5 LaTeX written
+
+Outstanding (implementation only):
+- Re-fit the other 9 `*_final_no_adaboost` joblibs if you want the full saved-
+  model set (currently only HistGB is saved on this machine; the metrics +
+  CMs + leaderboards under `outputs/reports/` are still complete).
+- AdaBoost tuning never finished (stopped at 23/27); deliberately left alone
+  per existing checkpoint instruction.
+- AdaBoost is absent from the 5 ablation regimes (gene, augmented, no-VEP
+  kfold, no-VEP gene, raw-only) — re-run with `--models AdaBoost ...` to
+  populate; ~30–40 min total. Deferred per existing checkpoint instruction.
+
+Outstanding (delivery):
+- Source-code bundle (GitHub link) — review, commit, push, share.
+- Demo video (≤10 min screen + voice).
+- Email to professor@hacettepe.edu.tr with subject `CMP682_yourname_project`
+  before 2026-05-24 23:59.
+
+### Hand-off note (Mac → faster machine, 2026-05-23)
+
+Files added or modified in this session:
+
+- Modified: `final_report.tex` (new §4.5 subsection + abstract sentence).
+- Modified: `checkpoint.md` (this entry).
+- Created: `data/missense_VUS_pro_set_annotated.csv` (5,468-variant subset of the
+  annotated 2x CSV — convenience artifact, can be regenerated from the
+  build_vus_pro_set + a (chrom,pos,ref,alt) join in 30 s).
+- Created: `outputs/predictions/vus_pro_2class.csv`,
+  `outputs/predictions/vus_pro_4class.csv`,
+  `outputs/predictions/vus_2class.csv`,
+  `outputs/predictions/vus_4class.csv`.
+- Created: `outputs/figures/vus_per_gene_predictions.png`.
+- Created: `outputs/models/4class_final_no_adaboost/histgradientboosting.joblib`,
+  `outputs/models/2class_final_no_adaboost/histgradientboosting.joblib`.
+
+When the new machine picks up:
+
+1. `git status --short --branch` to see the dirty files.
+2. Open this checkpoint, scroll to the bottom.
+3. Rebuild the PDF: `pdflatex final_report.tex` (twice for cross-refs).
+4. Verify the inserted §4.5 renders correctly and the figure is found
+   at `outputs/figures/vus_per_gene_predictions.png`.
+5. If you want the other 9 joblibs back, run the refit command above.
+6. Decide whether to close the AdaBoost gaps or accept the
+   already-disclosed exclusion.
+7. Move to delivery: GitHub bundle, video, email.

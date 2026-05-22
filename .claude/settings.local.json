@@ -5,7 +5,9 @@
       "Bash(where python *)",
       "Bash(where python3 *)",
       "Bash(py --version)",
-      "Bash(py -c \"import sys; print\\(sys.version\\)\")"
+      "Bash(py -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(env)",
+      "Bash(git -C \"C:/Users/Doruk-Topcu/Documents/Projects/MissVarPath-Missense-Detection-2\" status --short --branch)"
     ]
   }
 }
