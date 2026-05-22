@@ -437,6 +437,93 @@ Recommended report structure:
 - README and project_progress_report updated to point at the new final state.
 
 Pending for delivery (per [project_delivery_instructions.md](project_delivery_instructions.md), due 2026-05-24 23:59):
-- compile `final_report.tex` → PDF;
-- prepare source-code bundle (zip or repo link);
+- ~~compile `final_report.tex` → PDF~~ (done — see next entry);
+- prepare source-code bundle (zip or repo link) — user opted for GitHub link;
 - record demo video (≤10 minutes, screen + voice).
+
+### 2026-05-19 — PDF compiled + AdaBoost gap identified
+
+- Installed MiKTeX 25.12 via `winget install MiKTeX.MiKTeX`. `pdflatex` now at
+  `C:\Users\Doruk-Topcu\AppData\Local\Programs\MiKTeX\miktex\bin\x64\pdflatex.exe`.
+- Fixed one typo in [final_report.tex](final_report.tex) (`\end{enumerate>` → `\end{enumerate}`).
+- Compiled `final_report.tex` → [final_report.pdf](final_report.pdf) (15 pages,
+  515 KB, exit 0, no undefined refs). Two pdflatex passes for cross-refs.
+
+**Known gap (to handle later): AdaBoost was not evaluated under the ablation regimes.**
+
+- Baseline AdaBoost ran cleanly: 4-class 0.6983 (7th), 2-class 0.9870 (tied #1 with HistGB). Reported in canonical tables.
+- `outputs/tuning/4class/adaboost/best_config.json` does **not** exist — the 23/27 partial combos from the previous machine were not consolidated. No tuned-AdaBoost number anywhere in the report.
+- AdaBoost is absent from every ablation in `run_full_chain.ps1`: gene-CV, augmented, no-VEP (kfold + gene), raw-only, no-DITTO. So the cross-regime story (e.g. "gene-CV costs HistGB 0.027 macro-F1") has no AdaBoost comparator.
+- The report discloses the exclusion in §3.5 (Hyperparameter tuning protocol), §4.4 (Final tuned suite), and §6.3 (Limitations) — so it is defensible as written, but a strict reviewer can fairly say AdaBoost was not really evaluated.
+
+**Recommended fix when picking this up later** (option chosen by user, deferred):
+- Re-run the 5 most informative chain experiments with AdaBoost added to the
+  model list: gene-CV 4-class + 2-class, no-VEP gene 4-class, raw-only 4-class
+  + 2-class. ~30–40 min compute. Add AdaBoost as a reference row in the
+  cross-regime tables in §4. Optionally also finish the 4 missing tuning
+  combos to populate `outputs/tuning/4class/adaboost/best_config.json`.
+
+Pending for delivery (unchanged):
+- prepare source-code bundle (GitHub link) — review diff, commit, push;
+- record demo video (≤10 minutes, screen + voice);
+- email to professor@hacettepe.edu.tr with subject `CMP682_yourname_project`
+  before 2026-05-24 23:59.
+
+### 2026-05-19 — VUS gap identified + inference path prepared
+
+**Gap.** The curated dataset (`data/missense_dataset.csv`) was pre-balanced to
+21,872 variants across exactly four classes (Benign / Likely benign /
+Likely pathogenic / Pathogenic, 5,468 each) — **zero VUS (Uncertain
+significance) rows**. The §4.4 "No-VEP / VUS scenario" subsection in
+[final_report.tex](final_report.tex) is a *simulation* of the VUS deployment
+case (drops every learned-predictor column), not real VUS prediction. The
+introduction and clinical-implications framing both lean on VUS prioritisation
+but no VUS variant was ever scored by the trained model.
+
+**User is sourcing VUS data themselves** — DONE (raw ClinVar TSVs dropped at
+project root: `VUS_missense_expert.txt` 2,886 rows ≈ 3-star,
+`missense_VUS.txt` 279,693 rows = 2-star + 3-star).
+
+**Curated VUS pro-set built.** [scripts/build_vus_pro_set.py](scripts/build_vus_pro_set.py)
+reads both ClinVar TSVs, filters to SNVs (missense ⇒ SNV), parses Canonical
+SPDI for ref/alt, includes all 3-star rows plus a random 2-star sample, and
+writes OpenCRAVAT-ready TSVs to:
+- `data/missense_VUS_pro_set.txt` (5,468 = same as other classes; 2,861 expert + 2,607 sampled 2-star)
+- `data/missense_VUS_pro_set_2x.txt` (10,936 = twice the other classes; 2,861 expert + 8,075 sampled 2-star)
+
+Both in OpenCRAVAT TSV format: `chr<n>\t<pos>\t+\t<ref>\t<alt>\ts0`.
+
+**Inference path is ready.** Added [scripts/predict_vus.py](scripts/predict_vus.py):
+loads any `.joblib` from `outputs/models/<task>_final_no_adaboost/`, takes a
+VUS CSV/TSV/parquet in the same OpenCRAVAT 777-column schema as the training
+CSV, applies the same column-pruning and tidy steps, imputes missing features
+with the **training-set medians** loaded from
+`outputs/preprocessing/missense_processed.parquet` (so VUS imputation is
+aligned with what the model saw at fit time), and writes per-variant
+predictions + probabilities + identifier columns.
+
+Smoke-tested on the first 100 rows of the training CSV (pretending they were
+VUS): 100 predictions out, identifier columns preserved, probabilities sum to
+1.0, predicted labels match the known ClinVar labels for the spot-checked rows
+(>0.999 probability on Benign / Likely-benign rows).
+
+**When the user delivers the VUS file:**
+1. Drop it at `data/vus_missense.csv` (or any path).
+2. Run:
+   ```
+   $PY -m scripts.predict_vus --input data/vus_missense.csv --task 2class \
+       --output outputs/predictions/vus_2class.csv
+   ```
+   Defaults pick the headline tuned HistGradientBoosting. Add `--task 4class`
+   for the four-class breakdown.
+3. Inspect the prediction-class distribution and add a results subsection to
+   [final_report.tex](final_report.tex) (after §4.4 or as a new §4.9), plus
+   a sentence in the abstract / conclusion claiming the real VUS deployment.
+4. Optionally copy a small slice of the predictions table into the LaTeX as
+   a table or figure.
+
+**Caveat to flag in the report once we run this.** Without ground-truth labels
+on VUS, the only quality-check we have is (a) the *distribution* of
+predictions and (b) consistency with other published predictors on the same
+variants. Don't claim accuracy numbers — describe what the model thinks, not
+how often it is right.
