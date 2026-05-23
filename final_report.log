@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.19)  23 MAY 2026 13:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.19)  24 MAY 2026 02:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -586,7 +586,7 @@ ing the 4-class head's pre-dic-tions to \OMS/cmsy/m/n/10.95 f\OT1/cmr/m/n/10.95
  []
 
 [7]
-<outputs/figures/vus_per_gene_predictions.png, id=253, 643.203pt x 575.06271pt>
+<outputs/figures/vus_per_gene_predictions.png, id=257, 643.203pt x 575.06271pt>
 
 File: outputs/figures/vus_per_gene_predictions.png Graphic file (type png)
 <use outputs/figures/vus_per_gene_predictions.png>
@@ -627,13 +627,13 @@ Overfull \hbox (8.07466pt too wide) in paragraph at lines 689--705
  [][] 
  []
 
-<final_report/figures/histgb_4class_cm.png, id=285, 346.896pt x 289.08pt>
+<final_report/figures/histgb_4class_cm.png, id=289, 346.896pt x 289.08pt>
 File: final_report/figures/histgb_4class_cm.png Graphic file (type png)
 <use final_report/figures/histgb_4class_cm.png>
 Package pdftex.def Info: final_report/figures/histgb_4class_cm.png  used on inp
 ut line 711.
 (pdftex.def)             Requested size: 217.42265pt x 181.18622pt.
-<final_report/figures/histgb_2class_cm.png, id=286, 289.08pt x 252.945pt>
+<final_report/figures/histgb_2class_cm.png, id=290, 289.08pt x 252.945pt>
 File: final_report/figures/histgb_2class_cm.png Graphic file (type png)
 <use final_report/figures/histgb_2class_cm.png>
 Package pdftex.def Info: final_report/figures/histgb_2class_cm.png  used on inp
@@ -740,13 +740,13 @@ urce:
  []
 
 [17]
-<final_report/figures/shap_bar_4class.png, id=370, 578.16pt x 650.43pt>
+<final_report/figures/shap_bar_4class.png, id=374, 578.16pt x 650.43pt>
 File: final_report/figures/shap_bar_4class.png Graphic file (type png)
 <use final_report/figures/shap_bar_4class.png>
 Package pdftex.def Info: final_report/figures/shap_bar_4class.png  used on inpu
 t line 1265.
 (pdftex.def)             Requested size: 217.42265pt x 244.59546pt.
-<final_report/figures/shap_bar_2class.png, id=371, 578.16pt x 650.43pt>
+<final_report/figures/shap_bar_2class.png, id=375, 578.16pt x 650.43pt>
 File: final_report/figures/shap_bar_2class.png Graphic file (type png)
 <use final_report/figures/shap_bar_2class.png>
 Package pdftex.def Info: final_report/figures/shap_bar_2class.png  used on inpu
@@ -767,7 +767,20 @@ Overfull \hbox (17.48665pt too wide) in paragraph at lines 1297--1302
 ic''
  []
 
-[19] [20] [21] [22] (final_report.aux)
+[19] [20]
+Overfull \hbox (5.31013pt too wide) in paragraph at lines 1437--1446
+[]\OT1/cmr/bx/n/10.95 True homology-based BLAST fea-tures. \OT1/cmr/m/n/10.95 R
+e-place the 51bp DNA-flank label-aware BLAST
+ []
+
+
+Overfull \hbox (13.42108pt too wide) in paragraph at lines 1453--1460
+[]\OT1/cmr/bx/n/10.95 Probability cal-i-bra-tion. \OT1/cmr/m/n/10.95 Ap-ply Pla
+tt scal-ing or iso-tonic re-gres-sion to \OT1/cmtt/m/n/10.95 HistGradientBoosti
+ng\OT1/cmr/m/n/10.95 ,
+ []
+
+[21] [22] [23] (final_report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -777,16 +790,16 @@ L3 programming layer <2025-12-24>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `final_report.out' has not changed.
-(rerunfilecheck)             Checksum: 362B231AA85BA5853E2FCE7B39D3850F;6489.
+(rerunfilecheck)             Checksum: 427B838AEF976965037C46859AC9D30E;6635.
  ) 
 Here is how much of TeX's memory you used:
- 14032 strings out of 467871
- 221568 string characters out of 5415472
- 727795 words of memory out of 5000000
- 42605 multiletter control sequences out of 15000+600000
+ 14036 strings out of 467871
+ 221617 string characters out of 5415472
+ 751843 words of memory out of 5000000
+ 42607 multiletter control sequences out of 15000+600000
  638498 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,79p,696b,1973s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,79p,696b,1979s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Doruk-Topcu\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
 0\tcrm1095.pk> <C:\Users\Doruk-Topcu\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
 pen/ec/dpi600\tcrm1000.pk><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/f
@@ -806,9 +819,9 @@ blic/amsfonts/cm/cmsy7.pfb><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/
 fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Doruk-Topcu/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Doruk-Topcu/A
 ppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on final_report.pdf (22 pages, 677048 bytes).
+Output written on final_report.pdf (23 pages, 681813 bytes).
 PDF statistics:
- 557 PDF objects out of 1000 (max. 8388607)
- 157 named destinations out of 1000 (max. 500000)
- 314 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 566 PDF objects out of 1000 (max. 8388607)
+ 159 named destinations out of 1000 (max. 500000)
+ 322 words of extra memory for PDF output out of 10000 (max. 10000000)
 

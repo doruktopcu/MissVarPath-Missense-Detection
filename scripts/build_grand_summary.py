@@ -38,14 +38,17 @@ MODELS = Path("outputs/models")
 
 
 def _parquet_for(setting_dir: str) -> Path:
-    """Pick parquet by setting name."""
+    """Pick parquet by setting name.
+
+    `4class_no_ditto` deliberately does NOT match the augmented condition even
+    though both contain `_no_`; the no-DITTO ablation was run on the base
+    parquet (only `--drop-prefixes ditto_`, no `--variant augmented`).
+    """
     if setting_dir.startswith("3class"):
         return VUS_3CLASS_PARQUET
     if setting_dir.startswith("5class"):
         return VUS_5CLASS_PARQUET
-    if "augmented" in setting_dir or "no_ditto" in setting_dir or setting_dir in {
-        "4class_augmented_raw_only", "2class_augmented_raw_only",
-    }:
+    if "augmented" in setting_dir:
         return AUGMENTED_PARQUET
     return PROCESSED_PARQUET
 

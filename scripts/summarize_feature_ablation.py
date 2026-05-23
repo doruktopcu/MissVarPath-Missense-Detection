@@ -53,36 +53,60 @@ def _count_dropped(task: str, group: str) -> int:
 
 
 def main() -> None:
-    rows = []
-    missing = []
-    for task in TASKS:
-        base = _load_lb(BASELINE_DIRS[task])[["model", "holdout_macro_f1"]].rename(
-            columns={"holdout_macro_f1": "baseline_f1"})
-        for group, _prefixes in GROUPS:
-            ab_dir = f"{task}_ablate_{group}"
-            ab_path = Path(f"outputs/reports/{ab_dir}/leaderboard.csv")
-            if not ab_path.exists():
-                missing.append(f"{task}/{group}")
-                continue
-            ab = pd.read_csv(ab_path)[["model", "holdout_macro_f1"]].rename(
-                columns={"holdout_macro_f1": "ablated_f1"})
-            merged = base.merge(ab, on="model", how="inner")
-            merged["task"] = task
-            merged["group"] = group
-            merged["n_dropped"] = _count_dropped(task, group)
-            merged["delta"] = merged["baseline_f1"] - merged["ablated_f1"]
-            rows.append(merged[["task", "model", "group", "n_dropped",
-                                "baseline_f1", "ablated_f1", "delta"]])
-
-    if missing:
-        print(f"[summarize] missing leaderboards (skipped): {len(missing)}")
-        for m in missing[:10]:
-            print(f"  - {m}")
-
-    master = pd.concat(rows, ignore_index=True)
     master_path = OUT_DIR / "master.csv"
-    master.to_csv(master_path, index=False)
-    print(f"[summarize] wrote {master_path}  ({len(master)} rows)")
+
+    # If a master.csv was uploaded (the Colab "skip the 48-run sweep" path),
+    # use it directly instead of trying to rebuild from per-group leaderboards
+    # that don't exist on disk. Otherwise rebuild as before.
+    if master_path.exists():
+        master = pd.read_csv(master_path)
+        if len(master) == 0:
+            print(f"[summarize] {master_path} exists but is empty; will try to rebuild.")
+        else:
+            print(f"[summarize] using existing {master_path}  ({len(master)} rows) — "
+                  f"skipping the 48-leaderboard rebuild.")
+
+    if not master_path.exists() or len(master) == 0:
+        rows = []
+        missing = []
+        for task in TASKS:
+            base_dir = BASELINE_DIRS[task]
+            base_lb = Path(f"outputs/reports/{base_dir}/leaderboard.csv")
+            if not base_lb.exists():
+                print(f"[summarize] baseline leaderboard missing for {task}: {base_lb} — skipping task")
+                continue
+            base = _load_lb(base_dir)[["model", "holdout_macro_f1"]].rename(
+                columns={"holdout_macro_f1": "baseline_f1"})
+            for group, _prefixes in GROUPS:
+                ab_dir = f"{task}_ablate_{group}"
+                ab_path = Path(f"outputs/reports/{ab_dir}/leaderboard.csv")
+                if not ab_path.exists():
+                    missing.append(f"{task}/{group}")
+                    continue
+                ab = pd.read_csv(ab_path)[["model", "holdout_macro_f1"]].rename(
+                    columns={"holdout_macro_f1": "ablated_f1"})
+                merged = base.merge(ab, on="model", how="inner")
+                merged["task"] = task
+                merged["group"] = group
+                merged["n_dropped"] = _count_dropped(task, group)
+                merged["delta"] = merged["baseline_f1"] - merged["ablated_f1"]
+                rows.append(merged[["task", "model", "group", "n_dropped",
+                                    "baseline_f1", "ablated_f1", "delta"]])
+
+        if missing:
+            print(f"[summarize] missing leaderboards (skipped): {len(missing)}")
+            for m in missing[:10]:
+                print(f"  - {m}")
+        if not rows:
+            print("[summarize] No per-group leaderboards found and no usable "
+                  "master.csv to read. Either run `scripts.run_feature_ablation` "
+                  "first to generate the 48 leaderboards, or upload a precomputed "
+                  "master.csv to outputs/reports/feature_ablation/. Skipping.")
+            return
+
+        master = pd.concat(rows, ignore_index=True)
+        master.to_csv(master_path, index=False)
+        print(f"[summarize] wrote {master_path}  ({len(master)} rows)")
 
     # Per-task wide pivot: rows=group, cols=model, values=delta
     for task in TASKS:

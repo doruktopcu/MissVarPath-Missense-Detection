@@ -1420,6 +1420,79 @@ reading:
           well-calibrated risk scores without an additional calibration step.
 \end{itemize}
 
+\subsection{Future directions}
+\label{sec:future}
+
+Several extensions follow naturally from the findings above and from the
+limitations just listed:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Cross-database validation.} Replicate the headline tuned
+          and Lean B numbers on an independent labelled variant corpus
+          (HGMD professional, gnomAD pathogenicity-classified subsets, or
+          a recent ClinVar snapshot held out by submission date). This is
+          the most important step before claiming clinical generalisation
+          — the single-corpus result is honest but unfalsifiable on its
+          own.
+    \item \textbf{True homology-based BLAST features.} Replace the
+          51\,bp DNA-flank label-aware BLAST proxy with a proper
+          protein-level (\texttt{blastp}) search against a UniRef50/90
+          reference database, with the variant substitution applied to
+          the amino-acid window and tighter cutoffs (e.g.\ $e \le 10^{-3}$,
+          $\text{pident} \ge 90\%$). This would let cross-gene paralog
+          hits contribute and would test whether the augmented-variant
+          lift survives when same-gene proximity is removed by
+          construction.
+    \item \textbf{Finish the AdaBoost tuning grid.} The 23/27 partial
+          grid that was halted for compute budget should be completed
+          and a tuned-AdaBoost row added to the canonical leaderboard
+          and the ablation tables. The current AdaBoost numbers reflect
+          the baseline 200-stump configuration; a properly tuned
+          AdaBoost may shift its tied-best position on the 2-class task
+          and is a fairer comparator for the ablation regimes.
+    \item \textbf{Probability calibration.} Apply Platt scaling or
+          isotonic regression to \texttt{HistGradientBoosting},
+          \texttt{LinearSVC}, and \texttt{RidgeClassifier} so the raw
+          \texttt{predict\_proba} outputs are usable as risk scores in a
+          downstream clinical-decision pipeline. The ROC-AUC numbers
+          are honest as-is, but calibrated probabilities would be
+          required for any threshold-based deployment.
+    \item \textbf{Stratify the VUS deployment by review status and gene
+          family.} The current $5{,}468$-row pro-set mixes 3-star
+          (expert-reviewed) and 2-star (multi-submitter no-conflict)
+          variants. Splitting predictions by review status and by gene
+          functional class (oncogenes, tumour suppressors, channelopathy,
+          metabolic) would surface whether the model's per-gene priors
+          generalise outside the heavily-curated Mendelian-disease genes
+          (\texttt{GCK}, \texttt{PAH}, \texttt{MYH7}) that dominate the
+          pro-set.
+    \item \textbf{Gene-stratified VUS-as-class.} The VUS-as-class study
+          (\S\ref{sec:vus-class}) used the canonical k-fold split. Re-run
+          it under gene-stratified CV to test whether ``VUS is one of the
+          cleanest classes to recognise'' survives when no gene appears
+          in both train and test folds. If yes, the model is genuinely
+          learning a feature signature of uncertain variants; if no, it
+          is mostly memorising per-gene patterns and the finding should
+          be re-stated.
+    \item \textbf{Lean B as the deployment default.} Lean B is within
+          $0.012$ macro-F1 of the full-feature baseline on every task
+          and saves $45\%$ of the schema. For a clinical pipeline where
+          annotation cost matters (some predictor APIs are rate-limited
+          or paid), Lean B is a better operating point than the
+          full-feature baseline. The follow-up is to retrain Lean B
+          under the gene-stratified split and under the no-VEP regime to
+          confirm it is competitive in those harder settings too.
+    \item \textbf{Variant-level error analysis.} The residual
+          $\text{Pathogenic} \leftrightarrow \text{Likely-pathogenic}$
+          confusion (F1 $\approx 0.62$--$0.65$ in the 5-class study)
+          is the single biggest remaining error source. Manual review
+          of the most-confidently-misclassified variants would surface
+          whether the boundary is genuinely fuzzy in ClinVar (curator
+          disagreement) or whether a specific feature pattern explains
+          the model's mistakes — both have practical implications for
+          how the deployed scores should be presented to a clinician.
+\end{itemize}
+
 \section{Conclusion}
 
 We benchmarked an 11-model fast-baseline suite for missense pathogenicity on

@@ -103,7 +103,12 @@ def _eval_task(task: str, waste_groups: list[str]) -> list[dict]:
 
 def main() -> None:
     if not WASTE_FILE.exists():
-        raise SystemExit(f"{WASTE_FILE} not found — run scripts.summarize_feature_ablation first.")
+        # Soft-skip: print clearly and return rather than SystemExit so the
+        # subprocess.run() in the Colab notebook surfaces the message via stdout.
+        print(f"[per-feature] {WASTE_FILE} not found — run "
+              f"`scripts.summarize_feature_ablation` first to produce it. "
+              f"Skipping Phase B.")
+        return
     waste = [g for g in WASTE_FILE.read_text().splitlines() if g.strip()]
     if not waste:
         print("[per-feature] No waste groups flagged by Phase A — nothing to drill in.")
