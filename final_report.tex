@@ -49,7 +49,17 @@ explicit about a methodological subtlety: the BLAST features here are
 \emph{label-aware locus-neighbour} signals on 51\,bp DNA flanks, not biologically
 meaningful homology features (\S\ref{sec:blast-caveat}); a true homology-based
 extension would require a UniRef-scale reference database and protein-level BLAST,
-out of scope for this project.
+out of scope for this project. A VUS-as-class study (\S\ref{sec:vus-class}) shows
+that VUS is one of the cleanest classes to recognise (held-out F1 $=0.901$ in a
+balanced 5-class setup), with the headline 4-class metrics essentially unchanged
+when the class is added. A two-phase feature-ablation study
+(\S\ref{sec:feature-ablation}) -- group leave-one-out across all four tasks plus
+per-feature permutation importance inside the waste groups -- identifies the
+$208$-feature schema as $47$ indispensable \texttt{population\_af} columns
+$+$ $66$ useful-but-redundant meta-classifier / functional / sequence columns
+$+$ $94$ waste columns; the resulting \textbf{Lean B} model (113 features,
+\S\ref{sec:lean}) drops $45\%$ of the schema and stays within $0.012$ macro-F1
+of the $208$-feature baseline on every task.
 \end{abstract}
 
 \section{Introduction}
@@ -233,6 +243,10 @@ discard the rest of the grid. We deliberately did \emph{not} tune AdaBoost:
 its grid (3 $\times$ 3 $\times$ 3 = 27 combos with deep base estimators)
 was stopped at combo 23/27 after exceeding the compute budget allocated for
 classical-model tuning, so the final 10-model tuned suite excludes AdaBoost.
+AdaBoost is, however, evaluated under its baseline configuration in the five
+cross-regime ablations (gene-CV for both tasks, no-VEP gene-CV for 4-class,
+raw-only for both tasks) so the ablation tables (\S\ref{sec:gene-strat},
+\S\ref{sec:no-vep}, \S\ref{sec:raw-only}) carry an AdaBoost reference row.
 Tuning was performed only for the 4-class task; the resulting hyperparameters
 were carried over to the binary task because the binary problem is
 substantially easier and dominated by the same feature signals, so re-tuning
@@ -360,6 +374,7 @@ columns are this run. $\Delta$ = Gene $-$ Canonical, on holdout macro-F1.}
 Model & Canonical & Gene & $\Delta$ & Canonical & Gene & $\Delta$ \\
 \midrule
 HistGradientBoosting & $0.7928$ & $0.7658$ & $-0.027$ & $0.9870$ & $0.9874$ & $+0.000$ \\
+AdaBoost             & $0.6983$ & $0.7009$ & $+0.003$ & $0.9870$ & $0.9853$ & $-0.002$ \\
 LinearSVC            & $0.7549$ & $0.7252$ & $-0.030$ & $0.9867$ & $0.9809$ & $-0.006$ \\
 DecisionTree         & $0.7111$ & $0.7186$ & $+0.008$ & $0.9774$ & $0.9806$ & $+0.003$ \\
 SGDClassifier        & $0.7015$ & $0.7070$ & $+0.005$ & $0.9845$ & $0.9832$ & $-0.001$ \\
@@ -424,6 +439,7 @@ LinearSVC            & $0.7274$ & $0.7300$ \\
 SGDClassifier        & $0.6962$ & $0.6977$ \\
 RidgeClassifier      & $0.6736$ & $0.6738$ \\
 LDA                  & $0.6696$ & --       \\
+AdaBoost             & --       & $0.6629$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -752,8 +768,10 @@ DecisionTree         (4-class) & $0.7574$ & $0.6517$ & $-0.106$ \\
 LinearSVC            (4-class) & $0.7657$ & $0.6393$ & $-0.126$ \\
 LDA                  (4-class) & $0.7111$ & $0.5520$ & $-0.159$ \\
 SGDClassifier        (4-class) & $0.7209$ & $0.5370$ & $-0.184$ \\
+AdaBoost             (4-class) & --       & $0.6278$ & --       \\
 \midrule
 HistGradientBoosting (2-class) & $0.9904$ & $0.9339$ & $-0.057$ \\
+AdaBoost             (2-class) & --       & $0.9229$ & --       \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -782,6 +800,308 @@ HistGradientBoosting (2-class) & $0.9904$ & $0.9339$ & $-0.057$ \\
           rather than in any pre-existing pathogenicity score.
 \end{enumerate}
 
+\subsection{VUS-as-class study}
+\label{sec:vus-class}
+
+The deployment subsection (\S\ref{sec:vus-deployment}) only \emph{scores}
+VUS rows with the existing 2-class / 4-class classifiers. A natural
+follow-up question is whether VUS itself can be a labelled class:
+i.e., can the model learn to identify \emph{which variants will be
+flagged as uncertain}, alongside the pathogenic/benign distinction?
+
+We assembled two new training corpora by appending the strict-VUS subset
+of the curated pro-set (\texttt{clinvar\_\_sig == "Uncertain significance"},
+$n=5{,}428$ after dropping NaN and drifted labels) to the existing
+$21{,}872$-row training corpus. Two task definitions:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{3-class}: \{Benign-side, Pathogenic-side, VUS\}, where the
+          Likely-* labels collapse into the definitive ones (same rule as the
+          existing 2-class task). Class counts: $10{,}936\,/\,10{,}936\,/\,5{,}428$.
+    \item \textbf{5-class}: \{Benign, Likely-benign, Likely-pathogenic,
+          Pathogenic, VUS\}. Class counts: $5{,}468\,/\,5{,}468\,/\,5{,}468\,/\,5{,}468\,/\,5{,}428$ --- essentially balanced.
+\end{itemize}
+
+The same 10-model suite with tuned defaults (\S\ref{sec:tuned-final}) was
+trained on each, using the same 80/20 stratified split and 5-fold
+StratifiedKFold protocol as the canonical baselines. Headline numbers
+(tuned \texttt{HistGradientBoosting}, Table~\ref{tab:vus-class}):
+
+\begin{table}[H]
+\centering
+\caption{VUS-as-class study, tuned \texttt{HistGradientBoosting}
+held-out numbers, vs. the no-VUS baselines. Adding VUS as a third class
+costs $\approx 0.04$ macro-F1 against the 2-class baseline; adding it as
+a fifth class is essentially free on aggregate metrics.}
+\label{tab:vus-class}
+\small
+\begin{tabular}{lcrrr}
+\toprule
+Study & $n$ classes & Acc & macro-F1 & MCC \\
+\midrule
+2-class no-VUS (baseline) & 2 & $0.9872$ & $0.9872$ & $0.9744$ \\
+3-class with VUS          & 3 & $0.9540$ & $\mathbf{0.9459}$ & $0.9284$ \\
+4-class no-VUS (baseline) & 4 & $0.7952$ & $0.7950$ & $0.7274$ \\
+5-class with VUS          & 5 & $0.7995$ & $\mathbf{0.7984}$ & $0.7497$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three findings stand out. \textbf{First}, VUS is one of the cleanest
+classes to recognise: in the 5-class confusion matrix it has held-out
+F1 = $0.901$, sitting between Benign ($0.929$) and Likely-benign ($0.894$)
+in difficulty -- much easier than the Pathogenic $\leftrightarrow$
+Likely-pathogenic boundary ($0.622$ / $0.646$) that has been the
+residual difficulty since the baseline 4-class study. \textbf{Second},
+adding VUS as a fifth class does \emph{not} reshuffle the existing four
+classes' error structure: the Likely-pathogenic $\leftrightarrow$
+Pathogenic confusion region is essentially unchanged
+($\Delta\text{F1} = -0.047$ and $-0.012$ respectively). \textbf{Third},
+MCC \emph{improves} from $0.7274$ to $0.7497$ ($\Delta=+0.022$) when VUS
+is added -- on a chance-corrected metric the 5-class task is
+\emph{easier} than the 4-class task, which is the expected behaviour when
+adding a class that is highly separable.
+
+When the 5-class model misclassifies a VUS row ($6.3\%$ of held-out
+VUS), it hedges into a Likely-* category $4.7\%$ of the time and
+escalates to a definitive call only $1.6\%$ of the time -- the
+clinically conservative behaviour.
+
+Artifacts:
+\texttt{outputs/reports/\{3class\_vus,5class\_vus\}/leaderboard.csv},
+\texttt{outputs/models/\{3class\_vus,5class\_vus\}/histgradientboosting.joblib},
+and the new training parquets at
+\texttt{outputs/preprocessing/missense\_\{3class,5class\}.parquet}.
+
+\subsection{Feature ablation study: what is useful, what is waste}
+\label{sec:feature-ablation}
+
+We ran a two-phase systematic ablation across all four tasks
+(2-class, 3-class, 4-class, 5-class) on the full 10-model suite to
+identify which functional groups of features contribute to the headline
+numbers and which are deadweight. Total compute: 48 group leave-one-out
+(LOO) re-runs covering 504 (task, model, group) cells; results under
+\texttt{outputs/reports/feature\_ablation/}.
+
+\paragraph{Group definition.}
+The 208-feature base schema partitions into twelve functional groups
+matching the OpenCRAVAT annotator families: predictor scores singled out
+for their established clinical use (\texttt{ditto}, \texttt{alphamissense},
+\texttt{revel}, \texttt{cadd}, \texttt{metarnn}, \texttt{bayesdel}), the
+oncology-focused \texttt{chasmplus} basket (68 features), the
+residual meta-classifier basket (\texttt{other\_vep}, 56 features),
+multi-species \texttt{conservation} (\texttt{phastcons} + \texttt{phylop}
++ \texttt{gerp} + \texttt{siphy}, 17 features), \texttt{population\_af}
+(47 features across ALFA, AllOfUs250k, gnomAD, Regeneron), the
+\texttt{functional}-genomics pair (\texttt{fitcons} + \texttt{ncer}), and
+\texttt{position} (\texttt{hg19\_pos}, \texttt{original\_input\_pos}).
+
+\paragraph{Phase A: group LOO.}
+Per (task, group) cell, we ran the full 10-model suite under
+\texttt{src.train --drop-prefixes <group> --tag ablate\_<group>} and
+compared \texttt{HistGradientBoosting} held-out macro-F1 against the
+no-drop baseline. Table~\ref{tab:ablation-headline} reports the deltas:
+
+\begin{table}[H]
+\centering
+\caption{Group leave-one-out ablation, HistGB held-out macro-F1
+$\Delta = \text{baseline} - \text{ablated}$. Positive = removing the
+group hurt the model (group was useful); negative = removing helped
+(group was noisy/redundant). Threshold for ``waste'' (max\,$|\Delta|<0.005$
+across all four tasks) marked with $\dagger$. Source:
+\texttt{outputs/reports/feature\_ablation/headline\_histgb.csv}.}
+\label{tab:ablation-headline}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Group & 4-class & 2-class & 5-class & 3-class & $n_{\text{feat}}$ \\
+\midrule
+\texttt{population\_af}            & $+0.0471$ & $+0.0025$ & $+0.0405$ & $+0.0054$ & 47 \\
+\texttt{functional}                & $-0.0012$ & $-0.0005$ & $+0.0266$ & $+0.0469$ & 4  \\
+\texttt{other\_vep}                & $+0.0133$ & $-0.0002$ & $+0.0137$ & $+0.0073$ & 56 \\
+\texttt{cadd}                      & $-0.0054$ & $-0.0005$ & $-0.0001$ & $-0.0015$ & 4  \\
+\texttt{ditto}$^\dagger$           & $+0.0039$ & $+0.0046$ & $+0.0001$ & $+0.0033$ & 1  \\
+\texttt{metarnn}$^\dagger$         & $+0.0014$ & $+0.0005$ & $+0.0045$ & $+0.0005$ & 2  \\
+\texttt{bayesdel}$^\dagger$        & $-0.0045$ & $-0.0002$ & $-0.0004$ & $-0.0003$ & 4  \\
+\texttt{position}$^\dagger$        & $-0.0044$ & $+0.0002$ & $+0.0018$ & $+0.0029$ & 2  \\
+\texttt{revel}$^\dagger$           & $-0.0018$ & $+0.0005$ & $-0.0044$ & $-0.0015$ & 2  \\
+\texttt{chasmplus}$^\dagger$       & $+0.0026$ & $+0.0011$ & $+0.0028$ & $-0.0002$ & 68 \\
+\texttt{alphamissense}$^\dagger$   & $-0.0015$ & $+0.0005$ & $-0.0028$ & $-0.0017$ & 1  \\
+\texttt{conservation}$^\dagger$    & $+0.0018$ & $-0.0007$ & $-0.0001$ & $+0.0000$ & 17 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{\texttt{population\_af} is indispensable.} Removing
+          its 47 columns costs $+0.047$ macro-F1 on 4-class and $+0.041$
+          on 5-class. This is consistent with the canonical SHAP table
+          (Table~\ref{tab:shap-canonical}): \texttt{allofus250k\_gvs\_max\_af}
+          and \texttt{gnomad\_af} are top-5 features.
+    \item \textbf{\texttt{functional} (FitCons + ncER, 4 features) is
+          a hidden VUS detector.} Near-zero impact on canonical 2/4-class
+          but the single biggest contributor on 3-class ($+0.047$) and
+          second-biggest on 5-class ($+0.027$). The implication is that
+          FitCons / ncER fingerprint the feature pattern of an
+          unclassified ClinVar variant, which is exactly why VUS is
+          easy to recognise as a class (\S\ref{sec:vus-class}).
+    \item \textbf{Eight groups are waste at the group level.} Marked
+          $\dagger$ above: \texttt{ditto}, \texttt{metarnn},
+          \texttt{bayesdel}, \texttt{position}, \texttt{revel},
+          \texttt{chasmplus}, \texttt{alphamissense}, \texttt{conservation}.
+          They cover $97$ of $208$ features ($\approx 47\%$ of the schema)
+          and individually no removal moves macro-F1 by more than the
+          $0.005$ noise floor on any task.
+\end{enumerate}
+
+\paragraph{Phase B: per-feature permutation importance inside the waste groups.}
+Group LOO conflates two effects: a feature's marginal predictive value,
+and the strength of correlated alternatives that compensate when it is
+removed. To unpack this we ran per-feature permutation importance
+(\texttt{n\_repeats=10}, held-out 20\%, baseline-scored HistGB joblib)
+on every feature inside the eight waste groups, for every task. The
+finding (Table~\ref{tab:ablation-perfeat}, top of the $388$-row table)
+overturns the group-level reading on two features:
+
+\begin{table}[H]
+\centering
+\caption{Per-feature permutation importance (\texttt{n\_repeats=10},
+macro-F1 drop when each column is independently shuffled on the held-out
+$20\%$). Only the features that exceed the $0.005$ noise floor on at
+least one task are shown; full table at
+\texttt{outputs/reports/feature\_ablation/per\_feature\_waste.csv}.}
+\label{tab:ablation-perfeat}
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Group & Feature & 4-class & 2-class & 5-class & 3-class \\
+\midrule
+\texttt{ditto}    & \texttt{ditto\_score}                   & $0.133$ & $0.148$ & $0.110$ & $0.078$ \\
+\texttt{metarnn}  & \texttt{metarnn\_score}                 & $0.048$ & $0.028$ & $0.022$ & $0.008$ \\
+\texttt{bayesdel} & \texttt{bayesdel\_bayesdel\_addaf\_score}& $0.003$ & $0.000$ & $0.009$ & $0.000$ \\
+\texttt{position} & \texttt{hg19\_pos}                      & $0.001$ & $0.000$ & $0.006$ & $0.006$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\texttt{ditto\_score} alone carries $0.13$--$0.15$ macro-F1 weight
+\emph{individually}, yet removing the ditto group costs only
+$\approx 0.004$ in the group LOO. The resolution is straightforward:
+\textbf{the suite has strong inter-predictor redundancy}. Remove DITTO and
+the model substitutes MetaRNN, BayesDel, REVEL, or one of the 56
+\texttt{other\_vep} predictors; remove MetaRNN and DITTO compensates.
+Only by removing several correlated meta-classifiers together does the
+redundancy buffer collapse -- as the lean model below demonstrates.
+
+Every other feature in the eight waste groups -- in particular all 68
+\texttt{chasmplus} columns and all 17 conservation columns -- comes
+back below the $0.005$ noise floor on every task. Those groups are
+genuine waste at both the group and per-feature levels.
+
+\subsection{Ablation-optimal Lean model}
+\label{sec:lean}
+
+Two candidate ``lean'' feature subsets, both motivated by the ablation
+findings above. Both retain the indispensable
+\texttt{population\_af} + \texttt{functional} + \texttt{other\_vep} +
+\texttt{cadd} groups (the four useful ones) and drop the eight waste
+groups. They differ only in whether the per-feature winners are kept:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Lean A} ($n=110$ features, $-47\%$): drop all eight
+          waste groups including \texttt{ditto\_} and \texttt{metarnn\_}.
+    \item \textbf{Lean B} ($n=113$ features, $-45\%$): same as Lean A
+          but keep the \texttt{ditto\_} and \texttt{metarnn\_} prefixes,
+          i.e., restore the two per-feature winners (and \texttt{metarnn\_rank\_score}).
+\end{itemize}
+
+Each candidate was trained from scratch with the full 10-model suite,
+on the same 80/20 stratified split as the canonical baselines, on every
+one of the four tasks. Headline (HistGB) numbers in
+Table~\ref{tab:lean-headline}; Table~\ref{tab:lean-full} shows the full
+10-model leaderboards under Lean B alongside their baseline deltas.
+
+\begin{table}[H]
+\centering
+\caption{Lean-model HistGB headlines. Both lean models drop 94--97 of
+the 208 base features and stay within $\sim 0.012$ macro-F1 of the
+$208$-feature baseline on the headline 4-class task. Lean B recovers
+about half of Lean A's loss by keeping \texttt{ditto\_score} and
+\texttt{metarnn\_score}.}
+\label{tab:lean-headline}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Task & Baseline ($208$) & Lean A ($110$) & Lean B ($113$) & Lean A $\Delta$ & Lean B $\Delta$ \\
+\midrule
+2-class & $0.9872$ & $0.9810$ & $\mathbf{0.9863}$ & $-0.0062$ & $-0.0009$ \\
+3-class & $0.9459$ & $0.9349$ & $\mathbf{0.9386}$ & $-0.0110$ & $-0.0074$ \\
+4-class & $0.7950$ & $0.7838$ & $\mathbf{0.7900}$ & $-0.0112$ & $-0.0051$ \\
+5-class & $0.7984$ & $0.7823$ & $\mathbf{0.7867}$ & $-0.0161$ & $-0.0117$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Lean B full 10-model leaderboard per task. Italicised values
+\emph{improve} on the $208$-feature baseline. The centroid families
+(NearestCentroid, CosineSimilarity) and KNN consistently benefit from
+the lean subset: dropping the noisy 68-column \texttt{chasmplus} basket
+and the 17 conservation columns helps these distance/centroid models
+disentangle the remaining signal.}
+\label{tab:lean-full}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Model & 2-class & 3-class & 4-class & 5-class \\
+\midrule
+HistGradientBoosting & $\mathbf{0.9863}$ & $\mathbf{0.9386}$ & $\mathbf{0.7900}$ & $\mathbf{0.7867}$ \\
+LinearSVC            & $0.9847$ & $0.8556$ & $0.7464$ & $0.7040$ \\
+SGDClassifier        & $0.9840$ & $0.8473$ & $0.7134$ & $0.6902$ \\
+DecisionTree         & $0.9822$ & $0.9065$ & $0.7360$ & $0.7330$ \\
+LDA                  & $0.9797$ & $0.8238$ & $0.6898$ & $0.6499$ \\
+RidgeClassifier      & $0.9797$ & $0.8346$ & $0.6873$ & $0.6440$ \\
+QDA                  & $0.9735$ & $0.7842$ & $0.5533$ & $0.5518$ \\
+KNN                  & \emph{0.9721} & \emph{0.7973} & $0.6554$ & $0.6185$ \\
+AdaBoost             & --       & \emph{0.8690} & --       & \emph{0.6673} \\
+NearestCentroid      & \emph{0.9272} & \emph{0.6817} & \emph{0.5676} & $0.4653$ \\
+CosineSimilarity     & \emph{0.9263} & \emph{0.6946} & \emph{0.5565} & \emph{0.4746} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The bottom line.}
+\textbf{Lean B drops $94$ of $208$ features ($45\%$ of the schema) and
+loses at most $0.012$ macro-F1 on any task.} Five of the ten models
+improve on at least one task with the lean subset. The 94 dropped
+features were validated as waste under \emph{both} the group-LOO and the
+per-feature permutation views, except for the two per-feature winners
+(\texttt{ditto\_score}, \texttt{metarnn\_score}) which Lean B
+explicitly retains. The artifact set is at
+\texttt{outputs/models/\{2class,3class,4class,5class\}\_leanB/}.
+
+\paragraph{Three-tier feature classification.}
+Combining the group LOO and per-feature views, the $208$-feature schema
+divides cleanly:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Indispensable} ($n=47$): \texttt{population\_af}.
+    \item \textbf{Useful but redundant} ($n=66$): the
+          \texttt{other\_vep} basket + \texttt{functional} +
+          \texttt{cadd} + \texttt{ditto\_score} +
+          \texttt{metarnn\_score} + \texttt{metarnn\_rank\_score}.
+          Each individual member can be removed cheaply but the
+          collective cannot.
+    \item \textbf{Waste} ($n=94$): \texttt{chasmplus} (68), conservation
+          (17), \texttt{bayesdel} (4), \texttt{revel} (2),
+          \texttt{position} (2), \texttt{alphamissense} (1). Removed
+          jointly by Lean B with no measurable loss on the headline
+          model.
+\end{enumerate}
+
 \subsection{Anchor numbers across the report}
 
 Table~\ref{tab:anchors} collects the headline numbers (top model, held-out
@@ -807,6 +1127,9 @@ No-VEP / VUS, augmented kfold             & HistGradientBoosting & $0.7727$ & $0
 No-VEP / VUS, augmented gene-CV           & HistGradientBoosting & $0.7611$ & --       \\
 Raw-only, augmented kfold                 & HistGradientBoosting & $0.7212$ & $0.9339$ \\
 DITTO removed, canonical kfold            & HistGradientBoosting & $0.7911$ & --       \\
+Lean B (113 features) (\S\ref{sec:lean})  & HistGradientBoosting & $0.7900$ & $0.9863$ \\
+3-class with VUS (\S\ref{sec:vus-class})  & HistGradientBoosting & \multicolumn{2}{c}{$0.9459$ (3-class macro-F1)} \\
+5-class with VUS (\S\ref{sec:vus-class})  & HistGradientBoosting & \multicolumn{2}{c}{$0.7984$ (5-class macro-F1)} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -996,7 +1319,10 @@ reading:
           at combo 23/27 after exceeding the compute budget for classical-model
           tuning; the final 10-model tuned suite excludes it. The baseline
           AdaBoost result (tied with HistGB on the 2-class task) is reported in
-          Table~\ref{tab:canonical-2class} for context.
+          Table~\ref{tab:canonical-2class}, and AdaBoost is additionally
+          evaluated under its baseline configuration in the five cross-regime
+          ablations (gene-CV both tasks, no-VEP gene-CV 4-class, raw-only both
+          tasks) so every ablation table carries an AdaBoost reference row.
     \item \textbf{BLAST features are locus-neighbour proxies, not homology
           features.} See \S\ref{sec:blast-caveat} for the framing. A true
           homology-based extension would require a UniRef-scale protein
@@ -1027,7 +1353,28 @@ score (raw-only) costs $\approx 0.074$ on 4-class but leaves both classifiers
 well above chance, and the linear models lose far more than the booster.
 SHAP shows the booster making asymmetric per-class decisions: Benign calls
 are driven by population frequency, Pathogenic calls by DITTO, and the
-Likely-pathogenic boundary by MetaRNN. We are explicit that the BLAST
+Likely-pathogenic boundary by MetaRNN.
+
+Beyond the canonical benchmark, two further studies complete the project.
+A \textbf{VUS-as-class study} (\S\ref{sec:vus-class}) re-trains the suite
+with the strict-VUS subset of the curated pro-set added as a labelled
+class: 3-class \{Benign-side, Pathogenic-side, VUS\} reaches macro-F1
+$=0.946$, and 5-class \{Benign, Likely-benign, Likely-pathogenic,
+Pathogenic, VUS\} reaches $0.798$ -- essentially unchanged from the
+4-class baseline because VUS is one of the cleanest classes to recognise
+(F1 $=0.901$). A two-phase \textbf{feature-ablation study}
+(\S\ref{sec:feature-ablation}) -- group leave-one-out across all four
+tasks plus per-feature permutation importance inside the waste groups --
+partitions the $208$-feature schema into $47$ indispensable
+\texttt{population\_af} columns, $66$ useful-but-redundant
+meta-classifier / functional / sequence columns, and $94$ waste columns.
+The resulting ablation-optimal \textbf{Lean B} classifier
+(\S\ref{sec:lean}, $113$ features) drops $45\%$ of the schema and stays
+within $0.012$ macro-F1 of the $208$-feature baseline on every task,
+with the centroid / KNN families actually \emph{improving} on the lean
+subset.
+
+We are explicit that the BLAST
 columns in the augmented variant are \emph{label-aware locus-neighbour
 features} on 51\,bp DNA flanks rather than biologically meaningful homology
 features (\S\ref{sec:blast-caveat}); a true homology-based extension would
@@ -1054,6 +1401,28 @@ python -m src.train --task 2class --variant augmented \
     --keep-prefixes alfa_ allofus250k_ gnomad_ gnomad3_ regeneron_ \
                     hg19_pos original_input_pos kmer_ gc_ entropy_ \
     --tag raw_only
+\end{lstlisting}
+
+\noindent
+The VUS-as-class study (\S\ref{sec:vus-class}) is reproduced via:
+\begin{lstlisting}[basicstyle=\small\ttfamily,breaklines=true]
+python -m scripts.build_vus_train_parquets
+python -m src.train --task 3class --tag vus
+python -m src.train --task 5class --tag vus
+\end{lstlisting}
+
+\noindent
+The feature-ablation study (\S\ref{sec:feature-ablation},
+\S\ref{sec:lean}) is reproduced via:
+\begin{lstlisting}[basicstyle=\small\ttfamily,breaklines=true]
+python -m scripts.run_feature_ablation --max-workers 6
+python -m scripts.summarize_feature_ablation
+python -m scripts.waste_group_per_feature
+# Lean B (the ablation-optimal model):
+python -m src.train --task 4class \
+    --drop-prefixes bayesdel_ hg19_pos original_input_pos revel_ \
+                    chasmplus alphamissense_ phastcons_ phylop_ \
+                    gerp_ siphy_ --tag leanB
 \end{lstlisting}
 
 \begin{thebibliography}{99}

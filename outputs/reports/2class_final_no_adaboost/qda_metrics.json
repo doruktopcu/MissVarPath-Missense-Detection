@@ -10,14 +10,14 @@
       "accuracy": 0.966,
       "macro_f1": 0.9659943786625953,
       "weighted_f1": 0.9659943786625952,
-      "fit_seconds": 0.08
+      "fit_seconds": 0.09
     },
     {
       "fold": 2,
       "accuracy": 0.9651428571428572,
       "macro_f1": 0.9651387477838205,
       "weighted_f1": 0.9651387477838205,
-      "fit_seconds": 0.08
+      "fit_seconds": 0.09
     },
     {
       "fold": 3,
@@ -38,7 +38,7 @@
       "accuracy": 0.9668476707630752,
       "macro_f1": 0.9668456966157916,
       "weighted_f1": 0.9668456234992255,
-      "fit_seconds": 0.08
+      "fit_seconds": 0.07
     }
   ],
   "cv_summary": {
@@ -57,7 +57,7 @@
     },
     "mcc": 0.9302052713607144,
     "roc_auc_ovr_macro": 0.9820620268179344,
-    "fit_seconds": 0.1
+    "fit_seconds": 0.09
   },
-  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\2class_final_no_adaboost\\qda.joblib"
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\2class_final_no_adaboost\\qda.joblib"
 }

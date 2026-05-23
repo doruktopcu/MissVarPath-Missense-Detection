@@ -10,35 +10,35 @@
       "accuracy": 0.9854285714285714,
       "macro_f1": 0.9854280468382577,
       "weighted_f1": 0.9854280468382576,
-      "fit_seconds": 1.15
+      "fit_seconds": 1.29
     },
     {
       "fold": 2,
       "accuracy": 0.9805714285714285,
       "macro_f1": 0.9805714222274031,
       "weighted_f1": 0.9805714222274031,
-      "fit_seconds": 1.09
+      "fit_seconds": 1.22
     },
     {
       "fold": 3,
       "accuracy": 0.9828522434981424,
       "macro_f1": 0.9828516258037534,
       "weighted_f1": 0.982851655217772,
-      "fit_seconds": 1.03
+      "fit_seconds": 1.0
     },
     {
       "fold": 4,
       "accuracy": 0.9859959988568162,
       "macro_f1": 0.9859959256508466,
       "weighted_f1": 0.9859959348015928,
-      "fit_seconds": 1.14
+      "fit_seconds": 1.12
     },
     {
       "fold": 5,
       "accuracy": 0.9874249785653044,
       "macro_f1": 0.9874248953680984,
       "weighted_f1": 0.9874248861239645,
-      "fit_seconds": 1.15
+      "fit_seconds": 1.12
     }
   ],
   "cv_summary": {
@@ -57,7 +57,7 @@
     },
     "mcc": 0.9643832377571496,
     "roc_auc_ovr_macro": 0.9886487504273633,
-    "fit_seconds": 1.41
+    "fit_seconds": 1.44
   },
-  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\2class_final_no_adaboost\\decisiontree.joblib"
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\2class_final_no_adaboost\\decisiontree.joblib"
 }

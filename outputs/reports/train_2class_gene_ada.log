@@ -1,0 +1,14 @@
+[01:56:57] INFO train: Task=2class  variant=base  cv_mode=gene  tag=gene  X=(21872, 208)  features=208  unique_genes=4852
+[01:56:57] INFO train: Gene-grouped split: 3881 train genes, 971 test genes, 0 overlap
+[01:56:57] INFO train: Train: (17586, 208)  Test: (4286, 208)
+[01:56:57] INFO train: ======================================================================
+[01:56:57] INFO train: Model: AdaBoost  (family=sklearn)
+[01:57:21] INFO train:   fold 1/5  acc=0.9830  macroF1=0.9830  (24.2s)
+[01:57:46] INFO train:   fold 2/5  acc=0.9865  macroF1=0.9863  (24.1s)
+[01:58:11] INFO train:   fold 3/5  acc=0.9908  macroF1=0.9908  (25.1s)
+[01:58:36] INFO train:   fold 4/5  acc=0.9913  macroF1=0.9908  (24.9s)
+[01:58:58] INFO train:   fold 5/5  acc=0.9885  macroF1=0.9882  (22.5s)
+[01:58:58] INFO train:   CV: acc=0.9880±0.0034  macroF1=0.9878±0.0033
+[01:59:27] INFO train: Leaderboard:
+   model  family  cv_acc_mean  cv_acc_std  cv_macro_f1_mean  cv_macro_f1_std  holdout_acc  holdout_macro_f1  holdout_weighted_f1  holdout_mcc  holdout_roc_auc_macro  fit_seconds
+AdaBoost sklearn     0.988002    0.003372          0.987827         0.003288     0.985301            0.9853             0.985302     0.970656               0.998426         28.9

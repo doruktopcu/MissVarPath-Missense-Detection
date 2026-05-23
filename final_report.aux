@@ -6,8 +6,8 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2}Data}{2}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Source}{2}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Preprocessing}{2}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Methods}{2}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Train/test protocol}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methods}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Train/test protocol}{3}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Model suite}{3}{subsection.3.2}\protected@file@percent }
 \newlabel{sec:model-suite}{{3.2}{3}{Model suite}{subsection.3.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Evaluation regimes}{3}{subsection.3.3}\protected@file@percent }
@@ -34,53 +34,87 @@
 \newlabel{sec:no-vep}{{4.4}{6}{No-VEP / VUS scenario}{subsection.4.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces No-VEP / VUS scenario top results (4-class, holdout macro-F1). The augmented variant is the reference point because the dropped columns are removed from it; the lift from k-mer + BLAST under no-VEP is much larger than under canonical (\S  \ref {sec:augmented}).}}{7}{table.caption.4}\protected@file@percent }
 \newlabel{tab:no-vep}{{4}{7}{No-VEP / VUS scenario top results (4-class, holdout macro-F1). The augmented variant is the reference point because the dropped columns are removed from it; the lift from k-mer + BLAST under no-VEP is much larger than under canonical (\S \ref {sec:augmented})}{table.caption.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Augmented variant (k-mer + BLAST lift)}{7}{subsection.4.5}\protected@file@percent }
-\newlabel{sec:augmented}{{4.5}{7}{Augmented variant (k-mer + BLAST lift)}{subsection.4.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}DITTO ablation: meta-classifier check}{7}{subsection.4.6}\protected@file@percent }
-\newlabel{sec:ditto}{{4.6}{7}{DITTO ablation: meta-classifier check}{subsection.4.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Hyperparameter tuning}{7}{subsection.4.7}\protected@file@percent }
-\newlabel{sec:tuning-results}{{4.7}{7}{Hyperparameter tuning}{subsection.4.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces 4-class hyperparameter tuning summary. Baseline / Tuned columns are held-out macro-F1. ``Tuned'' marks the configurations whose winning grid cell was carried into the final model suite (\S  \ref {sec:tuned-final}). Source: \texttt  {outputs/tuning/4class/*/best\_config.json}.}}{8}{table.caption.5}\protected@file@percent }
-\newlabel{tab:tuning}{{5}{8}{4-class hyperparameter tuning summary. Baseline / Tuned columns are held-out macro-F1. ``Tuned'' marks the configurations whose winning grid cell was carried into the final model suite (\S \ref {sec:tuned-final}). Source: \texttt {outputs/tuning/4class/*/best\_config.json}}{table.caption.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Final tuned suite (no-AdaBoost)}{8}{subsection.4.8}\protected@file@percent }
-\newlabel{sec:tuned-final}{{4.8}{8}{Final tuned suite (no-AdaBoost)}{subsection.4.8}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Final 4-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt  {outputs/reports/4class\_final\_no\_adaboost/leaderboard.csv}.}}{8}{table.caption.6}\protected@file@percent }
-\newlabel{tab:tuned-4class}{{6}{8}{Final 4-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt {outputs/reports/4class\_final\_no\_adaboost/leaderboard.csv}}{table.caption.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Final 2-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt  {outputs/reports/2class\_final\_no\_adaboost/leaderboard.csv}.}}{9}{table.caption.7}\protected@file@percent }
-\newlabel{tab:tuned-2class}{{7}{9}{Final 2-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt {outputs/reports/2class\_final\_no\_adaboost/leaderboard.csv}}{table.caption.7}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Held-out confusion matrices for the final \texttt  {HistGradientBoosting} model on both tasks. The 4-class panel shows the residual difficulty concentrated at the Benign$\leftrightarrow $Likely-benign and Pathogenic$\leftrightarrow $Likely-pathogenic boundaries; the 2-class panel is near-diagonal.}}{9}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:cm-headline}{{1}{9}{Held-out confusion matrices for the final \texttt {HistGradientBoosting} model on both tasks. The 4-class panel shows the residual difficulty concentrated at the Benign$\leftrightarrow $Likely-benign and Pathogenic$\leftrightarrow $Likely-pathogenic boundaries; the 2-class panel is near-diagonal}{figure.caption.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.9}Raw-only experiment: predicting from data, not from predictors}{9}{subsection.4.9}\protected@file@percent }
-\newlabel{sec:raw-only}{{4.9}{9}{Raw-only experiment: predicting from data, not from predictors}{subsection.4.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Raw-only ablation top results (held-out macro-F1). ``Augmented'' column reproduces \S  \ref {sec:augmented} for reference; ``Raw-only'' is this ablation.}}{10}{table.caption.9}\protected@file@percent }
-\newlabel{tab:raw-only}{{8}{10}{Raw-only ablation top results (held-out macro-F1). ``Augmented'' column reproduces \S \ref {sec:augmented} for reference; ``Raw-only'' is this ablation}{table.caption.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.10}Anchor numbers across the report}{10}{subsection.4.10}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S  \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost.}}{10}{table.caption.10}\protected@file@percent }
-\newlabel{tab:anchors}{{9}{10}{Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Interpretability}{11}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Canonical SHAP}{11}{subsection.5.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt  {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt  {outputs/shap/canonical\_4class/feature\_importance.csv}.}}{11}{table.caption.11}\protected@file@percent }
-\newlabel{tab:shap-canonical}{{10}{11}{Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt {outputs/shap/canonical\_4class/feature\_importance.csv}}{table.caption.11}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt  {HistGradientBoosting} model.}}{11}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:shap-bar}{{2}{11}{Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt {HistGradientBoosting} model}{figure.caption.12}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Per-class contrastive analysis}{12}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Linear-vs-nonlinear interpretability}{12}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{12}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Clinical implications}{12}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Meta-classifier behavior}{12}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}What the raw-only experiment teaches}{13}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Limitations}{13}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Real VUS deployment}{7}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:vus-deployment}{{4.5}{7}{Real VUS deployment}{subsection.4.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Dataset.}{7}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Caveat on what we can measure.}{7}{section*.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Predicted class distribution on the $5{,}468$-variant VUS pro-set, 2-class head (tuned HistGradientBoosting).}}{7}{table.caption.7}\protected@file@percent }
+\newlabel{tab:vus-dist-2class}{{5}{7}{Predicted class distribution on the $5{,}468$-variant VUS pro-set, 2-class head (tuned HistGradientBoosting)}{table.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Predicted class distribution, 4-class head. Note how the model correctly hedges into \emph  {Likely-*} categories for these uncertain variants ($87\%$ of predictions are ``Likely''), with only $13.1\%$ escalated to a definitive call.}}{7}{table.caption.8}\protected@file@percent }
+\newlabel{tab:vus-dist-4class}{{6}{7}{Predicted class distribution, 4-class head. Note how the model correctly hedges into \emph {Likely-*} categories for these uncertain variants ($87\%$ of predictions are ``Likely''), with only $13.1\%$ escalated to a definitive call}{table.caption.8}{}}
+\@writefile{toc}{\contentsline {paragraph}{Cross-task consistency.}{8}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Per-gene structure.}{8}{section*.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Predicted-class fractions on the top-20 most-frequent genes in the $5{,}468$-variant VUS pro-set. Bars stacked Pathogenic / Likely-pathogenic / Likely-benign / Benign; $n$ marks the count of VUS per gene in the pro-set. Sorted by predicted pathogenic-side (P + LP) rate. The per-gene gradient -- saturated pathogenic at \texttt  {GCK} / \texttt  {PAH} / \texttt  {MYH7} and gradually shifting to benign-leaning at \texttt  {APC} / \texttt  {DICER1} -- matches published clinical priors on these genes' missense-pathogenicity profiles.}}{8}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:vus-per-gene}{{1}{8}{Predicted-class fractions on the top-20 most-frequent genes in the $5{,}468$-variant VUS pro-set. Bars stacked Pathogenic / Likely-pathogenic / Likely-benign / Benign; $n$ marks the count of VUS per gene in the pro-set. Sorted by predicted pathogenic-side (P + LP) rate. The per-gene gradient -- saturated pathogenic at \texttt {GCK} / \texttt {PAH} / \texttt {MYH7} and gradually shifting to benign-leaning at \texttt {APC} / \texttt {DICER1} -- matches published clinical priors on these genes' missense-pathogenicity profiles}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {paragraph}{Deployment artifacts.}{9}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Augmented variant (k-mer + BLAST lift)}{9}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:augmented}{{4.6}{9}{Augmented variant (k-mer + BLAST lift)}{subsection.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}DITTO ablation: meta-classifier check}{9}{subsection.4.7}\protected@file@percent }
+\newlabel{sec:ditto}{{4.7}{9}{DITTO ablation: meta-classifier check}{subsection.4.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Hyperparameter tuning}{9}{subsection.4.8}\protected@file@percent }
+\newlabel{sec:tuning-results}{{4.8}{9}{Hyperparameter tuning}{subsection.4.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces 4-class hyperparameter tuning summary. Baseline / Tuned columns are held-out macro-F1. ``Tuned'' marks the configurations whose winning grid cell was carried into the final model suite (\S  \ref {sec:tuned-final}). Source: \texttt  {outputs/tuning/4class/*/best\_config.json}.}}{10}{table.caption.13}\protected@file@percent }
+\newlabel{tab:tuning}{{7}{10}{4-class hyperparameter tuning summary. Baseline / Tuned columns are held-out macro-F1. ``Tuned'' marks the configurations whose winning grid cell was carried into the final model suite (\S \ref {sec:tuned-final}). Source: \texttt {outputs/tuning/4class/*/best\_config.json}}{table.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.9}Final tuned suite (no-AdaBoost)}{10}{subsection.4.9}\protected@file@percent }
+\newlabel{sec:tuned-final}{{4.9}{10}{Final tuned suite (no-AdaBoost)}{subsection.4.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Final 4-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt  {outputs/reports/4class\_final\_no\_adaboost/leaderboard.csv}.}}{10}{table.caption.14}\protected@file@percent }
+\newlabel{tab:tuned-4class}{{8}{10}{Final 4-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt {outputs/reports/4class\_final\_no\_adaboost/leaderboard.csv}}{table.caption.14}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Final 2-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt  {outputs/reports/2class\_final\_no\_adaboost/leaderboard.csv}.}}{10}{table.caption.15}\protected@file@percent }
+\newlabel{tab:tuned-2class}{{9}{10}{Final 2-class tuned no-AdaBoost leaderboard (held-out 20\%). Source: \texttt {outputs/reports/2class\_final\_no\_adaboost/leaderboard.csv}}{table.caption.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Held-out confusion matrices for the final \texttt  {HistGradientBoosting} model on both tasks. The 4-class panel shows the residual difficulty concentrated at the Benign$\leftrightarrow $Likely-benign and Pathogenic$\leftrightarrow $Likely-pathogenic boundaries; the 2-class panel is near-diagonal.}}{11}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:cm-headline}{{2}{11}{Held-out confusion matrices for the final \texttt {HistGradientBoosting} model on both tasks. The 4-class panel shows the residual difficulty concentrated at the Benign$\leftrightarrow $Likely-benign and Pathogenic$\leftrightarrow $Likely-pathogenic boundaries; the 2-class panel is near-diagonal}{figure.caption.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.10}Raw-only experiment: predicting from data, not from predictors}{11}{subsection.4.10}\protected@file@percent }
+\newlabel{sec:raw-only}{{4.10}{11}{Raw-only experiment: predicting from data, not from predictors}{subsection.4.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Raw-only ablation top results (held-out macro-F1). ``Augmented'' column reproduces \S  \ref {sec:augmented} for reference; ``Raw-only'' is this ablation.}}{11}{table.caption.17}\protected@file@percent }
+\newlabel{tab:raw-only}{{10}{11}{Raw-only ablation top results (held-out macro-F1). ``Augmented'' column reproduces \S \ref {sec:augmented} for reference; ``Raw-only'' is this ablation}{table.caption.17}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.11}VUS-as-class study}{12}{subsection.4.11}\protected@file@percent }
+\newlabel{sec:vus-class}{{4.11}{12}{VUS-as-class study}{subsection.4.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces VUS-as-class study, tuned \texttt  {HistGradientBoosting} held-out numbers, vs. the no-VUS baselines. Adding VUS as a third class costs $\approx 0.04$ macro-F1 against the 2-class baseline; adding it as a fifth class is essentially free on aggregate metrics.}}{12}{table.caption.18}\protected@file@percent }
+\newlabel{tab:vus-class}{{11}{12}{VUS-as-class study, tuned \texttt {HistGradientBoosting} held-out numbers, vs. the no-VUS baselines. Adding VUS as a third class costs $\approx 0.04$ macro-F1 against the 2-class baseline; adding it as a fifth class is essentially free on aggregate metrics}{table.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.12}Feature ablation study: what is useful, what is waste}{13}{subsection.4.12}\protected@file@percent }
+\newlabel{sec:feature-ablation}{{4.12}{13}{Feature ablation study: what is useful, what is waste}{subsection.4.12}{}}
+\@writefile{toc}{\contentsline {paragraph}{Group definition.}{13}{section*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Phase A: group LOO.}{13}{section*.20}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Group leave-one-out ablation, HistGB held-out macro-F1 $\Delta = \text  {baseline} - \text  {ablated}$. Positive = removing the group hurt the model (group was useful); negative = removing helped (group was noisy/redundant). Threshold for ``waste'' (max\,$|\Delta |<0.005$ across all four tasks) marked with $\dagger $. Source: \texttt  {outputs/reports/feature\_ablation/headline\_histgb.csv}.}}{13}{table.caption.21}\protected@file@percent }
+\newlabel{tab:ablation-headline}{{12}{13}{Group leave-one-out ablation, HistGB held-out macro-F1 $\Delta = \text {baseline} - \text {ablated}$. Positive = removing the group hurt the model (group was useful); negative = removing helped (group was noisy/redundant). Threshold for ``waste'' (max\,$|\Delta |<0.005$ across all four tasks) marked with $\dagger $. Source: \texttt {outputs/reports/feature\_ablation/headline\_histgb.csv}}{table.caption.21}{}}
+\@writefile{toc}{\contentsline {paragraph}{Phase B: per-feature permutation importance inside the waste groups.}{14}{section*.22}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Per-feature permutation importance (\texttt  {n\_repeats=10}, macro-F1 drop when each column is independently shuffled on the held-out $20\%$). Only the features that exceed the $0.005$ noise floor on at least one task are shown; full table at \texttt  {outputs/reports/feature\_ablation/per\_feature\_waste.csv}.}}{14}{table.caption.23}\protected@file@percent }
+\newlabel{tab:ablation-perfeat}{{13}{14}{Per-feature permutation importance (\texttt {n\_repeats=10}, macro-F1 drop when each column is independently shuffled on the held-out $20\%$). Only the features that exceed the $0.005$ noise floor on at least one task are shown; full table at \texttt {outputs/reports/feature\_ablation/per\_feature\_waste.csv}}{table.caption.23}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.13}Ablation-optimal Lean model}{14}{subsection.4.13}\protected@file@percent }
+\newlabel{sec:lean}{{4.13}{14}{Ablation-optimal Lean model}{subsection.4.13}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Lean-model HistGB headlines. Both lean models drop 94--97 of the 208 base features and stay within $\sim 0.012$ macro-F1 of the $208$-feature baseline on the headline 4-class task. Lean B recovers about half of Lean A's loss by keeping \texttt  {ditto\_score} and \texttt  {metarnn\_score}.}}{15}{table.caption.24}\protected@file@percent }
+\newlabel{tab:lean-headline}{{14}{15}{Lean-model HistGB headlines. Both lean models drop 94--97 of the 208 base features and stay within $\sim 0.012$ macro-F1 of the $208$-feature baseline on the headline 4-class task. Lean B recovers about half of Lean A's loss by keeping \texttt {ditto\_score} and \texttt {metarnn\_score}}{table.caption.24}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Lean B full 10-model leaderboard per task. Italicised values \emph  {improve} on the $208$-feature baseline. The centroid families (NearestCentroid, CosineSimilarity) and KNN consistently benefit from the lean subset: dropping the noisy 68-column \texttt  {chasmplus} basket and the 17 conservation columns helps these distance/centroid models disentangle the remaining signal.}}{15}{table.caption.25}\protected@file@percent }
+\newlabel{tab:lean-full}{{15}{15}{Lean B full 10-model leaderboard per task. Italicised values \emph {improve} on the $208$-feature baseline. The centroid families (NearestCentroid, CosineSimilarity) and KNN consistently benefit from the lean subset: dropping the noisy 68-column \texttt {chasmplus} basket and the 17 conservation columns helps these distance/centroid models disentangle the remaining signal}{table.caption.25}{}}
+\@writefile{toc}{\contentsline {paragraph}{The bottom line.}{15}{section*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Three-tier feature classification.}{15}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.14}Anchor numbers across the report}{16}{subsection.4.14}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S  \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost.}}{16}{table.caption.28}\protected@file@percent }
+\newlabel{tab:anchors}{{16}{16}{Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost}{table.caption.28}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Interpretability}{16}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Canonical SHAP}{16}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt  {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt  {outputs/shap/canonical\_4class/feature\_importance.csv}.}}{16}{table.caption.29}\protected@file@percent }
+\newlabel{tab:shap-canonical}{{17}{16}{Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt {outputs/shap/canonical\_4class/feature\_importance.csv}}{table.caption.29}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt  {HistGradientBoosting} model.}}{17}{figure.caption.30}\protected@file@percent }
+\newlabel{fig:shap-bar}{{3}{17}{Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt {HistGradientBoosting} model}{figure.caption.30}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Per-class contrastive analysis}{17}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Linear-vs-nonlinear interpretability}{17}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{18}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Clinical implications}{18}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Meta-classifier behavior}{18}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}What the raw-only experiment teaches}{18}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Limitations}{19}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{19}{section.7}\protected@file@percent }
 \bibcite{clinvar}{1}
 \bibcite{opencravat}{2}
 \bibcite{alphamissense}{3}
 \bibcite{revel}{4}
 \bibcite{cadd}{5}
 \bibcite{ditto}{6}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{14}{section.7}\protected@file@percent }
 \bibcite{polyphen2}{7}
 \bibcite{sift}{8}
 \bibcite{shap}{9}
 \bibcite{blast}{10}
 \bibcite{gnomad}{11}
 \bibcite{acmg}{12}
-\gdef \@abspage@last{15}
+\gdef \@abspage@last{21}

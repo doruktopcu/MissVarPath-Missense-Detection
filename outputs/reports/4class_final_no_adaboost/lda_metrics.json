@@ -17,14 +17,14 @@
       "accuracy": 0.7017142857142857,
       "macro_f1": 0.7024164825471195,
       "weighted_f1": 0.7024164825471195,
-      "fit_seconds": 0.08
+      "fit_seconds": 0.06
     },
     {
       "fold": 3,
       "accuracy": 0.6987710774507002,
       "macro_f1": 0.6998748673978225,
       "weighted_f1": 0.6998468530140374,
-      "fit_seconds": 0.08
+      "fit_seconds": 0.07
     },
     {
       "fold": 4,
@@ -61,5 +61,5 @@
     "roc_auc_ovr_macro": 0.9185313455822397,
     "fit_seconds": 0.08
   },
-  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\4class_final_no_adaboost\\lda.joblib"
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\4class_final_no_adaboost\\lda.joblib"
 }

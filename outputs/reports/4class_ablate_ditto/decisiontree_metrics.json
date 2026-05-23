@@ -1,0 +1,65 @@
+{
+  "model": "DecisionTree",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": "ablate_ditto",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.7474285714285714,
+      "macro_f1": 0.7470379122380253,
+      "weighted_f1": 0.7470379122380253,
+      "fit_seconds": 1.66
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.7394285714285714,
+      "macro_f1": 0.7350701566384877,
+      "weighted_f1": 0.7350701566384876,
+      "fit_seconds": 1.43
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.7464989997142041,
+      "macro_f1": 0.7470282786985175,
+      "weighted_f1": 0.7469778611330126,
+      "fit_seconds": 1.41
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.7344955701629037,
+      "macro_f1": 0.7340640294573767,
+      "weighted_f1": 0.7341075937261381,
+      "fit_seconds": 1.44
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.741926264647042,
+      "macro_f1": 0.7421552777219164,
+      "weighted_f1": 0.7422015567423573,
+      "fit_seconds": 1.5
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.7419555954762586,
+    "cv_acc_std": 0.005306474261574336,
+    "cv_macro_f1_mean": 0.7410711309508647,
+    "cv_macro_f1_std": 0.006272492058089959
+  },
+  "holdout": {
+    "accuracy": 0.7380571428571429,
+    "macro_f1": 0.7340076001586864,
+    "weighted_f1": 0.7339731793797244,
+    "f1_per_class": {
+      "Benign": 0.9190225203641591,
+      "Likely benign": 0.8845985081175954,
+      "Likely pathogenic": 0.6267244777296019,
+      "Pathogenic": 0.5056848944233893
+    },
+    "mcc": 0.6566478479394924,
+    "roc_auc_ovr_macro": 0.9177728420971687,
+    "fit_seconds": 1.88
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\4class_ablate_ditto\\decisiontree.joblib"
+}

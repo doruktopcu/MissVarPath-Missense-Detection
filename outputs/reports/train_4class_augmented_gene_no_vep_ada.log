@@ -1,0 +1,34 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\Doruk-Topcu\anaconda3\Lib\logging\__init__.py", line 1154, in emit
+    stream.write(msg + self.terminator)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Doruk-Topcu\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 42: character maps to <undefined>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection-2\src\train.py", line 311, in <module>
+    run(args.task, args.models, variant=args.variant, cv_mode=args.cv_mode,
+  File "C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection-2\src\train.py", line 212, in run
+    X, y, groups, feature_cols, class_names = load_processed(
+  File "C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection-2\src\train.py", line 96, in load_processed
+    LOG.info("Ablation drop: %d \u2192 %d features (dropped %d by prefix)",
+Message: 'Ablation drop: %d \u2192 %d features (dropped %d by prefix)'
+Arguments: (414, 286, 128)
+[01:57:01] INFO train: Task=4class  variant=augmented  cv_mode=gene  tag=no_vep  X=(21797, 286)  features=286  unique_genes=4846
+[01:57:01] INFO train: Gene-grouped split: 3876 train genes, 970 test genes, 0 overlap
+[01:57:01] INFO train: Train: (17992, 286)  Test: (3805, 286)
+[01:57:01] INFO train: ======================================================================
+[01:57:01] INFO train: Model: AdaBoost  (family=sklearn)
+[01:57:17] INFO train:   fold 1/5  acc=0.6893  macroF1=0.6929  (15.7s)
+[01:57:33] INFO train:   fold 2/5  acc=0.6747  macroF1=0.6697  (15.8s)
+[01:57:48] INFO train:   fold 3/5  acc=0.6919  macroF1=0.6958  (14.9s)
+[01:58:03] INFO train:   fold 4/5  acc=0.6673  macroF1=0.6719  (14.8s)
+[01:58:18] INFO train:   fold 5/5  acc=0.6886  macroF1=0.6693  (15.1s)
+[01:58:18] INFO train:   CV: acc=0.6824±0.0108  macroF1=0.6799±0.0132
+[01:58:37] INFO train: Leaderboard:
+   model  family  cv_acc_mean  cv_acc_std  cv_macro_f1_mean  cv_macro_f1_std  holdout_acc  holdout_macro_f1  holdout_weighted_f1  holdout_mcc  holdout_roc_auc_macro  fit_seconds
+AdaBoost sklearn     0.682377    0.010763          0.679907         0.013227     0.696452          0.662891             0.683784     0.598474               0.877207        18.43

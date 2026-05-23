@@ -10,7 +10,7 @@
       "accuracy": 0.9105714285714286,
       "macro_f1": 0.9104497791653134,
       "weighted_f1": 0.9104497791653134,
-      "fit_seconds": 0.03
+      "fit_seconds": 0.04
     },
     {
       "fold": 2,
@@ -24,7 +24,7 @@
       "accuracy": 0.8973992569305516,
       "macro_f1": 0.8971896221954476,
       "weighted_f1": 0.8971909489975686,
-      "fit_seconds": 0.04
+      "fit_seconds": 0.03
     },
     {
       "fold": 4,
@@ -58,5 +58,5 @@
     "mcc": 0.7997945751710237,
     "fit_seconds": 0.03
   },
-  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\2class_final_no_adaboost\\cosinesimilarity.joblib"
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\2class_final_no_adaboost\\cosinesimilarity.joblib"
 }

@@ -10,35 +10,35 @@
       "accuracy": 0.9908571428571429,
       "macro_f1": 0.9908571309154364,
       "weighted_f1": 0.9908571309154364,
-      "fit_seconds": 0.24
+      "fit_seconds": 0.27
     },
     {
       "fold": 2,
       "accuracy": 0.9865714285714285,
       "macro_f1": 0.9865711117592897,
       "weighted_f1": 0.9865711117592897,
-      "fit_seconds": 0.12
+      "fit_seconds": 0.14
     },
     {
       "fold": 3,
       "accuracy": 0.9831380394398399,
       "macro_f1": 0.9831379017113673,
       "weighted_f1": 0.9831379154842146,
-      "fit_seconds": 0.12
+      "fit_seconds": 0.14
     },
     {
       "fold": 4,
       "accuracy": 0.9871391826236068,
       "macro_f1": 0.9871390313551812,
       "weighted_f1": 0.9871390439608834,
-      "fit_seconds": 0.12
+      "fit_seconds": 0.14
     },
     {
       "fold": 5,
       "accuracy": 0.9905687339239783,
       "macro_f1": 0.9905686846219988,
       "weighted_f1": 0.9905686784592513,
-      "fit_seconds": 0.14
+      "fit_seconds": 0.16
     }
   ],
   "cv_summary": {
@@ -56,7 +56,7 @@
       "Pathogenic/Likely pathogenic": 0.9868241708314403
     },
     "mcc": 0.9735655477717889,
-    "fit_seconds": 0.18
+    "fit_seconds": 0.21
   },
-  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\2class_final_no_adaboost\\linearsvc.joblib"
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\2class_final_no_adaboost\\linearsvc.joblib"
 }

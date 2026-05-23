@@ -10,7 +10,7 @@
       "accuracy": 0.5545714285714286,
       "macro_f1": 0.5548406905316046,
       "weighted_f1": 0.5548406905316046,
-      "fit_seconds": 1.92
+      "fit_seconds": 1.36
     },
     {
       "fold": 2,
@@ -31,7 +31,7 @@
       "accuracy": 0.5395827379251215,
       "macro_f1": 0.5408607111207897,
       "weighted_f1": 0.5408702886494076,
-      "fit_seconds": 0.04
+      "fit_seconds": 0.05
     },
     {
       "fold": 5,
@@ -61,5 +61,5 @@
     "roc_auc_ovr_macro": 0.8706243129354064,
     "fit_seconds": 0.04
   },
-  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\4class_final_no_adaboost\\nearestcentroid.joblib"
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\4class_final_no_adaboost\\nearestcentroid.joblib"
 }

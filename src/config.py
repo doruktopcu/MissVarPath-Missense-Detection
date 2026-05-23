@@ -24,6 +24,10 @@ CLASS_4 = {"Benign": 0, "Likely benign": 1, "Likely pathogenic": 2, "Pathogenic"
 CLASS_4_NAMES = ["Benign", "Likely benign", "Likely pathogenic", "Pathogenic"]
 CLASS_2 = {"Benign": 0, "Likely benign": 0, "Likely pathogenic": 1, "Pathogenic": 1}
 CLASS_2_NAMES = ["Benign/Likely benign", "Pathogenic/Likely pathogenic"]
+# 3-class and 5-class targets include VUS as a labelled class. The training
+# parquets are produced by `scripts.build_vus_train_parquets`.
+CLASS_3_NAMES = ["Benign-side", "Pathogenic-side", "VUS"]
+CLASS_5_NAMES = ["Benign", "Likely benign", "Likely pathogenic", "Pathogenic", "VUS"]
 
 # Reproducibility
 RANDOM_STATE = 42
@@ -32,6 +36,8 @@ TEST_SIZE = 0.2
 
 # Processed data outputs
 PROCESSED_PARQUET = PREPROC_DIR / "missense_processed.parquet"
+VUS_3CLASS_PARQUET = PREPROC_DIR / "missense_3class.parquet"
+VUS_5CLASS_PARQUET = PREPROC_DIR / "missense_5class.parquet"
 FEATURE_LIST_TXT = PREPROC_DIR / "final_features.txt"
 DROPPED_COLS_TXT = PREPROC_DIR / "dropped_columns.txt"
 

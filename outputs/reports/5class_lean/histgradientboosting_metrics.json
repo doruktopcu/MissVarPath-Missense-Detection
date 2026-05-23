@@ -1,0 +1,66 @@
+{
+  "model": "HistGradientBoosting",
+  "task": "5class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": "lean",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.7939560439560439,
+      "macro_f1": 0.7923694053011416,
+      "weighted_f1": 0.7922068477619856,
+      "fit_seconds": 8.61
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.7886904761904762,
+      "macro_f1": 0.7865594721924689,
+      "weighted_f1": 0.7864027747394122,
+      "fit_seconds": 8.79
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.7884615384615384,
+      "macro_f1": 0.7869925283470407,
+      "weighted_f1": 0.786884729635199,
+      "fit_seconds": 8.1
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.7898351648351648,
+      "macro_f1": 0.7878917207261099,
+      "weighted_f1": 0.7877872453813232,
+      "fit_seconds": 9.09
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.7799908424908425,
+      "macro_f1": 0.7788839624814689,
+      "weighted_f1": 0.7787233200242055,
+      "fit_seconds": 8.08
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.7881868131868132,
+    "cv_acc_std": 0.0050868500290529505,
+    "cv_macro_f1_mean": 0.786539417809646,
+    "cv_macro_f1_std": 0.004863876667534777
+  },
+  "holdout": {
+    "accuracy": 0.7840659340659341,
+    "macro_f1": 0.7823194033822726,
+    "weighted_f1": 0.7821356763028534,
+    "f1_per_class": {
+      "Benign": 0.9258018190521781,
+      "Likely benign": 0.8673740053050398,
+      "Likely pathogenic": 0.6031000469704086,
+      "Pathogenic": 0.6309911586784551,
+      "VUS": 0.8843299869052815
+    },
+    "mcc": 0.7306345403185472,
+    "roc_auc_ovr_macro": 0.9561572683047412,
+    "fit_seconds": 9.24
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\5class_lean\\histgradientboosting.joblib"
+}

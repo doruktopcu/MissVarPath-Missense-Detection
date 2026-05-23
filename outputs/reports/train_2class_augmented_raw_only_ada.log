@@ -1,0 +1,33 @@
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Users\Doruk-Topcu\anaconda3\Lib\logging\__init__.py", line 1154, in emit
+    stream.write(msg + self.terminator)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Doruk-Topcu\anaconda3\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 42: character maps to <undefined>
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection-2\src\train.py", line 311, in <module>
+    run(args.task, args.models, variant=args.variant, cv_mode=args.cv_mode,
+  File "C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection-2\src\train.py", line 212, in run
+    X, y, groups, feature_cols, class_names = load_processed(
+  File "C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection-2\src\train.py", line 102, in load_processed
+    LOG.info("Ablation keep: %d \u2192 %d features (kept %d by prefix)",
+Message: 'Ablation keep: %d \u2192 %d features (kept %d by prefix)'
+Arguments: (414, 245, 245)
+[01:57:08] INFO train: Task=2class  variant=augmented  cv_mode=kfold  tag=raw_only  X=(21797, 245)  features=245  unique_genes=4846
+[01:57:08] INFO train: Train: (17437, 245)  Test: (4360, 245)
+[01:57:08] INFO train: ======================================================================
+[01:57:08] INFO train: Model: AdaBoost  (family=sklearn)
+[01:57:17] INFO train:   fold 1/5  acc=0.9206  macroF1=0.9206  (9.0s)
+[01:57:26] INFO train:   fold 2/5  acc=0.9249  macroF1=0.9249  (8.9s)
+[01:57:35] INFO train:   fold 3/5  acc=0.9171  macroF1=0.9171  (8.6s)
+[01:57:44] INFO train:   fold 4/5  acc=0.9174  macroF1=0.9174  (8.7s)
+[01:57:52] INFO train:   fold 5/5  acc=0.9177  macroF1=0.9177  (8.8s)
+[01:57:52] INFO train:   CV: acc=0.9195±0.0033  macroF1=0.9195±0.0033
+[01:58:04] INFO train: Leaderboard:
+   model  family  cv_acc_mean  cv_acc_std  cv_macro_f1_mean  cv_macro_f1_std  holdout_acc  holdout_macro_f1  holdout_weighted_f1  holdout_mcc  holdout_roc_auc_macro  fit_seconds
+AdaBoost sklearn     0.919539    0.003297          0.919522         0.003304     0.922936          0.922935             0.922935     0.845901               0.975992        11.13

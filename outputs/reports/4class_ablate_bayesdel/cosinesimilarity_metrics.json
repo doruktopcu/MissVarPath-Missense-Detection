@@ -1,0 +1,64 @@
+{
+  "model": "CosineSimilarity",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": "ablate_bayesdel",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.5577142857142857,
+      "macro_f1": 0.5495898548575291,
+      "weighted_f1": 0.5495898548575291,
+      "fit_seconds": 0.09
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.5597142857142857,
+      "macro_f1": 0.5524414268213714,
+      "weighted_f1": 0.5524414268213713,
+      "fit_seconds": 0.07
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.5633038010860246,
+      "macro_f1": 0.5541725179030578,
+      "weighted_f1": 0.554176559377973,
+      "fit_seconds": 0.06
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.53615318662475,
+      "macro_f1": 0.5280947556476366,
+      "weighted_f1": 0.528096231444165,
+      "fit_seconds": 0.06
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.5581594741354673,
+      "macro_f1": 0.5486461888005287,
+      "weighted_f1": 0.5486707684599317,
+      "fit_seconds": 0.08
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.5550090066549627,
+    "cv_acc_std": 0.010767186201905069,
+    "cv_macro_f1_mean": 0.5465889488060247,
+    "cv_macro_f1_std": 0.010571599610209212
+  },
+  "holdout": {
+    "accuracy": 0.5568,
+    "macro_f1": 0.5489242826570819,
+    "weighted_f1": 0.5488994928889871,
+    "f1_per_class": {
+      "Benign": 0.54125,
+      "Likely benign": 0.6573795180722891,
+      "Likely pathogenic": 0.5485059353254196,
+      "Pathogenic": 0.4485616772306192
+    },
+    "mcc": 0.41868037671657127,
+    "fit_seconds": 0.04
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\4class_ablate_bayesdel\\cosinesimilarity.joblib"
+}

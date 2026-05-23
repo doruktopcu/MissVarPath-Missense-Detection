@@ -49,13 +49,17 @@ from sklearn.model_selection import (
 from .config import (
     AUGMENTED_PARQUET,
     CLASS_2_NAMES,
+    CLASS_3_NAMES,
     CLASS_4_NAMES,
+    CLASS_5_NAMES,
     MODELS_DIR,
     N_SPLITS,
     PROCESSED_PARQUET,
     RANDOM_STATE,
     REPORTS_DIR,
     TEST_SIZE,
+    VUS_3CLASS_PARQUET,
+    VUS_5CLASS_PARQUET,
 )
 from .models import MODEL_SPECS, ModelSpec, get_model
 from .utils import (
@@ -69,7 +73,17 @@ from .utils import (
 
 LOG = get_logger("train")
 
-META_COLS = {"clinvar_sig", "target_4", "target_2", "gene_symbol"}
+META_COLS = {"clinvar_sig", "target_4", "target_2", "target_3", "target_5", "gene_symbol"}
+
+# Task → (parquet, target column, class names). The 3-class and 5-class tasks
+# include VUS as a labelled class and use their own pre-built parquets;
+# `--variant augmented` is not defined for them.
+_TASK_TABLE = {
+    "4class": ("target_4", CLASS_4_NAMES),
+    "2class": ("target_2", CLASS_2_NAMES),
+    "3class": ("target_3", CLASS_3_NAMES),
+    "5class": ("target_5", CLASS_5_NAMES),
+}
 
 
 def load_processed(task: str, variant: str = "base",
@@ -81,10 +95,18 @@ def load_processed(task: str, variant: str = "base",
     `groups` is the gene-symbol array (length = X.shape[0]); used by gene-CV.
     `drop_prefixes` and `keep_prefixes` are mutually exclusive — use one or the other.
     """
-    parquet = AUGMENTED_PARQUET if variant == "augmented" else PROCESSED_PARQUET
+    if task == "3class":
+        if variant != "base":
+            raise ValueError("--variant augmented is not defined for the 3-class task.")
+        parquet = VUS_3CLASS_PARQUET
+    elif task == "5class":
+        if variant != "base":
+            raise ValueError("--variant augmented is not defined for the 5-class task.")
+        parquet = VUS_5CLASS_PARQUET
+    else:
+        parquet = AUGMENTED_PARQUET if variant == "augmented" else PROCESSED_PARQUET
     df = pd.read_parquet(parquet)
-    target_col = "target_4" if task == "4class" else "target_2"
-    class_names = CLASS_4_NAMES if task == "4class" else CLASS_2_NAMES
+    target_col, class_names = _TASK_TABLE[task]
 
     feature_cols = [c for c in df.columns if c not in META_COLS]
     if drop_prefixes and keep_prefixes:
@@ -291,7 +313,7 @@ def run(task: str, model_names: list[str] | None = None,
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
-    p.add_argument("--task", choices=["4class", "2class"], default="4class")
+    p.add_argument("--task", choices=["4class", "2class", "3class", "5class"], default="4class")
     p.add_argument("--variant", choices=["base", "augmented"], default="base",
                    help="'base' = tabular only; 'augmented' = + k-mer + BLAST features.")
     p.add_argument("--cv-mode", choices=["kfold", "gene"], default="kfold",

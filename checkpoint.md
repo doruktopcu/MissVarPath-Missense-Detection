@@ -672,3 +672,375 @@ When the new machine picks up:
 6. Decide whether to close the AdaBoost gaps or accept the
    already-disclosed exclusion.
 7. Move to delivery: GitHub bundle, video, email.
+
+### 2026-05-23 — Windows pickup: both gaps closed, PDF rebuilt
+
+Picked up on Windows (Ryzen 9 9850X3D / RTX 5080 / 32 GB DDR5-6200) after the
+Mac handoff. Repo move had left two stale tree copies behind
+(`.claude/worktrees/beautiful-yonath-dfccbe/` from the Mac claude-worktree
+and `__MACOSX/MissVarPath-Missense-Detection/` zip-extraction artifact);
+their nested `.git` files plus the `.git/worktrees/beautiful-yonath-dfccbe/`
+pointer made every `git status` fail with a Mac-path "not a git repository"
+error. Removed all three; git healthy.
+
+**Refit of the 9 non-HistGB joblibs (both tasks).** Ran `src.train` with
+`--tag final_no_adaboost` against the 9 non-HistGB models on both tasks in
+parallel (~2 min wall-clock each thanks to `n_jobs=-1` and the 16-core box;
+the original Mac run took noticeably longer). Backed up the existing
+10-model leaderboards beforehand so the HistGB row could be merged back
+post-run — leaderboards now restored to 10-row state with HistGB headlining
+exactly as before (4-class $0.7950$, 2-class $0.9872$). All 10 joblibs now
+present under `outputs/models/{4class,2class}_final_no_adaboost/`.
+
+**AdaBoost added to the 5 cross-regime ablations.** Re-ran AdaBoost-only
+under matching tags for: `4class_gene`, `2class_gene`,
+`4class_augmented_gene_no_vep`, `4class_augmented_raw_only`,
+`2class_augmented_raw_only` — all five launched in parallel (~2 min wall
+clock total, vs. the 30–40 min budget I'd originally estimated for serial).
+Same backup-then-merge protocol; each leaderboard ends with 11 rows.
+Headline AdaBoost numbers (held-out macro-F1):
+
+| Regime | AdaBoost F1 | Rank |
+|---|---:|---:|
+| `4class_gene` | $0.7009$ | 5/11 |
+| `2class_gene` | $0.9853$ | 2/11 |
+| `4class_augmented_gene_no_vep` | $0.6629$ | 7/11 |
+| `4class_augmented_raw_only` | $0.6278$ | 4/11 |
+| `2class_augmented_raw_only` | $0.9229$ | 2/11 |
+
+AdaBoost never tops a regime (HistGB still wins everywhere) but it is now
+the clear runner-up on both 2-class ablations, validating the
+canonical-baseline 2-class tie. The 4-class numbers are middling-to-poor,
+consistent with the un-tuned stump-ensemble configuration.
+
+**LaTeX updates.** Added AdaBoost reference rows to three tables —
+[final_report.tex](final_report.tex) `tab:gene-strat`, `tab:no-vep`,
+`tab:raw-only` — and revised the two disclosure paragraphs in §3.5
+(tuning protocol) and §6.3 (limitations) to note that AdaBoost is now
+evaluated under its baseline configuration in all five ablation regimes.
+
+**PDF rebuilt.** Two `pdflatex` passes, no undefined refs, exit 0,
+[final_report.pdf](final_report.pdf) at 17 pages / 611 KB.
+
+### Implementation status (post-Windows pickup)
+
+Complete:
+- Every artifact promised by previous entries.
+- All 20 `*_final_no_adaboost` joblibs present (10 × 2 tasks).
+- AdaBoost reference rows in all five cross-regime ablations.
+- LaTeX consistent with on-disk numbers; PDF compiled.
+
+Outstanding for delivery (per [project_delivery_instructions.md](project_delivery_instructions.md)):
+- Commit + push to `origin/new-method` so the GitHub link is shareable.
+  Working tree currently has: `.claude/settings.local.json`,
+  [checkpoint.md](checkpoint.md), [final_report.tex](final_report.tex),
+  [final_report.pdf](final_report.pdf), plus the new AdaBoost artifacts
+  under `outputs/reports/*/adaboost_*` and `outputs/models/*/adaboost.joblib`
+  and the 9 refit joblibs, plus the VUS deployment artifacts already noted
+  on the previous entry. Note: the tracked `.claude/worktrees/...` directory
+  was deleted (worktree pointer; never should have been committed) — the
+  commit will also stage that deletion.
+- Demo video (≤10 min screen + voice).
+- Email to `professor@hacettepe.edu.tr` subject `CMP682_yourname_project`
+  before 2026-05-24 23:59.
+
+### 2026-05-23 — VUS-as-class study launched
+
+New direction the user opened up: train classifiers that include VUS as its
+own labelled class (rather than only using VUS for inference at deployment
+time). Two studies in flight:
+
+- **3-class:** Benign-side / Pathogenic-side / VUS. The two
+  pathogenicity-side classes collapse the existing Likely-* labels into the
+  definitive ones (same collapse rule as the existing 2-class task) — so
+  10,936 / 10,936 / 5,428 (slightly imbalanced, 2 : 2 : 1).
+- **5-class:** Benign / Likely-benign / Likely-pathogenic / Pathogenic / VUS.
+  5,468 × 4 + 5,428 — essentially perfectly balanced.
+
+**VUS source.** Strict-VUS filter on the existing 5,468-row pro-set
+(`data/missense_VUS_pro_set_annotated.csv`) — kept only rows whose
+`clinvar__sig` is exactly "Uncertain significance"; dropped 16 NaN rows
+and 24 drifted labels (Conflicting / Likely benign / Pathogenic /
+"Uncertain significance|drug response" / etc.) → 5,428 strict-VUS rows.
+The user explicitly asked to **not** add a "VUS is annotation-pipeline
+uncertainty, not biological" caveat to the report; results-only framing.
+
+**Build path (new).** Added [scripts/build_vus_train_parquets.py](scripts/build_vus_train_parquets.py)
+which reuses the preprocessing module's column-pruning + numeric-coercion
++ tidy-rename steps and aligns the VUS rows to the 208-feature training
+schema with training-set medians for any column missing in the VUS file.
+Outputs:
+
+- `outputs/preprocessing/missense_3class.parquet` (27,300 × 211 with
+  `target_3` ∈ {0,1,2}).
+- `outputs/preprocessing/missense_5class.parquet` (27,300 × 211 with
+  `target_5` ∈ {0..4}).
+
+**Code touched.** [src/config.py](src/config.py) now exports
+`CLASS_3_NAMES`, `CLASS_5_NAMES`, `VUS_3CLASS_PARQUET`, `VUS_5CLASS_PARQUET`;
+[src/train.py](src/train.py)'s `--task` choices now include `3class` and
+`5class`, `load_processed` switches parquet + target column accordingly,
+and `--variant augmented` errors out for the new tasks (no augmented
+parquet exists for VUS rows).
+
+**Training in progress.** Both 10-model suites launched in parallel on the
+16-core Ryzen 9850X3D — `--task 3class --tag vus` and
+`--task 5class --tag vus`. Output dirs (once runs land):
+
+- `outputs/reports/3class_vus/`, `outputs/models/3class_vus/`
+- `outputs/reports/5class_vus/`, `outputs/models/5class_vus/`
+
+Headline numbers will be appended to this entry on completion. After that
+we will analyse how the VUS class affects performance vs. the 2-class /
+4-class baselines (the user explicitly wants this comparison — "later we
+will see how the VUS side affects the performance, what changes").
+
+### 2026-05-23 — VUS-as-class study results landed
+
+Both 10-model suites finished cleanly (~5–7 min wall-clock parallel on the
+Ryzen 9850X3D). Leaderboards under `outputs/reports/{3class_vus,5class_vus}/`,
+joblibs under `outputs/models/{3class_vus,5class_vus}/`. HistGB headline
+in both cases.
+
+**Headline (tuned HistGradientBoosting, holdout macro-F1):**
+
+| Study | n classes | Acc | macro-F1 | MCC |
+|---|---:|---:|---:|---:|
+| 2-class no-VUS (baseline) | 2 | $0.9872$ | $0.9872$ | $0.9744$ |
+| **3-class with VUS** | 3 | $0.9540$ | $\mathbf{0.9459}$ | $0.9284$ |
+| 4-class no-VUS (baseline) | 4 | $0.7952$ | $0.7950$ | $0.7274$ |
+| **5-class with VUS** | 5 | $0.7995$ | $\mathbf{0.7984}$ | $0.7497$ |
+
+**Headline findings — how VUS affects performance:**
+
+1. **3-class: adding VUS costs ~$0.041$ in macro-F1** (0.9872 → 0.9459).
+   Per-class F1 on held-out: Benign-side $0.975$, Pathogenic-side $0.958$,
+   VUS $0.905$. VUS recall is $0.921$ (precision $0.889$), so the model
+   identifies VUS correctly most of the time. When VUS is misclassified,
+   it leans pathogenic-side ($5.8\%$) more than benign-side ($2.1\%$).
+
+2. **5-class: adding VUS does NOT hurt overall macro-F1, it slightly
+   improves it** ($0.7950 \to 0.7984$, $\Delta=+0.003$). And **MCC
+   improves materially** ($0.7274 \to 0.7497$, $\Delta=+0.022$). Adding
+   the VUS class is essentially free on aggregate metrics.
+
+3. **VUS is one of the easiest classes to recognize**, not the hardest.
+   In the 5-class case, per-class F1 is:
+   Benign $0.930$, Likely-benign $0.894$, Likely-pathogenic $0.622$,
+   Pathogenic $0.646$, **VUS $0.901$**. VUS sits between Benign and
+   Likely-benign in difficulty — much cleaner than the
+   Pathogenic↔Likely-pathogenic boundary that has been the residual
+   difficulty since the baseline 4-class study.
+
+4. **Per-class cost on the existing four classes when VUS is added (5c−4c):**
+
+   | class | 4-class F1 | 5-class F1 | $\Delta$ |
+   |---|---:|---:|---:|
+   | Benign            | $0.9312$ | $0.9295$ | $-0.002$ |
+   | Likely benign     | $0.9225$ | $0.8942$ | $-0.028$ |
+   | Likely pathogenic | $0.6691$ | $0.6219$ | $-0.047$ |
+   | Pathogenic        | $0.6573$ | $0.6456$ | $-0.012$ |
+
+   The biggest cost is on Likely-pathogenic (it now also loses some mass
+   to VUS); the smallest is on definitive Benign. The headline confusion
+   region (Likely-pathogenic↔Pathogenic) is essentially unchanged — VUS
+   does not poach from there.
+
+5. **VUS bleed-through pattern (5-class confusion matrix, row-normalized
+   recall):** VUS rows are predicted correctly $93.7\%$ of the time, with
+   the residual $6.3\%$ split as $3.0\%$ Likely-pathogenic, $1.7\%$
+   Likely-benign, $1.5\%$ Pathogenic, $0.1\%$ Benign. So when the model
+   misses on VUS, it hedges into a Likely-* category — clinically
+   reasonable behaviour.
+
+6. **AdaBoost in both new studies.** 3-class: AdaBoost ranks 4/10 at
+   $0.8704$ macro-F1. 5-class: AdaBoost ranks 5/10 at $0.6730$. So
+   AdaBoost remains a competent but mid-pack performer when VUS is
+   included, consistent with the existing ablation regimes.
+
+**Implementation notes for future pickup:**
+
+- New parquets at `outputs/preprocessing/{missense_3class,missense_5class}.parquet`
+  (27,300 × 211 each). They are regenerable via
+  `python -m scripts.build_vus_train_parquets`. Note: they are NOT
+  gitignored — they're 16 MB each, so they may want a `.gitignore` entry
+  before the next commit (the existing rule covers `*.parquet` under
+  `outputs/preprocessing/` already — they'll be ignored automatically).
+- Training entry point: `python -m src.train --task 3class --tag vus` /
+  `--task 5class --tag vus`. The new tasks reject `--variant augmented`
+  with a clear error (no augmented VUS parquet exists, by design).
+- `src/config.py` now exports `CLASS_3_NAMES`, `CLASS_5_NAMES`,
+  `VUS_3CLASS_PARQUET`, `VUS_5CLASS_PARQUET`.
+
+**Pending decision.** Whether to write these results into
+`final_report.tex` as a new §4.10 (or wherever fits the narrative) and
+rebuild the PDF. The user has not yet asked for this — only for the
+study itself + the checkpoint capture.
+
+### 2026-05-23 — Feature-ablation study + ablation-optimal "Lean" model
+
+User: *"now we will do an ablation study, take the best models, do it for all
+categories, we need to know what features are useful, and what are waste,
+save these somewhere so will do a report."*
+
+Performed a two-phase ablation across all four tasks (2-class, 3-class,
+4-class, 5-class) × the full 10-model suite. Took **108.6 min** wall-clock
+for Phase A on the Ryzen 9850X3D (6-way parallel; AdaBoost on 5-class with
+all features is the slow leg). All results written under
+`outputs/reports/feature_ablation/`.
+
+#### Phase A — Group-level leave-one-out (LOO)
+
+Twelve functional groups defined in [scripts/run_feature_ablation.py](scripts/run_feature_ablation.py).
+For each (task × group) we re-ran the full 10-model suite with
+`src.train --drop-prefixes <group_prefixes> --tag ablate_<group>`. Master
+table at `outputs/reports/feature_ablation/master.csv` (504 rows: 4 tasks ×
+12 groups × 10–11 models per task). Headline (HistGB delta,
+baseline − ablated, positive = group is USEFUL):
+
+| group           | 4-class | 2-class | 5-class | 3-class | max\|Δ\| | n features |
+|---|---:|---:|---:|---:|---:|---:|
+| population_af   | $+0.0471$ | $+0.0025$ | $+0.0405$ | $+0.0054$ | $0.0471$ | 47 |
+| functional      | $-0.0012$ | $-0.0005$ | $+0.0266$ | $+0.0469$ | $0.0469$ | 4  |
+| other_vep       | $+0.0133$ | $-0.0002$ | $+0.0137$ | $+0.0073$ | $0.0137$ | 56 |
+| cadd            | $-0.0054$ | $-0.0005$ | $-0.0001$ | $-0.0015$ | $0.0054$ | 4  |
+| ditto           | $+0.0039$ | $+0.0046$ | $+0.0001$ | $+0.0033$ | $0.0046$ | 1  |
+| metarnn         | $+0.0014$ | $+0.0005$ | $+0.0045$ | $+0.0005$ | $0.0045$ | 2  |
+| bayesdel        | $-0.0045$ | $-0.0002$ | $-0.0004$ | $-0.0003$ | $0.0045$ | 4  |
+| position        | $-0.0044$ | $+0.0002$ | $+0.0018$ | $+0.0029$ | $0.0044$ | 2  |
+| revel           | $-0.0018$ | $+0.0005$ | $-0.0044$ | $-0.0015$ | $0.0044$ | 2  |
+| chasmplus       | $+0.0026$ | $+0.0011$ | $+0.0028$ | $-0.0002$ | $0.0028$ | 68 |
+| alphamissense   | $-0.0015$ | $+0.0005$ | $-0.0028$ | $-0.0017$ | $0.0028$ | 1  |
+| conservation    | $+0.0018$ | $-0.0007$ | $-0.0001$ | $+0.0000$ | $0.0018$ | 17 |
+
+**Top three useful groups (across tasks):**
+
+1. **population_af** — by far the most important group. Removing it costs
+   $+0.047$ macro-F1 on 4-class and $+0.041$ on 5-class. Consistent with
+   the existing canonical SHAP analysis where `allofus250k_gvs_max_af`
+   and `gnomad_af` rank in the top 5 features.
+2. **functional** — only four features (`fitcons_*`, `ncer_*`) but the
+   single biggest contributor on 3-class ($+0.047$) and second-biggest on
+   5-class ($+0.027$). Essentially noise on 2-class and 4-class — i.e.,
+   FitCons / ncER carry a feature signature that uniquely fingerprints
+   VUS rows. This explains *why* VUS is so easy to classify in the
+   5-class study.
+3. **other_vep** — 56 residual meta-classifier predictor scores, a
+   collective $+0.013$ on 4-class. The basket has redundancy internally
+   (no single member is critical) but as a whole it carries real signal.
+
+**Eight groups confirmed waste** (max \|Δ\| < $0.005$ across all four tasks):
+ditto, metarnn, bayesdel, position, revel, chasmplus, alphamissense,
+conservation. They cover 97 of 208 features (≈47% of the schema).
+
+#### Phase B — Per-feature permutation importance inside waste groups
+
+Output: `outputs/reports/feature_ablation/per_feature_waste.csv`.
+N\_repeats = 10 column shuffles per feature, scored on the held-out 20%
+of each task with the canonical HistGB joblib. Surprising finding —
+**Phase B contradicts Phase A on individual features**:
+
+| feature | 4-class | 2-class | 5-class | 3-class |
+|---|---:|---:|---:|---:|
+| `ditto_score`                     | $0.133$ | $0.148$ | $0.110$ | $0.078$ |
+| `metarnn_score`                   | $0.048$ | $0.028$ | $0.022$ | $0.008$ |
+| `bayesdel_bayesdel_addaf_score`   | $0.003$ | $0.000$ | $0.009$ | $0.000$ |
+| `hg19_pos`                        | $0.001$ | $0.000$ | $0.006$ | $0.006$ |
+| `revel_score`                     | $0.000$ | $0.000$ | $0.003$ | $0.000$ |
+| `alphamissense_am_pathogenicity`  | $0.000$ | $0.000$ | $0.002$ | $0.000$ |
+| every `chasmplus_*` (n=68)        | < $0.002$ | < $0.001$ | < $0.003$ | < $0.001$ |
+| every `conservation_*` (n=17)     | < $0.002$ | < $0.001$ | < $0.003$ | < $0.001$ |
+
+The discrepancy is the redundancy story: **`ditto_score` and
+`metarnn_score` are highly predictive individually, but removing them as
+a group leaves enough correlated predictors behind (the other_vep
+basket) to absorb the loss**. Permutation importance captures marginal
+contribution including redundancy; group LOO captures only marginal
+contribution net of redundancy. Both views are necessary.
+
+The remainder of the waste groups are confirmed inert at the per-feature
+level — no feature inside chasmplus, conservation, alphamissense, revel,
+bayesdel (other than `addaf_score`) crosses the $0.005$ floor on the
+headline 4-class task.
+
+#### Ablation-optimal "Lean" model
+
+Built and evaluated two candidate lean feature subsets via full 10-model
+suite training on all four tasks (4 × 1 = 4 subset runs × 2 candidates = 8
+total fits):
+
+- **Lean A** (110 features, $-47\%$): drop all 8 waste groups including
+  ditto and metarnn. HistGB cost: $4$c $-0.0112$, $2$c $-0.0062$, $3$c
+  $-0.0110$, $5$c $-0.0161$. Cost exceeds the per-group LOO sum — the
+  compound removal collapses redundancy that the individual LOOs hid.
+- **Lean B** (113 features, $-45\%$): drop the same 8 groups *except*
+  keep the `ditto_` and `metarnn_` prefixes (3 extra features). HistGB
+  cost: $4$c $-0.0051$, $2$c $-0.0009$, $3$c $-0.0074$, $5$c $-0.0117$.
+  **Recovers $\approx 50\%$ of Lean A's loss for 3 extra features.**
+
+Lean B is the headline "ablation-optimal" model. Final numbers
+(HistGradientBoosting):
+
+| Task | Baseline | Lean B | $\Delta$ | Features dropped |
+|---|---:|---:|---:|---:|
+| 2-class | $0.9872$ | $\mathbf{0.9863}$ | $-0.0009$ | $-94\,(45\%)$ |
+| 3-class | $0.9459$ | $\mathbf{0.9386}$ | $-0.0074$ | $-94$ |
+| 4-class | $0.7950$ | $\mathbf{0.7900}$ | $-0.0051$ | $-94$ |
+| 5-class | $0.7984$ | $\mathbf{0.7867}$ | $-0.0117$ | $-94$ |
+
+**Side-effects on other models:** Lean B does NOT just trade size for a
+small loss — several models *improve*:
+
+- `NearestCentroid` $+0.028$ (2c), $+0.040$ (3c), $+0.016$ (4c) — dropping
+  the noisy chasmplus columns helps the centroid families decisively.
+- `CosineSimilarity` $+0.027$ (2c), $+0.027$ (3c), $+0.022$ (5c) — same.
+- `KNN` $+0.007$ (2c), $+0.025$ (3c) — distance-weighted KNN benefits
+  from removing the curse-of-dimensionality contribution of the dropped
+  groups.
+
+Linear models (LinearSVC, LDA, RidgeClassifier) lose $0.01$–$0.02$ —
+they relied on those columns for a small additive lift but degrade
+gracefully. **QDA collapses ($-0.07$)** — expected; it is sensitive to
+feature-correlation structure and removing 94 columns disrupts its
+covariance estimates.
+
+#### What is useful vs. what is waste — the report-grade answer
+
+Three tiers:
+
+1. **Indispensable.** `population_af` family. Cost of removal: up to
+   $0.047$ macro-F1. Cannot be replaced.
+2. **Useful but redundant.** `ditto_score`, `metarnn_score`, the
+   `other_vep` basket. Removing any one is cheap because the others
+   compensate; removing all of them is expensive.
+3. **Waste.** The 94 features dropped by Lean B: bayesdel, position,
+   revel, chasmplus (68 features), alphamissense, conservation
+   (phastcons + phylop + gerp + siphy = 17 features), and the bulk of
+   metarnn and ditto's rank-score columns. None of them carries a
+   per-feature contribution above the $0.005$ noise floor on the
+   headline 4-class task; collectively they cost only $-0.005$ macro-F1
+   when removed together.
+
+**Functional / fitcons** is an interesting edge case: low impact on
+canonical tasks but huge impact on VUS-class tasks. We keep it; the
+VUS-as-class subsection downstream uses it.
+
+#### Artifacts
+
+- `outputs/reports/feature_ablation/master.csv` — long-form delta table.
+- `outputs/reports/feature_ablation/{task}_pivot.csv` — per-task wide
+  pivots (groups × models).
+- `outputs/reports/feature_ablation/headline_histgb.csv` — the table
+  above, machine-readable.
+- `outputs/reports/feature_ablation/per_feature_waste.csv` — Phase B
+  per-feature permutation importance inside the waste groups.
+- `outputs/reports/feature_ablation/waste_groups.txt` — the 8 waste-group
+  labels.
+- `outputs/reports/{task}_lean/`, `outputs/reports/{task}_leanB/` — full
+  10-model leaderboards under each candidate lean subset.
+- `outputs/models/{task}_lean/`, `outputs/models/{task}_leanB/` —
+  ablation-optimal `.joblib` artifacts.
+- `outputs/reports/{task}_ablate_<group>/` — the 48 Phase A LOO runs.
+
+Next: write the comparative ablation subsection into `final_report.tex`
+and rebuild the PDF; that closes the loop on the project deliverable.

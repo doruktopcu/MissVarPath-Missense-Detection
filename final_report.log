@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.19)  19 MAY 2026 03:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.5.19)  23 MAY 2026 07:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -543,137 +543,249 @@ Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count337
  [1
 
-{C:/Users/Doruk-Topcu/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Overfull \hbox (20.35242pt too wide) in paragraph at lines 135--145
+{C:/Users/Doruk-Topcu/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2]
+Overfull \hbox (20.35242pt too wide) in paragraph at lines 152--162
 \OT1/cmr/m/n/10.95 clas-si-fier), De-ci-sion-Tree (\OT1/cmtt/m/n/10.95 max[]dep
 th=10\OT1/cmr/m/n/10.95 , \OT1/cmtt/m/n/10.95 min[]samples[]leaf=1\OT1/cmr/m/n/
 10.95 , \OT1/cmtt/m/n/10.95 ccp[]alpha=0.001\OT1/cmr/m/n/10.95 , class-balanced
 ),
  []
 
-[2]
-Overfull \hbox (7.2396pt too wide) in paragraph at lines 180--186
+
+Overfull \hbox (7.2396pt too wide) in paragraph at lines 197--203
 \OT1/cmtt/m/n/10.95 word[]size=7\OT1/cmr/m/n/10.95 , \OT1/cmtt/m/n/10.95 evalue
 =10\OT1/cmr/m/n/10.95 , top-K=10). We de-lib-er-ately frame these as \OT1/cmr/m
 /it/10.95 label-aware locus-neighbour
  []
 
 [3] [4]
-Overfull \hbox (3.07465pt too wide) in paragraph at lines 303--320
+Overfull \hbox (3.07465pt too wide) in paragraph at lines 324--341
  [][] 
  []
 
 [5]
-Overfull \hbox (1.15343pt too wide) in paragraph at lines 372--380
+Overfull \hbox (1.15343pt too wide) in paragraph at lines 394--402
 \OT1/cmr/m/n/10.95 MetaRNN, Bayes-Del, FATHMM, Mu-ta-tion-Taster, PROVEAN, ESM1
 b, EVE, Pri-mateAI, MVP,
  []
 
 [6]
-Overfull \hbox (16.14665pt too wide) in paragraph at lines 459--466
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 5
+14.
+
+(C:\Users\Doruk-Topcu\AppData\Local\Programs\MiKTeX\tex/latex/base\omscmr.fd
+File: omscmr.fd 2024/11/19 v2.5n Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 514.
+
+Overfull \hbox (6.15605pt too wide) in paragraph at lines 514--520
+ []\OT1/cmr/bx/n/10.95 Cross-task con-sis-tency.[] \OT1/cmr/m/n/10.95 Col-laps-
+ing the 4-class head's pre-dic-tions to \OMS/cmsy/m/n/10.95 f\OT1/cmr/m/n/10.95
+ pathogenic-side, benign-
+ []
+
+[7]
+<outputs/figures/vus_per_gene_predictions.png, id=253, 643.203pt x 575.06271pt>
+
+File: outputs/figures/vus_per_gene_predictions.png Graphic file (type png)
+<use outputs/figures/vus_per_gene_predictions.png>
+Package pdftex.def Info: outputs/figures/vus_per_gene_predictions.png  used on 
+input line 537.
+(pdftex.def)             Requested size: 430.31812pt x 384.73721pt.
+ [8 <./outputs/figures/vus_per_gene_predictions.png>]
+Overfull \hbox (16.14665pt too wide) in paragraph at lines 597--604
 []\OT1/cmr/m/n/10.95 Dropping the sin-gle \OT1/cmtt/m/n/10.95 ditto[] \OT1/cmr/
 m/n/10.95 col-umn on the canon-i-cal base par-quet yields \OT1/cmtt/m/n/10.95 H
 istGradientBoosting
  []
 
 
-Overfull \hbox (20.76907pt too wide) in paragraph at lines 492--507
+Overfull \hbox (20.76907pt too wide) in paragraph at lines 630--645
  [][] 
  []
 
-[7]
-Underfull \hbox (badness 3942) in paragraph at lines 524--524
-[]\OT1/cmr/m/n/10.95 Table 6: |Fi-nal 4-class tuned no-AdaBoost leader-board (h
+[9]
+Underfull \hbox (badness 3942) in paragraph at lines 662--662
+[]\OT1/cmr/m/n/10.95 Table 8: |Fi-nal 4-class tuned no-AdaBoost leader-board (h
 eld-out 20%). Source:
  []
 
 
-Overfull \hbox (8.07466pt too wide) in paragraph at lines 527--543
+Overfull \hbox (8.07466pt too wide) in paragraph at lines 665--681
  [][] 
  []
 
 
-Underfull \hbox (badness 3942) in paragraph at lines 548--548
-[]\OT1/cmr/m/n/10.95 Table 7: |Fi-nal 2-class tuned no-AdaBoost leader-board (h
+Underfull \hbox (badness 3942) in paragraph at lines 686--686
+[]\OT1/cmr/m/n/10.95 Table 9: |Fi-nal 2-class tuned no-AdaBoost leader-board (h
 eld-out 20%). Source:
  []
 
 
-Overfull \hbox (8.07466pt too wide) in paragraph at lines 551--567
+Overfull \hbox (8.07466pt too wide) in paragraph at lines 689--705
  [][] 
  []
 
-[8]
-<final_report/figures/histgb_4class_cm.png, id=243, 346.896pt x 289.08pt>
+<final_report/figures/histgb_4class_cm.png, id=285, 346.896pt x 289.08pt>
 File: final_report/figures/histgb_4class_cm.png Graphic file (type png)
 <use final_report/figures/histgb_4class_cm.png>
 Package pdftex.def Info: final_report/figures/histgb_4class_cm.png  used on inp
-ut line 573.
+ut line 711.
 (pdftex.def)             Requested size: 217.42265pt x 181.18622pt.
-<final_report/figures/histgb_2class_cm.png, id=245, 289.08pt x 252.945pt>
+<final_report/figures/histgb_2class_cm.png, id=286, 289.08pt x 252.945pt>
 File: final_report/figures/histgb_2class_cm.png Graphic file (type png)
 <use final_report/figures/histgb_2class_cm.png>
 Package pdftex.def Info: final_report/figures/histgb_2class_cm.png  used on inp
-ut line 579.
+ut line 717.
 (pdftex.def)             Requested size: 217.42265pt x 190.24477pt.
- [9 <./final_report/figures/histgb_4class_cm.png> <./final_report/figures/histg
-b_2class_cm.png>] [10]
-Underfull \hbox (badness 10000) in paragraph at lines 707--707
-[]\OT1/cmr/m/n/10.95 Table 10: |Top-15 fea-tures by mean$\OMS/cmsy/m/n/10.95 j$
-\OT1/cmr/m/n/10.95 SHAP$\OMS/cmsy/m/n/10.95 j$ \OT1/cmr/m/n/10.95 for the canon
+[10] [11 <./final_report/figures/histgb_4class_cm.png> <./final_report/figures/
+histgb_2class_cm.png>]
+Overfull \hbox (126.63686pt too wide) in paragraph at lines 821--823
+[]\OT1/cmr/bx/n/10.95 5-class\OT1/cmr/m/n/10.95 : \OMS/cmsy/m/n/10.95 f\OT1/cmr
+/m/n/10.95 Benign, Likely-benign, Likely-pathogenic, Pathogenic, VUS\OMS/cmsy/m
+/n/10.95 g\OT1/cmr/m/n/10.95 . Class counts: $5[]468 \OML/cmm/m/it/10.95 = \OT1
+/cmr/m/n/10.95 5[]468 \OML/cmm/m/it/10.95 = \OT1/cmr/m/n/10.95 5[]468 \OML/cmm/
+m/it/10.95 = \OT1/cmr/m/n/10.95 5[]468 \OML/cmm/m/it/10.95 = \OT1/cmr/m/n/10.95
+ 5[]428$
+ []
+
+[12]
+LaTeX Font Info:    Trying to load font information for OMS+cmtt on input line 
+871.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 871.
+
+
+LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbraceleft' on input line 871.
+
+
+Overfull \hbox (310.21638pt too wide) in paragraph at lines 870--875
+[]\OT1/cmr/m/n/10.95 Artifacts: \OT1/cmtt/m/n/10.95 outputs/reports/\OMS/cmtt/m
+/n/10.95 f\OT1/cmtt/m/n/10.95 3class[]vus,5class[]vus\OMS/cmtt/m/n/10.95 g\OT1/
+cmtt/m/n/10.95 /leaderboard.csv\OT1/cmr/m/n/10.95 , \OT1/cmtt/m/n/10.95 outputs
+/models/\OMS/cmtt/m/n/10.95 f\OT1/cmtt/m/n/10.95 3class[]vus,5class[]vus\OMS/cm
+tt/m/n/10.95 g\OT1/cmtt/m/n/10.95 /histgradientboosting.joblib\OT1/cmr/m/n/10.9
+5 ,
+ []
+
+
+Overfull \hbox (13.28862pt too wide) in paragraph at lines 870--875
+\OT1/cmr/m/n/10.95 and the new train-ing par-quets at \OT1/cmtt/m/n/10.95 outpu
+ts/preprocessing/missense[]\OMS/cmtt/m/n/10.95 f\OT1/cmtt/m/n/10.95 3class,5cla
+ss\OMS/cmtt/m/n/10.95 g\OT1/cmtt/m/n/10.95 .parquet\OT1/cmr/m/n/10.95 . 
+ []
+
+
+Overfull \hbox (10.70235pt too wide) in paragraph at lines 900--904
+\OT1/cmtt/m/n/10.95 --drop-prefixes <group> --tag ablate[]<group> \OT1/cmr/m/n/
+10.95 and com-pared \OT1/cmtt/m/n/10.95 HistGradientBoosting \OT1/cmr/m/n/10.95
+ held-
+ []
+
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 938.
+[13]
+Underfull \hbox (badness 2443) in paragraph at lines 974--974
+[]\OT1/cmr/m/n/10.95 Table 13: |Per-feature per-mu-ta-tion im-por-tance (\OT1/c
+mtt/m/n/10.95 n[]repeats=10\OT1/cmr/m/n/10.95 , macro-F1 drop when
+ []
+
+
+Underfull \hbox (badness 3189) in paragraph at lines 974--974
+\OT1/cmr/m/n/10.95 each col-umn is in-de-pen-dently shuf-fled on the held-out $
+20%$). Only the fea-tures
+ []
+
+
+Underfull \hbox (badness 2762) in paragraph at lines 974--974
+\OT1/cmr/m/n/10.95 that ex-ceed the $0\OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 0
+05$ noise floor on at least one task are shown; full ta-ble at
+ []
+
+[14]
+Overfull \hbox (169.56009pt too wide) in paragraph at lines 1078--1085
+\OT1/cmtt/m/n/10.95 metarnn[]score\OT1/cmr/m/n/10.95 ) which Lean B ex-plic-itl
+y re-tains. The ar-ti-fact set is at \OT1/cmtt/m/n/10.95 outputs/models/\OMS/cm
+tt/m/n/10.95 f\OT1/cmtt/m/n/10.95 2class,3class,4class,5class\OMS/cmtt/m/n/10.9
+5 g[]\OT1/cmtt/m/n/10.95 leanB/\OT1/cmr/m/n/10.95 . 
+ []
+
+
+Overfull \hbox (10.19295pt too wide) in paragraph at lines 1092--1098
+[]\OT1/cmr/bx/n/10.95 Useful but re-dun-dant \OT1/cmr/m/n/10.95 ($\OML/cmm/m/it
+/10.95 n \OT1/cmr/m/n/10.95 = 66$): the \OT1/cmtt/m/n/10.95 other[]vep \OT1/cmr
+/m/n/10.95 bas-ket + \OT1/cmtt/m/n/10.95 functional \OT1/cmr/m/n/10.95 + \OT1/c
+mtt/m/n/10.95 cadd \OT1/cmr/m/n/10.95 + \OT1/cmtt/m/n/10.95 ditto[]score
+ []
+
+
+Overfull \hbox (9.13022pt too wide) in paragraph at lines 1118--1135
+ [][] 
+ []
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 1152--1152
+[]\OT1/cmr/m/n/10.95 Table 17: |Top-15 fea-tures by mean$\OMS/cmtt/m/n/10.95 j$
+\OT1/cmr/m/n/10.95 SHAP$\OMS/cmtt/m/n/10.95 j$ \OT1/cmr/m/n/10.95 for the canon
 -i-cal 4-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 707--707
+Underfull \hbox (badness 10000) in paragraph at lines 1152--1152
 \OT1/cmr/m/n/10.95 class \OT1/cmtt/m/n/10.95 HistGradientBoosting \OT1/cmr/m/n/
 10.95 (sam-ple $\OML/cmm/m/it/10.95 N \OT1/cmr/m/n/10.95 = 1000$, held-out). So
 urce:
  []
 
-<final_report/figures/shap_bar_4class.png, id=268, 578.16pt x 650.43pt>
+<final_report/figures/shap_bar_4class.png, id=357, 578.16pt x 650.43pt>
 File: final_report/figures/shap_bar_4class.png Graphic file (type png)
 <use final_report/figures/shap_bar_4class.png>
 Package pdftex.def Info: final_report/figures/shap_bar_4class.png  used on inpu
-t line 737.
+t line 1182.
 (pdftex.def)             Requested size: 217.42265pt x 244.59546pt.
-<final_report/figures/shap_bar_2class.png, id=269, 578.16pt x 650.43pt>
+<final_report/figures/shap_bar_2class.png, id=358, 578.16pt x 650.43pt>
 File: final_report/figures/shap_bar_2class.png Graphic file (type png)
 <use final_report/figures/shap_bar_2class.png>
 Package pdftex.def Info: final_report/figures/shap_bar_2class.png  used on inpu
-t line 743.
+t line 1188.
 (pdftex.def)             Requested size: 217.42265pt x 244.59546pt.
-[11 <./final_report/figures/shap_bar_4class.png> <./final_report/figures/shap_b
-ar_2class.png>]
-Overfull \hbox (27.86255pt too wide) in paragraph at lines 763--769
+[16]
+Overfull \hbox (27.86255pt too wide) in paragraph at lines 1208--1214
 []\OT1/cmr/bx/n/10.95 Pathogenic de-ci-sions are predictor-driven. \OT1/cmtt/m/
 n/10.95 ditto[]score \OT1/cmr/m/n/10.95 ($1\OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10
 .95 71$) and \OT1/cmtt/m/n/10.95 mutpred1[]general[]score
  []
 
 
-Overfull \hbox (17.48665pt too wide) in paragraph at lines 769--774
+Overfull \hbox (17.48665pt too wide) in paragraph at lines 1214--1219
 \OT1/cmr/m/n/10.95 Likely-pathogenic ($0\OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95
  79$), sug-gest-ing the bound-ary be-tween ``Likely pathogenic'' and ``Pathogen
 ic''
  []
 
-[12] [13] [14] [15] (final_report.aux)
+[17 <./final_report/figures/shap_bar_4class.png> <./final_report/figures/shap_b
+ar_2class.png>] [18] [19] [20] [21] (final_report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
 Package rerunfilecheck Info: File `final_report.out' has not changed.
-(rerunfilecheck)             Checksum: 966BFF498D987546400E74630A6256BF;5629.
+(rerunfilecheck)             Checksum: 362B231AA85BA5853E2FCE7B39D3850F;6489.
  ) 
 Here is how much of TeX's memory you used:
- 13924 strings out of 467871
- 219700 string characters out of 5415472
- 698947 words of memory out of 5000000
- 42552 multiletter control sequences out of 15000+600000
- 637803 words of font info for 75 fonts, out of 8000000 for 9000
+ 14027 strings out of 467871
+ 221512 string characters out of 5415472
+ 769795 words of memory out of 5000000
+ 42604 multiletter control sequences out of 15000+600000
+ 638139 words of font info for 77 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,10n,79p,459b,1095s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,79p,696b,1095s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Doruk-Topcu\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi60
 0\tcrm1095.pk> <C:\Users\Doruk-Topcu\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
 pen/ec/dpi600\tcrm1000.pk><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/f
@@ -684,15 +796,17 @@ s/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr1
 0.pfb><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
 sfonts/cm/cmr12.pfb><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fonts/t
 ype1/public/amsfonts/cm/cmr17.pfb><C:/Users/Doruk-Topcu/AppData/Local/Programs/
-MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Doruk-Topcu/AppData/Lo
-cal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Doruk-T
-opcu/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:
-/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
-/cmti10.pfb><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/amsfonts/cm/cmtt10.pfb>
-Output written on final_report.pdf (15 pages, 527301 bytes).
+MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Doruk-Topcu/AppData/Lo
+cal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Doruk-Top
+cu/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/
+Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
+cmsy7.pfb><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/amsfonts/cm/cmsy8.pfb><C:/Users/Doruk-Topcu/AppData/Local/Programs/MiKTeX/fon
+ts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Doruk-Topcu/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on final_report.pdf (21 pages, 660984 bytes).
 PDF statistics:
- 415 PDF objects out of 1000 (max. 8388607)
- 107 named destinations out of 1000 (max. 500000)
- 277 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 545 PDF objects out of 1000 (max. 8388607)
+ 154 named destinations out of 1000 (max. 500000)
+ 314 words of extra memory for PDF output out of 10000 (max. 10000000)
 
