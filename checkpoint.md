@@ -1044,3 +1044,122 @@ VUS-as-class subsection downstream uses it.
 
 Next: write the comparative ablation subsection into `final_report.tex`
 and rebuild the PDF; that closes the loop on the project deliverable.
+
+### 2026-05-23 — Grand summary + CSV exports + supplemental docs
+
+User: *"create csv versions of the tables ... create the table something
+similar to this if it is plausible ... what models in what settings gives
+what results we will be able to see it at a glance ... also explain all
+the settings, ablations in a supplemental files."*
+
+Delivered three additional pieces alongside the strengthened report:
+
+#### 1. Grand model × setting summary CSV
+
+[scripts/build_grand_summary.py](scripts/build_grand_summary.py) walks
+every setting on disk (24 in total), recomputes macro-precision and
+macro-recall from the saved joblibs (the per-class breakdown not
+already in `holdout_macro_f1`/`holdout_acc`/`holdout_mcc`), and emits:
+
+- [outputs/reports/grand_summary.csv](outputs/reports/grand_summary.csv)
+  — wide table, 11 models × 96 columns (24 settings × 4 metrics
+  per setting: `macro_f1`, `accuracy`, `macro_precision`, `macro_recall`).
+- [outputs/reports/grand_summary_long.csv](outputs/reports/grand_summary_long.csv)
+  — long format, 257 rows of `(model, setting, 4 metrics)` — easier for
+  filtering / pivoting in pandas.
+
+Settings covered: canonical kfold + tuned (both 4c and 2c), augmented,
+gene-CV, no-VEP kfold + gene, raw-only, no-DITTO, 3-class with VUS,
+5-class with VUS, plus Lean A and Lean B for all four tasks. The 48
+per-group ablations are NOT in the grand table (too many columns) —
+their master long-format CSV lives at
+`outputs/reports/feature_ablation/master.csv`.
+
+#### 2. Per-table CSVs matching each LaTeX table
+
+[scripts/build_report_table_csvs.py](scripts/build_report_table_csvs.py)
+emits one CSV per aggregated table in
+[final_report.tex](final_report.tex), all under
+[outputs/reports/tables_csv/](outputs/reports/tables_csv/):
+
+- `gene_strat.csv` — 4c / 2c canonical vs. gene-CV delta table
+- `no_vep.csv` — no-VEP kfold vs. no-VEP gene-CV (4-class)
+- `raw_only.csv` — augmented vs. raw-only delta table (4c + 2c)
+- `vus_class.csv` — VUS-as-class headline numbers
+- `ablation_headline.csv` — HistGB group-LOO delta × task × group
+- `ablation_per_feature.csv` — per-feature permutation importance in
+  the waste groups (only features above the $0.001$ noise floor)
+- `lean_headline.csv` — Lean A / Lean B HistGB summary
+- `lean_full.csv` — Lean B full 10-model leaderboard across all 4 tasks
+- `anchors.csv` — anchor numbers across the report
+- `leaderboard_{2class,3class_vus,4class,5class_vus}.csv` — full-suite
+  per-task leaderboards
+
+#### 3. Supplemental documentation
+
+[SETTINGS.md](SETTINGS.md) explains every setting label in the grand
+table, the metric definitions, the four task definitions, the 12 feature
+groups (with prefixes and group-LOO verdict), and the `src.train`
+invocation required to reproduce any cell. Also indexes every artifact
+file we've produced.
+
+#### Stronger ablation explanations in the report
+
+The §4 feature-ablation and Lean-model subsections in
+[final_report.tex](final_report.tex) were rewritten with substantially
+expanded interpretive prose:
+
+- Each of the three Phase A observations now has a paragraph explaining
+  *why* (population_af → ACMG BS1/BA1 alignment; functional → FitCons
+  missingness fingerprints VUS rows; eight waste groups → group LOO
+  measures replaceability not informativeness).
+- Phase B has a new paragraph on the deployment implication of
+  inter-predictor redundancy (any single meta-classifier can be swapped
+  out without retraining the suite).
+- Lean B has two new paragraphs explaining (a) why centroid /
+  KNN models actually *improve* on the lean subset (curse of
+  dimensionality + tree-split noise on chasmplus columns), and (b) why
+  the compound removal is super-additive vs. the per-group LOO sum.
+
+PDF rebuilt: 22 pages, 677 KB, no undefined refs. The interpretive
+density of §4.feature-ablation roughly doubled.
+
+#### Verification of the grand summary
+
+`HistGradientBoosting` macro-F1 across all 24 settings, pulled from
+[outputs/reports/grand_summary.csv](outputs/reports/grand_summary.csv):
+
+| Setting | macro-F1 |
+|---|---:|
+| `4class_canonical_kfold` | $0.7928$ |
+| `4class_tuned`           | $0.7950$ |
+| `4class_augmented`       | $0.7948$ |
+| `4class_gene_cv`         | $0.7658$ |
+| `4class_no_vep_kfold`    | $0.7727$ |
+| `4class_no_vep_gene`     | $0.7611$ |
+| `4class_raw_only`        | $0.7212$ |
+| `4class_no_ditto`        | $0.7911$ |
+| `4class_lean_A`          | $0.7838$ |
+| `4class_lean_B`          | $0.7900$ |
+| `2class_canonical_kfold` | $0.9870$ |
+| `2class_tuned`           | $0.9872$ |
+| `2class_augmented`       | $0.9904$ |
+| `2class_gene_cv`         | $0.9874$ |
+| `2class_no_vep_kfold`    | $0.9764$ |
+| `2class_raw_only`        | $0.9339$ |
+| `2class_lean_A`          | $0.9810$ |
+| `2class_lean_B`          | $0.9863$ |
+| `3class_with_vus`        | $0.9459$ |
+| `3class_lean_A`          | $0.9349$ |
+| `3class_lean_B`          | $0.9386$ |
+| `5class_with_vus`        | $0.7984$ |
+| `5class_lean_A`          | $0.7823$ |
+| `5class_lean_B`          | $0.7867$ |
+
+All numbers cross-reference with `final_report.tex` / `final_report.pdf`.
+
+Project is content-complete. Delivery items remaining (user-side):
+commit + push the four new scripts + 14 new CSV files +
+`SETTINGS.md` + the regenerated PDF; record the ≤10 min demo video; send
+the email to professor@hacettepe.edu.tr (subject
+`CMP682_yourname_project`) before 2026-05-24 23:59.

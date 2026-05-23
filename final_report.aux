@@ -80,31 +80,33 @@
 \@writefile{toc}{\contentsline {paragraph}{Phase B: per-feature permutation importance inside the waste groups.}{14}{section*.22}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Per-feature permutation importance (\texttt  {n\_repeats=10}, macro-F1 drop when each column is independently shuffled on the held-out $20\%$). Only the features that exceed the $0.005$ noise floor on at least one task are shown; full table at \texttt  {outputs/reports/feature\_ablation/per\_feature\_waste.csv}.}}{14}{table.caption.23}\protected@file@percent }
 \newlabel{tab:ablation-perfeat}{{13}{14}{Per-feature permutation importance (\texttt {n\_repeats=10}, macro-F1 drop when each column is independently shuffled on the held-out $20\%$). Only the features that exceed the $0.005$ noise floor on at least one task are shown; full table at \texttt {outputs/reports/feature\_ablation/per\_feature\_waste.csv}}{table.caption.23}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.13}Ablation-optimal Lean model}{14}{subsection.4.13}\protected@file@percent }
-\newlabel{sec:lean}{{4.13}{14}{Ablation-optimal Lean model}{subsection.4.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.13}Ablation-optimal Lean model}{15}{subsection.4.13}\protected@file@percent }
+\newlabel{sec:lean}{{4.13}{15}{Ablation-optimal Lean model}{subsection.4.13}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Lean-model HistGB headlines. Both lean models drop 94--97 of the 208 base features and stay within $\sim 0.012$ macro-F1 of the $208$-feature baseline on the headline 4-class task. Lean B recovers about half of Lean A's loss by keeping \texttt  {ditto\_score} and \texttt  {metarnn\_score}.}}{15}{table.caption.24}\protected@file@percent }
 \newlabel{tab:lean-headline}{{14}{15}{Lean-model HistGB headlines. Both lean models drop 94--97 of the 208 base features and stay within $\sim 0.012$ macro-F1 of the $208$-feature baseline on the headline 4-class task. Lean B recovers about half of Lean A's loss by keeping \texttt {ditto\_score} and \texttt {metarnn\_score}}{table.caption.24}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Lean B full 10-model leaderboard per task. Italicised values \emph  {improve} on the $208$-feature baseline. The centroid families (NearestCentroid, CosineSimilarity) and KNN consistently benefit from the lean subset: dropping the noisy 68-column \texttt  {chasmplus} basket and the 17 conservation columns helps these distance/centroid models disentangle the remaining signal.}}{15}{table.caption.25}\protected@file@percent }
-\newlabel{tab:lean-full}{{15}{15}{Lean B full 10-model leaderboard per task. Italicised values \emph {improve} on the $208$-feature baseline. The centroid families (NearestCentroid, CosineSimilarity) and KNN consistently benefit from the lean subset: dropping the noisy 68-column \texttt {chasmplus} basket and the 17 conservation columns helps these distance/centroid models disentangle the remaining signal}{table.caption.25}{}}
-\@writefile{toc}{\contentsline {paragraph}{The bottom line.}{15}{section*.26}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Three-tier feature classification.}{15}{section*.27}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.14}Anchor numbers across the report}{16}{subsection.4.14}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S  \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost.}}{16}{table.caption.28}\protected@file@percent }
-\newlabel{tab:anchors}{{16}{16}{Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost}{table.caption.28}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Interpretability}{16}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Canonical SHAP}{16}{subsection.5.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt  {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt  {outputs/shap/canonical\_4class/feature\_importance.csv}.}}{16}{table.caption.29}\protected@file@percent }
-\newlabel{tab:shap-canonical}{{17}{16}{Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt {outputs/shap/canonical\_4class/feature\_importance.csv}}{table.caption.29}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt  {HistGradientBoosting} model.}}{17}{figure.caption.30}\protected@file@percent }
-\newlabel{fig:shap-bar}{{3}{17}{Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt {HistGradientBoosting} model}{figure.caption.30}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Per-class contrastive analysis}{17}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Linear-vs-nonlinear interpretability}{17}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{18}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Clinical implications}{18}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Meta-classifier behavior}{18}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}What the raw-only experiment teaches}{18}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Limitations}{19}{subsection.6.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{19}{section.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Lean B full 10-model leaderboard per task. Italicised values \emph  {improve} on the $208$-feature baseline. The centroid families (NearestCentroid, CosineSimilarity) and KNN consistently benefit from the lean subset: dropping the noisy 68-column \texttt  {chasmplus} basket and the 17 conservation columns helps these distance/centroid models disentangle the remaining signal.}}{16}{table.caption.25}\protected@file@percent }
+\newlabel{tab:lean-full}{{15}{16}{Lean B full 10-model leaderboard per task. Italicised values \emph {improve} on the $208$-feature baseline. The centroid families (NearestCentroid, CosineSimilarity) and KNN consistently benefit from the lean subset: dropping the noisy 68-column \texttt {chasmplus} basket and the 17 conservation columns helps these distance/centroid models disentangle the remaining signal}{table.caption.25}{}}
+\@writefile{toc}{\contentsline {paragraph}{The bottom line.}{16}{section*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why several models actually \emph  {improve} on Lean B.}{16}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why the compound removal compounds.}{16}{section*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Three-tier feature classification.}{16}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.14}Anchor numbers across the report}{17}{subsection.4.14}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S  \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost.}}{17}{table.caption.30}\protected@file@percent }
+\newlabel{tab:anchors}{{16}{17}{Anchor numbers across every regime. ``Top model'' is the held-out leader within each leaderboard. All regimes use the 10-model final tuned suite (\S \ref {sec:tuned-final}) except the two canonical baselines which include AdaBoost}{table.caption.30}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Interpretability}{17}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Canonical SHAP}{17}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt  {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt  {outputs/shap/canonical\_4class/feature\_importance.csv}.}}{18}{table.caption.31}\protected@file@percent }
+\newlabel{tab:shap-canonical}{{17}{18}{Top-15 features by mean$|$SHAP$|$ for the canonical 4-class \texttt {HistGradientBoosting} (sample $N=1000$, held-out). Source: \texttt {outputs/shap/canonical\_4class/feature\_importance.csv}}{table.caption.31}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt  {HistGradientBoosting} model.}}{18}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:shap-bar}{{3}{18}{Top-30 features by mean$|$SHAP$|$ on the canonical kfold \texttt {HistGradientBoosting} model}{figure.caption.32}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Per-class contrastive analysis}{18}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Linear-vs-nonlinear interpretability}{19}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{19}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Clinical implications}{19}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Meta-classifier behavior}{19}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}What the raw-only experiment teaches}{20}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Limitations}{20}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{21}{section.7}\protected@file@percent }
 \bibcite{clinvar}{1}
 \bibcite{opencravat}{2}
 \bibcite{alphamissense}{3}
@@ -117,4 +119,4 @@
 \bibcite{blast}{10}
 \bibcite{gnomad}{11}
 \bibcite{acmg}{12}
-\gdef \@abspage@last{21}
+\gdef \@abspage@last{22}

@@ -932,28 +932,57 @@ Group & 4-class & 2-class & 5-class & 3-class & $n_{\text{feat}}$ \\
 \end{tabular}
 \end{table}
 
-Three observations:
+Three observations, each with a concrete interpretation:
 
 \begin{enumerate}[leftmargin=*]
     \item \textbf{\texttt{population\_af} is indispensable.} Removing
           its 47 columns costs $+0.047$ macro-F1 on 4-class and $+0.041$
           on 5-class. This is consistent with the canonical SHAP table
           (Table~\ref{tab:shap-canonical}): \texttt{allofus250k\_gvs\_max\_af}
-          and \texttt{gnomad\_af} are top-5 features.
+          and \texttt{gnomad\_af} are top-5 features. The clinical reading
+          is direct: \emph{a variant that is common in healthy populations
+          is unlikely to be pathogenic} -- the textbook ACMG BS1/BA1 rule
+          -- and population allele frequency is the single biggest
+          contributor to that side of the decision. No other group
+          replaces it because no other group encodes population data;
+          predictor scores carry pathogenic-side evidence but contribute
+          nothing to the benign-evidence margin. The drop is much smaller
+          on 2-class ($+0.003$) because the binary task only needs to
+          decide ``pathogenic or not'' and predictor scores already
+          carry that signal; on 4- and 5-class the model needs population
+          frequency specifically to separate Benign from Likely-benign.
     \item \textbf{\texttt{functional} (FitCons + ncER, 4 features) is
           a hidden VUS detector.} Near-zero impact on canonical 2/4-class
           but the single biggest contributor on 3-class ($+0.047$) and
-          second-biggest on 5-class ($+0.027$). The implication is that
-          FitCons / ncER fingerprint the feature pattern of an
-          unclassified ClinVar variant, which is exactly why VUS is
-          easy to recognise as a class (\S\ref{sec:vus-class}).
+          second-biggest on 5-class ($+0.027$). The mechanism is mundane
+          but useful to surface: FitCons coding scores are missing for
+          $>80\%$ of VUS rows (the annotator just doesn't process
+          most VUS variants), so the column's missingness pattern itself
+          is a strong indicator of ``this variant is annotation-incomplete,''
+          which correlates almost perfectly with ``this variant landed in
+          ClinVar as VUS.'' Four features that look uninteresting on the
+          canonical tasks become the dominant VUS detector once VUS is a
+          class. The lesson is that a feature's predictive value depends
+          on what classes the model is being asked to distinguish: there
+          are no universally ``useless'' features, only features whose
+          contribution is invisible until the right target appears.
     \item \textbf{Eight groups are waste at the group level.} Marked
           $\dagger$ above: \texttt{ditto}, \texttt{metarnn},
           \texttt{bayesdel}, \texttt{position}, \texttt{revel},
           \texttt{chasmplus}, \texttt{alphamissense}, \texttt{conservation}.
           They cover $97$ of $208$ features ($\approx 47\%$ of the schema)
           and individually no removal moves macro-F1 by more than the
-          $0.005$ noise floor on any task.
+          $0.005$ noise floor on any task. \emph{This does not mean the
+          individual scores are uninformative} -- the SHAP table shows
+          \texttt{ditto\_score} and \texttt{metarnn\_score} sitting at
+          the top of the importance ranking, and the per-feature
+          permutation results below confirm that they carry substantial
+          marginal value. What the group LOO measures is whether the
+          \emph{contribution} of the group can be replaced; for
+          meta-classifier predictors the answer is almost always yes,
+          because every learned predictor was trained on overlapping
+          ClinVar data and they all encode broadly the same biological
+          signal in slightly different shapes.
 \end{enumerate}
 
 \paragraph{Phase B: per-feature permutation importance inside the waste groups.}
@@ -995,10 +1024,32 @@ the model substitutes MetaRNN, BayesDel, REVEL, or one of the 56
 Only by removing several correlated meta-classifiers together does the
 redundancy buffer collapse -- as the lean model below demonstrates.
 
+This has a useful deployment implication. Any single meta-classifier
+predictor can be \emph{swapped out without retraining the classifier},
+which makes the suite robust to predictor-pipeline changes: if a future
+OpenCRAVAT release deprecates DITTO, the booster keeps working on
+MetaRNN; if MetaRNN goes away, BayesDel and the \texttt{other\_vep}
+basket fill in. The \emph{collective} signal is necessary; no
+\emph{individual} predictor is. This is also why the no-DITTO ablation
+(\S\ref{sec:ditto}, $-0.0017$ macro-F1) and the group-LOO finding here
+agree: removing one predictor at a time is cheap.
+
 Every other feature in the eight waste groups -- in particular all 68
 \texttt{chasmplus} columns and all 17 conservation columns -- comes
 back below the $0.005$ noise floor on every task. Those groups are
-genuine waste at both the group and per-feature levels.
+genuine waste at both the group and per-feature levels. The
+\texttt{chasmplus} finding is the most surprising: the annotator
+contributes 68 of our 208 columns (every TCGA cancer-type-specific
+score and p-value) and \emph{none of them} crosses the per-feature
+noise floor on either 4-class or 2-class. CHASMplus is trained for
+oncology-driver detection, not germline missense pathogenicity, so the
+mismatch is consistent with its target task; the group's bulk in the
+schema is essentially deadweight for our use case. Similarly the 17
+multi-species conservation columns (GERP / PhastCons / PhyloP / SIPHY)
+collectively carry less marginal value than \texttt{ditto\_score}
+alone, presumably because the booster has already absorbed conservation
+signal indirectly through the meta-classifier predictors that were
+themselves trained with conservation features.
 
 \subsection{Ablation-optimal Lean model}
 \label{sec:lean}
@@ -1082,6 +1133,38 @@ per-feature permutation views, except for the two per-feature winners
 (\texttt{ditto\_score}, \texttt{metarnn\_score}) which Lean B
 explicitly retains. The artifact set is at
 \texttt{outputs/models/\{2class,3class,4class,5class\}\_leanB/}.
+
+\paragraph{Why several models actually \emph{improve} on Lean B.}
+The centroid families (NearestCentroid, CosineSimilarity), KNN, and to
+a lesser extent DecisionTree gain $0.01$--$0.04$ macro-F1 by switching
+to the lean feature set. The mechanism is the curse of dimensionality:
+distance-based and tree-split classifiers do not down-weight noisy
+columns the way a gradient booster does, so dropping the 68
+\texttt{chasmplus} columns -- which carry near-zero signal individually
+but still contribute to pairwise distances and to candidate splits --
+materially helps these models. The booster is robust to those columns
+(it can simply assign them zero importance), so it neither gains much
+nor loses much when they are removed. \textbf{Lean B therefore acts as
+a model-fairness equaliser}: the gap between the booster and the
+centroid families shrinks from $\approx 0.10$ on 2-class baseline to
+$\approx 0.06$ on 2-class Lean B, mostly because the centroid families
+moved up. This is a useful aside for anyone deploying the lean schema
+with a distance-based classifier rather than a booster.
+
+\paragraph{Why the compound removal compounds.}
+The Lean A--versus--Lean B difference is the key methodological
+takeaway from the ablation. Group LOO measures \emph{cheapness of
+removing one group}; the lean models measure \emph{cost of removing
+many correlated groups together}. The compound cost is super-additive
+on the meta-classifier side: the per-group LOO sum for
+\texttt{ditto}~+~\texttt{metarnn}~+~\texttt{bayesdel}~+~\texttt{revel}~+~%
+\texttt{alphamissense} on 4-class is only $\approx 0.001$, but the
+joint removal in Lean A costs $0.0061$ more than Lean B (which keeps
+ditto and metarnn). The redundancy buffer is not infinite -- removing
+DITTO is cheap because MetaRNN substitutes, but removing both leaves
+the model thinner on pathogenic-side evidence. Lean B picks up the two
+features whose marginal contribution survives the joint removal of
+their neighbours.
 
 \paragraph{Three-tier feature classification.}
 Combining the group LOO and per-feature views, the $208$-feature schema

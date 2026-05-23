@@ -1,0 +1,12 @@
+regime,top_model,4class_f1,2class_f1
+Canonical kfold (untuned),HistGB/AdaBoost,0.7928,0.987
+Final tuned no-AdaBoost (canonical),HistGB,0.795,0.9872
+Augmented kfold (k-mer + BLAST),HistGB,0.7948,0.9904
+Gene-stratified CV,HistGB,0.7658,0.9874
+No-VEP kfold (augmented),HistGB,0.7727,0.9764
+No-VEP gene-CV (augmented),HistGB,0.7611,
+Raw-only (augmented),HistGB,0.7212,0.9339
+DITTO removed (canonical kfold),HistGB,0.7911,
+Lean B (113 features),HistGB,0.79,0.9863
+3-class with VUS,HistGB,0.9459,
+5-class with VUS,HistGB,0.7984,
