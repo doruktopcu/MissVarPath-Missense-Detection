@@ -40,7 +40,7 @@ SLIDE_W = Inches(13.333)
 SLIDE_H = Inches(7.5)
 MARGIN = Inches(0.6)
 
-TOTAL = 21
+TOTAL = 24
 
 
 # -----------------------------------------------------------------------------
@@ -336,11 +336,11 @@ def main():
     add_slide_title(s, "Methods")
 
     add_caption(s, MARGIN, Inches(1.2), Inches(6), Inches(0.4),
-                "Model suite — 11 estimators", size=15)
+                "Model suite — 10 estimators", size=15)
 
     classical = ["KNN", "NearestCentroid", "CosineSimilarity (custom)",
                  "DecisionTree", "LDA", "QDA", "LinearSVC", "RidgeClassifier", "SGDClassifier"]
-    ensemble = ["AdaBoost", "HistGradientBoosting"]
+    ensemble = ["HistGradientBoosting"]
 
     add_multiline(s, MARGIN, Inches(1.7), Inches(6), Inches(4.5),
                   [{"text": "Classical / linear", "size": 18, "bold": True,
@@ -374,8 +374,9 @@ def main():
         y = y + Inches(0.7)
 
     add_caption(s, MARGIN, Inches(6.55), Inches(12.1), Inches(0.5),
-                "RANDOM_STATE = 42 throughout. Per-model grid-search tuning by 5-fold CV macro-F1; "
-                "AdaBoost grid stopped at combo 23/27 (compute budget).", size=13)
+                "RANDOM_STATE = 42 throughout. Per-model grid-search tuning by 5-fold CV macro-F1 "
+                "on the training portion; tuning performed on the 4-class task, hyperparameters carried "
+                "over to the binary task.", size=13)
 
     add_slide_number(s, 7)
 
@@ -423,7 +424,106 @@ def main():
     add_slide_number(s, 8)
 
     # =========================================================================
-    # Slide 9 — 4-class confusion matrix
+    # Slide 9 — 2-class per-model leaderboard
+    # =========================================================================
+    s = prs.slides.add_slide(blank)
+    add_slide_title(s, "Per-model leaderboard — 2-class")
+
+    add_textbox(s, MARGIN, Inches(1.3), Inches(5.5), Inches(0.3),
+                text="2-class macro-F1", font=BODY_FONT, size=15,
+                italic=True, color=GREY)
+    add_textbox(s, MARGIN, Inches(1.7), Inches(5.5), Inches(1.6),
+                text="0.987", font=TITLE_FONT, size=80, bold=True, color=BLACK)
+    add_textbox(s, MARGIN, Inches(3.3), Inches(5.5), Inches(0.4),
+                text="HistGradientBoosting · binary collapse · 21,872 variants",
+                font=BODY_FONT, size=13, color=GREY)
+
+    df2 = lb("2class_final_no_adaboost")
+    df2 = df2[df2["model"] != "AdaBoost"].sort_values(
+        "holdout_macro_f1", ascending=False).head(7)
+    chart_data = CategoryChartData()
+    chart_data.categories = df2["model"].tolist()[::-1]
+    chart_data.add_series("2-class macro-F1", df2["holdout_macro_f1"].tolist()[::-1])
+    chart = s.shapes.add_chart(
+        XL_CHART_TYPE.BAR_CLUSTERED,
+        Inches(6.4), Inches(1.3), Inches(6.5), Inches(5.6),
+        chart_data,
+    ).chart
+    style_chart_minimal(chart, show_value=True, value_format="0.000",
+                        label_size=11, axis_size=11)
+    chart.value_axis.minimum_scale = 0.88
+    chart.value_axis.maximum_scale = 1.0
+
+    add_slide_number(s, 9)
+
+    # =========================================================================
+    # Slide 10 — 3-class per-model leaderboard (with VUS as a class)
+    # =========================================================================
+    s = prs.slides.add_slide(blank)
+    add_slide_title(s, "Per-model leaderboard — 3-class with VUS")
+
+    add_textbox(s, MARGIN, Inches(1.3), Inches(5.5), Inches(0.3),
+                text="3-class macro-F1", font=BODY_FONT, size=15,
+                italic=True, color=GREY)
+    add_textbox(s, MARGIN, Inches(1.7), Inches(5.5), Inches(1.6),
+                text="0.946", font=TITLE_FONT, size=80, bold=True, color=BLACK)
+    add_textbox(s, MARGIN, Inches(3.3), Inches(5.5), Inches(0.4),
+                text="HistGradientBoosting · Benign-side / Pathogenic-side / VUS",
+                font=BODY_FONT, size=13, color=GREY)
+
+    df3 = lb("3class_vus")
+    df3 = df3[df3["model"] != "AdaBoost"].sort_values(
+        "holdout_macro_f1", ascending=False).head(7)
+    chart_data = CategoryChartData()
+    chart_data.categories = df3["model"].tolist()[::-1]
+    chart_data.add_series("3-class macro-F1", df3["holdout_macro_f1"].tolist()[::-1])
+    chart = s.shapes.add_chart(
+        XL_CHART_TYPE.BAR_CLUSTERED,
+        Inches(6.4), Inches(1.3), Inches(6.5), Inches(5.6),
+        chart_data,
+    ).chart
+    style_chart_minimal(chart, show_value=True, value_format="0.000",
+                        label_size=11, axis_size=11)
+    chart.value_axis.minimum_scale = 0.60
+    chart.value_axis.maximum_scale = 1.0
+
+    add_slide_number(s, 10)
+
+    # =========================================================================
+    # Slide 11 — 5-class per-model leaderboard (with VUS as a class)
+    # =========================================================================
+    s = prs.slides.add_slide(blank)
+    add_slide_title(s, "Per-model leaderboard — 5-class with VUS")
+
+    add_textbox(s, MARGIN, Inches(1.3), Inches(5.5), Inches(0.3),
+                text="5-class macro-F1", font=BODY_FONT, size=15,
+                italic=True, color=GREY)
+    add_textbox(s, MARGIN, Inches(1.7), Inches(5.5), Inches(1.6),
+                text="0.798", font=TITLE_FONT, size=80, bold=True, color=BLACK)
+    add_textbox(s, MARGIN, Inches(3.3), Inches(5.5), Inches(0.4),
+                text="HistGradientBoosting · 4 ClinVar classes + VUS",
+                font=BODY_FONT, size=13, color=GREY)
+
+    df5 = lb("5class_vus")
+    df5 = df5[df5["model"] != "AdaBoost"].sort_values(
+        "holdout_macro_f1", ascending=False).head(7)
+    chart_data = CategoryChartData()
+    chart_data.categories = df5["model"].tolist()[::-1]
+    chart_data.add_series("5-class macro-F1", df5["holdout_macro_f1"].tolist()[::-1])
+    chart = s.shapes.add_chart(
+        XL_CHART_TYPE.BAR_CLUSTERED,
+        Inches(6.4), Inches(1.3), Inches(6.5), Inches(5.6),
+        chart_data,
+    ).chart
+    style_chart_minimal(chart, show_value=True, value_format="0.000",
+                        label_size=11, axis_size=11)
+    chart.value_axis.minimum_scale = 0.45
+    chart.value_axis.maximum_scale = 0.85
+
+    add_slide_number(s, 11)
+
+    # =========================================================================
+    # Slide 12 — 4-class confusion matrix  (was slide 9)
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Where the error lives — 4-class confusion matrix")
@@ -432,10 +532,10 @@ def main():
                 "Residual difficulty is the Pathogenic ↔ Likely-pathogenic boundary.")
     fit_image(s, "final_report/figures/histgb_4class_cm.png",
               x=Inches(2.5), y=Inches(2.0), max_w=Inches(8.3), max_h=Inches(5.0))
-    add_slide_number(s, 9)
+    add_slide_number(s, 12)
 
     # =========================================================================
-    # Slide 10 — Stress tests (was slide 6)
+    # Slide 13 — Stress tests (was slide 6)
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Stress tests — bounding the data-circularity")
@@ -480,10 +580,10 @@ def main():
                 "Graceful degradation across regimes: HistGB loses 0.027 to gene-stratified CV, 0.022 to no-VEP, "
                 "0.074 to raw-only. The 2-class task is essentially insensitive to all stresses.",
                 color=DARK, size=14)
-    add_slide_number(s, 10)
+    add_slide_number(s, 13)
 
     # =========================================================================
-    # Slide 11 — Real VUS deployment (per-gene chart)
+    # Slide 14 — Real VUS deployment (per-gene chart)
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Real VUS deployment — per-gene predictions")
@@ -492,10 +592,10 @@ def main():
                 "GCK 100%, PAH 99%, MYH7 90%, LDLR 84% pathogenic-side.")
     fit_image(s, "outputs/figures/vus_per_gene_predictions.png",
               x=Inches(0.6), y=Inches(2.0), max_w=Inches(12.1), max_h=Inches(4.8))
-    add_slide_number(s, 11)
+    add_slide_number(s, 14)
 
     # =========================================================================
-    # Slide 12 — VUS deployment stats
+    # Slide 15 — VUS deployment stats
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "VUS deployment — the four numbers")
@@ -527,10 +627,10 @@ def main():
                     text=desc, font=BODY_FONT, size=16, color=GRAPHITE,
                     line_spacing=1.3)
 
-    add_slide_number(s, 12)
+    add_slide_number(s, 15)
 
     # =========================================================================
-    # Slide 13 — VUS-as-class
+    # Slide 16 — VUS-as-class
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "VUS as a class")
@@ -582,10 +682,10 @@ def main():
                 "One of the cleanest classes to recognise.",
                 color=DARK, size=13)
 
-    add_slide_number(s, 13)
+    add_slide_number(s, 16)
 
     # =========================================================================
-    # Slide 14 — 5-class confusion matrix (with VUS as a class)
+    # Slide 17 — 5-class confusion matrix (with VUS as a class)
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "5-class confusion matrix — where VUS sits")
@@ -594,10 +694,10 @@ def main():
                 "or Likely-pathogenic (0.61). VUS misclassifications hedge into Likely-*, not into definitive calls.")
     fit_image(s, "outputs/reports/5class_vus/histgradientboosting_confusion_matrix_normalized.png",
               x=Inches(2.5), y=Inches(2.0), max_w=Inches(8.3), max_h=Inches(5.0))
-    add_slide_number(s, 14)
+    add_slide_number(s, 17)
 
     # =========================================================================
-    # Slide 15 — SHAP: what drives the model
+    # Slide 18 — SHAP: what drives the model
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "What drives the booster — SHAP top-30")
@@ -606,10 +706,10 @@ def main():
                 "then population allele frequencies — the model is using both predictor scores and frequency data.")
     fit_image(s, "final_report/figures/shap_bar_4class.png",
               x=Inches(2.5), y=Inches(2.0), max_w=Inches(8.3), max_h=Inches(5.0))
-    add_slide_number(s, 15)
+    add_slide_number(s, 18)
 
     # =========================================================================
-    # Slide 16 — Predictor correlation heatmap
+    # Slide 19 — Predictor correlation heatmap
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Predictor correlation — the redundancy structure")
@@ -619,10 +719,10 @@ def main():
                 "but population AF does not.")
     fit_image(s, "outputs/eda/key_vep_score_correlation.png",
               x=Inches(1.5), y=Inches(2.5), max_w=Inches(10.3), max_h=Inches(4.5))
-    add_slide_number(s, 16)
+    add_slide_number(s, 19)
 
     # =========================================================================
-    # Slide 17 — Feature ablation table
+    # Slide 20 — Feature ablation table
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Useful vs. waste — feature ablation")
@@ -683,10 +783,10 @@ def main():
                 "8 of 12 groups (97 of 208 features) are waste at the group level.",
                 color=GREY, size=13)
 
-    add_slide_number(s, 17)
+    add_slide_number(s, 20)
 
     # =========================================================================
-    # Slide 18 — Per-feature permutation: the redundancy insight
+    # Slide 21 — Per-feature permutation: the redundancy insight
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Per-feature permutation — the redundancy story")
@@ -717,10 +817,10 @@ def main():
                 "Only by removing several correlated meta-classifiers together does the redundancy buffer collapse — "
                 "which is what Lean B exploits.", color=DARK, size=15)
 
-    add_slide_number(s, 18)
+    add_slide_number(s, 21)
 
     # =========================================================================
-    # Slide 19 — Lean B vs baseline
+    # Slide 22 — Lean B vs baseline
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Lean B — 45% smaller, 0.012 cost")
@@ -776,10 +876,10 @@ def main():
                 "At most 0.012 macro-F1 cost on any task. Several models (KNN, NearestCentroid, CosineSimilarity) "
                 "actually improve on the lean subset.",
                 color=DARK, size=14)
-    add_slide_number(s, 19)
+    add_slide_number(s, 22)
 
     # =========================================================================
-    # Slide 20 — Future directions
+    # Slide 23 — Future directions
     # =========================================================================
     s = prs.slides.add_slide(blank)
     add_slide_title(s, "Future directions")
@@ -789,8 +889,6 @@ def main():
          "replicate Lean B numbers on HGMD or a held-out ClinVar snapshot"),
         ("True homology BLAST",
          "blastp on UniRef50 with the amino-acid substitution applied"),
-        ("Finish the AdaBoost tuning grid",
-         "the partial 23/27 grid was halted for compute budget"),
         ("Probability calibration",
          "Platt or isotonic regression so predict_proba is a usable risk score"),
         ("Gene-stratified VUS-as-class",
@@ -809,10 +907,10 @@ def main():
                     line_spacing=1.25)
         y = y + Inches(0.85)
 
-    add_slide_number(s, 20)
+    add_slide_number(s, 23)
 
     # =========================================================================
-    # Slide 21 — Thank you / Q&A
+    # Slide 24 — Thank you / Q&A
     # =========================================================================
     s = prs.slides.add_slide(blank)
     bar = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.6), Inches(0.0),
@@ -830,19 +928,20 @@ def main():
     add_textbox(s, Inches(1.2), Inches(6.3), Inches(11), Inches(0.4),
                 text="github.com/doruktopcu/MissVarPath-Missense-Detection",
                 font=BODY_FONT, size=14, italic=True, color=GREY)
-    add_slide_number(s, 21)
+    add_slide_number(s, 24)
 
     # =========================================================================
-    # Write — fall back to a versioned filename if the canonical one is locked
-    # (typically: user has it open in PowerPoint).
+    # Write to the submission filing path. Falls back to a versioned filename
+    # if the canonical one is locked (user has it open in PowerPoint).
     # =========================================================================
-    out = Path("MissVarPath_Presentation.pptx")
+    out = Path("Reports_Presentations/CMP682-DorukTopcu-AlihanSagoz-Final-Project-Presentation.pptx")
+    out.parent.mkdir(parents=True, exist_ok=True)
     if out.exists():
         try:
             with out.open("ab"):
                 pass
         except PermissionError:
-            out = Path("MissVarPath_Presentation_v2.pptx")
+            out = out.with_name(out.stem + "_v2.pptx")
             print(f"[build] canonical pptx is locked; writing to {out} instead.")
     prs.save(out)
     print(f"Wrote {out}  ({out.stat().st_size/1024:.0f} KB)")
