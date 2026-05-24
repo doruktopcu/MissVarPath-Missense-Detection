@@ -11,12 +11,12 @@ Produced features (per variant, 2 sets — ref and alt):
 The proposal explicitly calls for k-mer features with frame shift; here we use
 overlapping (frame-shift-1) k-mers, which is the standard formulation.
 
-For 51 bp windows and k=3, each variant yields:
-    49 ref k-mer counts + 49 alt k-mer counts + 64 diff k-mers (max k-mer space)
-    + 4 aggregates (gc_ref, gc_alt, entropy_ref, entropy_alt)
-
-But the alphabet has only 4 letters {A,C,G,T}, so the full k-mer space is 4^k.
-We materialise the full 4^k columns so that train/test splits stay dense.
+For a 2·FLANK_SIZE+1 = 51 bp window with k=3, each variant produces
+(51 − k + 1) = 49 overlapping k-mer occurrences in each of the ref and alt
+flanks. We materialise the full 4^k = 64 columns for ref, alt, and (alt − ref)
+diff so that train/test splits stay dense, giving 3·64 = 192 k-mer columns
+plus 4 aggregates (gc_ref, gc_alt, entropy_ref, entropy_alt) = 196 features
+per variant.
 """
 from __future__ import annotations
 

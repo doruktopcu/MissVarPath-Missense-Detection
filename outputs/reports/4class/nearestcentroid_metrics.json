@@ -1,0 +1,64 @@
+{
+  "model": "NearestCentroid",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": null,
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.5517142857142857,
+      "macro_f1": 0.5511860676587114,
+      "weighted_f1": 0.5511860676587114,
+      "fit_seconds": 0.04
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.5654285714285714,
+      "macro_f1": 0.5665737106273561,
+      "weighted_f1": 0.5665737106273561,
+      "fit_seconds": 0.04
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.5741640468705345,
+      "macro_f1": 0.5716686147558505,
+      "weighted_f1": 0.5716494138247289,
+      "fit_seconds": 0.04
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.538439554158331,
+      "macro_f1": 0.5393879832520742,
+      "weighted_f1": 0.5393963238927199,
+      "fit_seconds": 0.04
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.5684481280365818,
+      "macro_f1": 0.5673308493894962,
+      "weighted_f1": 0.5673597936031337,
+      "fit_seconds": 0.04
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.5596389172416608,
+    "cv_acc_std": 0.014442251046430243,
+    "cv_macro_f1_mean": 0.5592294451366977,
+    "cv_macro_f1_std": 0.013534063120982346
+  },
+  "holdout": {
+    "accuracy": 0.5478857142857143,
+    "macro_f1": 0.5475332811243312,
+    "weighted_f1": 0.5475272498135527,
+    "f1_per_class": {
+      "Benign": 0.6095138525875589,
+      "Likely benign": 0.5739202657807309,
+      "Likely pathogenic": 0.5447019867549668,
+      "Pathogenic": 0.46199701937406856
+    },
+    "mcc": 0.4000924836967286,
+    "roc_auc_ovr_macro": 0.870734340804822,
+    "fit_seconds": 0.04
+  }
+}

@@ -1,14 +1,13 @@
-"""SHAP attributions for the canonical and VUS models (proposal §4 deliverable).
+"""SHAP attributions for any model in ``MODEL_SPECS``.
 
-For tree boosters (XGBoost / LightGBM / CatBoost) we use ``shap.TreeExplainer``
-which is exact and fast. The output for a 4-class problem is a list of 4
-(N, F) arrays; we aggregate to global importance with mean(|SHAP|) per feature.
+Tree-based estimators get ``shap.TreeExplainer`` (exact and fast); linear
+models with a ``coef_`` get ``shap.LinearExplainer``. The output for a
+4-class problem is a list of 4 (N, F) arrays; we aggregate to global
+importance with mean(|SHAP|) per feature.
 
 Usage:
-    python -m src.shap_explain --task 4class --model LightGBM --variant base \\
-        --tag canonical
-    python -m src.shap_explain --task 4class --model CatBoost --variant augmented \\
-        --cv-mode gene --drop-prefixes <VEP list> --tag vus
+    python -m src.shap_explain --task 4class --model <name> --variant base \\
+        --tag <run_tag>
 
 Outputs (under outputs/shap/<run_tag>/):
     summary_bar.png          - top-30 features by mean(|SHAP|) (bar chart)
@@ -64,7 +63,7 @@ def _to_per_class_array(shap_values, n_classes: int, n_samples: int,
     else:
         arr = np.asarray(shap_values)
         if arr.ndim == 3:
-            # XGBoost / LightGBM may return (N, F, C) or (C, N, F)
+            # Some tree boosters return (N, F, C) instead of (C, N, F).
             if arr.shape == (n_samples, n_features, n_classes):
                 arr = arr.transpose(2, 0, 1)
             elif arr.shape == (n_classes, n_samples, n_features):

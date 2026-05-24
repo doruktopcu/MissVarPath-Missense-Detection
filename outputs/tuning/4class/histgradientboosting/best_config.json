@@ -1,0 +1,36 @@
+{
+  "model": "HistGradientBoosting",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "learning_rate",
+    "max_iter",
+    "max_leaf_nodes",
+    "min_samples_leaf",
+    "l2_regularization"
+  ],
+  "best_params": {
+    "learning_rate": "0.02",
+    "max_iter": "2000",
+    "max_leaf_nodes": "127",
+    "min_samples_leaf": "20",
+    "l2_regularization": "1.0"
+  },
+  "best_cv_macro_f1_mean": 0.7976110550673654,
+  "best_cv_macro_f1_std": 0.006495175394992959,
+  "holdout": {
+    "accuracy": 0.7952,
+    "macro_f1": 0.7950392616951822,
+    "weighted_f1": 0.7950101197638514,
+    "f1_per_class": {
+      "Benign": 0.9312470365101944,
+      "Likely benign": 0.9225352112676056,
+      "Likely pathogenic": 0.6690582959641256,
+      "Pathogenic": 0.6573165030388032
+    },
+    "mcc": 0.7273860997287324,
+    "roc_auc_ovr_macro": 0.9471848637342348,
+    "fit_seconds": 72.93753981590271
+  }
+}

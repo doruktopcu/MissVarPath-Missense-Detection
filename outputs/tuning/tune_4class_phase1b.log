@@ -1,0 +1,81 @@
+[18:35:26] INFO tune: Tuning LDA  task=4class  variant=base  cv=kfold  features=208  classes=4
+[18:35:26] INFO tune: Grid size: 14 combinations
+[18:35:26] INFO tune: Train: (17497, 208)  Holdout: (4375, 208)
+[18:35:27] INFO tune:   combo  1/14  {'solver': 'lsqr', 'shrinkage': None}  cv_macro_f1=0.7047±0.0065  (0.1s/fold)
+[18:35:28] INFO tune:   combo  2/14  {'solver': 'lsqr', 'shrinkage': 'auto'}  cv_macro_f1=0.7053±0.0036  (0.2s/fold)
+[18:35:29] INFO tune:   combo  3/14  {'solver': 'lsqr', 'shrinkage': 0.1}  cv_macro_f1=0.6922±0.0042  (0.1s/fold)
+[18:35:29] INFO tune:   combo  4/14  {'solver': 'lsqr', 'shrinkage': 0.3}  cv_macro_f1=0.6816±0.0062  (0.1s/fold)
+[18:35:30] INFO tune:   combo  5/14  {'solver': 'lsqr', 'shrinkage': 0.5}  cv_macro_f1=0.6704±0.0089  (0.2s/fold)
+[18:35:31] INFO tune:   combo  6/14  {'solver': 'lsqr', 'shrinkage': 0.7}  cv_macro_f1=0.6553±0.0091  (0.1s/fold)
+[18:35:31] INFO tune:   combo  7/14  {'solver': 'lsqr', 'shrinkage': 0.9}  cv_macro_f1=0.6291±0.0104  (0.1s/fold)
+[18:35:32] WARNING tune:   combo  8/14 {'solver': 'eigen', 'shrinkage': None} — skipped on fold 2 (LinAlgError: The leading minor of order 32 of B is not positive definite. The factorization of B could not be completed and no eigenv)
+[18:35:33] INFO tune:   combo  9/14  {'solver': 'eigen', 'shrinkage': 'auto'}  cv_macro_f1=0.7053±0.0036  (0.2s/fold)
+[18:35:34] INFO tune:   combo 10/14  {'solver': 'eigen', 'shrinkage': 0.1}  cv_macro_f1=0.6922±0.0042  (0.2s/fold)
+[18:35:35] INFO tune:   combo 11/14  {'solver': 'eigen', 'shrinkage': 0.3}  cv_macro_f1=0.6816±0.0062  (0.2s/fold)
+[18:35:36] INFO tune:   combo 12/14  {'solver': 'eigen', 'shrinkage': 0.5}  cv_macro_f1=0.6704±0.0089  (0.2s/fold)
+[18:35:37] INFO tune:   combo 13/14  {'solver': 'eigen', 'shrinkage': 0.7}  cv_macro_f1=0.6553±0.0091  (0.2s/fold)
+[18:35:38] INFO tune:   combo 14/14  {'solver': 'eigen', 'shrinkage': 0.9}  cv_macro_f1=0.6291±0.0104  (0.2s/fold)
+[18:35:38] WARNING tune: Skipped 1/14 combos for LDA due to fit errors.
+[18:35:38] INFO tune: Best combo: {'solver': 'lsqr', 'shrinkage': 'auto'} (cv_macro_f1=0.7053±0.0040)
+[18:35:39] INFO tune: Holdout (best): acc=0.7003  macroF1=0.7014  MCC=0.6006
+[18:35:39] INFO tune: Saved tuning artifacts to /Users/doruktopcu/Projects/MissVarPath-Missense-Detection/outputs/tuning/4class/lda
+[18:35:39] INFO tune: Tuning RidgeClassifier  task=4class  variant=base  cv=kfold  features=208  classes=4
+[18:35:39] INFO tune: Grid size: 6 combinations
+[18:35:39] INFO tune: Train: (17497, 208)  Holdout: (4375, 208)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_ridge.py:215: LinAlgWarning: Ill-conditioned matrix (rcond=4.97292e-09): result may not be accurate.
+  return linalg.solve(A, Xy, assume_a="pos", overwrite_a=True).T
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_ridge.py:215: LinAlgWarning: Ill-conditioned matrix (rcond=4.57752e-09): result may not be accurate.
+  return linalg.solve(A, Xy, assume_a="pos", overwrite_a=True).T
+[18:35:42] INFO tune:   combo  1/6  {'alpha': 0.01}  cv_macro_f1=0.7042±0.0055  (0.6s/fold)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_ridge.py:215: LinAlgWarning: Ill-conditioned matrix (rcond=3.12944e-08): result may not be accurate.
+  return linalg.solve(A, Xy, assume_a="pos", overwrite_a=True).T
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_ridge.py:215: LinAlgWarning: Ill-conditioned matrix (rcond=4.89407e-08): result may not be accurate.
+  return linalg.solve(A, Xy, assume_a="pos", overwrite_a=True).T
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_ridge.py:215: LinAlgWarning: Ill-conditioned matrix (rcond=3.53141e-08): result may not be accurate.
+  return linalg.solve(A, Xy, assume_a="pos", overwrite_a=True).T
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_ridge.py:215: LinAlgWarning: Ill-conditioned matrix (rcond=5.51094e-08): result may not be accurate.
+  return linalg.solve(A, Xy, assume_a="pos", overwrite_a=True).T
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_ridge.py:215: LinAlgWarning: Ill-conditioned matrix (rcond=4.10321e-08): result may not be accurate.
+  return linalg.solve(A, Xy, assume_a="pos", overwrite_a=True).T
+[18:35:42] INFO tune:   combo  2/6  {'alpha': 0.1}  cv_macro_f1=0.7037±0.0050  (0.1s/fold)
+[18:35:42] INFO tune:   combo  3/6  {'alpha': 1.0}  cv_macro_f1=0.7028±0.0042  (0.1s/fold)
+[18:35:43] INFO tune:   combo  4/6  {'alpha': 10.0}  cv_macro_f1=0.7043±0.0052  (0.1s/fold)
+[18:35:43] INFO tune:   combo  5/6  {'alpha': 100.0}  cv_macro_f1=0.7025±0.0037  (0.1s/fold)
+[18:35:43] INFO tune:   combo  6/6  {'alpha': 1000.0}  cv_macro_f1=0.6909±0.0030  (0.1s/fold)
+[18:35:43] INFO tune: Best combo: {'alpha': '10.0'} (cv_macro_f1=0.7043±0.0058)
+[18:35:44] INFO tune: Holdout (best): acc=0.6978  macroF1=0.6982  MCC=0.5972
+[18:35:44] INFO tune: Saved tuning artifacts to /Users/doruktopcu/Projects/MissVarPath-Missense-Detection/outputs/tuning/4class/ridgeclassifier
+[18:35:44] INFO tune: Tuning NearestCentroid  task=4class  variant=base  cv=kfold  features=208  classes=4
+[18:35:44] INFO tune: Grid size: 12 combinations
+[18:35:44] INFO tune: Train: (17497, 208)  Holdout: (4375, 208)
+[18:35:44] INFO tune:   combo  1/12  {'metric': 'euclidean', 'shrink_threshold': None}  cv_macro_f1=0.5592±0.0121  (0.1s/fold)
+[18:35:44] INFO tune:   combo  2/12  {'metric': 'euclidean', 'shrink_threshold': 0.1}  cv_macro_f1=0.5591±0.0127  (0.0s/fold)
+[18:35:45] INFO tune:   combo  3/12  {'metric': 'euclidean', 'shrink_threshold': 0.5}  cv_macro_f1=0.5599±0.0124  (0.0s/fold)
+[18:35:45] INFO tune:   combo  4/12  {'metric': 'euclidean', 'shrink_threshold': 1.0}  cv_macro_f1=0.5609±0.0117  (0.0s/fold)
+[18:35:45] INFO tune:   combo  5/12  {'metric': 'euclidean', 'shrink_threshold': 2.0}  cv_macro_f1=0.5595±0.0101  (0.0s/fold)
+[18:35:45] INFO tune:   combo  6/12  {'metric': 'euclidean', 'shrink_threshold': 4.0}  cv_macro_f1=0.5556±0.0128  (0.0s/fold)
+[18:35:45] INFO tune:   combo  7/12  {'metric': 'manhattan', 'shrink_threshold': None}  cv_macro_f1=0.5254±0.0062  (0.1s/fold)
+[18:35:46] INFO tune:   combo  8/12  {'metric': 'manhattan', 'shrink_threshold': 0.1}  cv_macro_f1=0.5251±0.0066  (0.1s/fold)
+[18:35:46] INFO tune:   combo  9/12  {'metric': 'manhattan', 'shrink_threshold': 0.5}  cv_macro_f1=0.5244±0.0063  (0.1s/fold)
+[18:35:47] INFO tune:   combo 10/12  {'metric': 'manhattan', 'shrink_threshold': 1.0}  cv_macro_f1=0.5244±0.0054  (0.1s/fold)
+[18:35:47] INFO tune:   combo 11/12  {'metric': 'manhattan', 'shrink_threshold': 2.0}  cv_macro_f1=0.5232±0.0043  (0.1s/fold)
+[18:35:47] INFO tune:   combo 12/12  {'metric': 'manhattan', 'shrink_threshold': 4.0}  cv_macro_f1=0.5193±0.0046  (0.1s/fold)
+[18:35:47] INFO tune: Best combo: {'metric': 'euclidean', 'shrink_threshold': '1.0'} (cv_macro_f1=0.5609±0.0130)
+[18:35:47] INFO tune: Holdout (best): acc=0.5511  macroF1=0.5514  MCC=0.4033
+[18:35:47] INFO tune: Saved tuning artifacts to /Users/doruktopcu/Projects/MissVarPath-Missense-Detection/outputs/tuning/4class/nearestcentroid
+[18:35:47] INFO tune: Tuning LinearSVC  task=4class  variant=base  cv=kfold  features=208  classes=4
+[18:35:47] INFO tune: Grid size: 10 combinations
+[18:35:47] INFO tune: Train: (17497, 208)  Holdout: (4375, 208)
+[18:36:02] INFO tune:   combo  1/10  {'C': 0.01, 'max_iter': 5000}  cv_macro_f1=0.7468±0.0073  (2.9s/fold)
+[18:36:16] INFO tune:   combo  2/10  {'C': 0.01, 'max_iter': 10000}  cv_macro_f1=0.7468±0.0073  (2.9s/fold)
+[18:36:44] INFO tune:   combo  3/10  {'C': 0.1, 'max_iter': 5000}  cv_macro_f1=0.7557±0.0062  (5.5s/fold)
+[18:37:12] INFO tune:   combo  4/10  {'C': 0.1, 'max_iter': 10000}  cv_macro_f1=0.7557±0.0062  (5.5s/fold)
+[18:38:40] INFO tune:   combo  5/10  {'C': 1.0, 'max_iter': 5000}  cv_macro_f1=0.7589±0.0071  (17.6s/fold)
+[18:40:06] INFO tune:   combo  6/10  {'C': 1.0, 'max_iter': 10000}  cv_macro_f1=0.7589±0.0071  (17.2s/fold)
+[18:44:56] INFO tune:   combo  7/10  {'C': 10.0, 'max_iter': 5000}  cv_macro_f1=0.7593±0.0083  (58.1s/fold)
+[18:50:19] INFO tune:   combo  8/10  {'C': 10.0, 'max_iter': 10000}  cv_macro_f1=0.7593±0.0083  (64.5s/fold)
+[19:00:01] INFO tune:   combo  9/10  {'C': 100.0, 'max_iter': 5000}  cv_macro_f1=0.7604±0.0087  (116.5s/fold)
+[19:09:41] INFO tune:   combo 10/10  {'C': 100.0, 'max_iter': 10000}  cv_macro_f1=0.7604±0.0087  (115.9s/fold)
+[19:09:41] INFO tune: Best combo: {'C': '100.0', 'max_iter': '5000'} (cv_macro_f1=0.7604±0.0097)
+[19:12:18] INFO tune: Holdout (best): acc=0.7554  macroF1=0.7559  MCC=0.6749
+[19:12:18] INFO tune: Saved tuning artifacts to /Users/doruktopcu/Projects/MissVarPath-Missense-Detection/outputs/tuning/4class/linearsvc

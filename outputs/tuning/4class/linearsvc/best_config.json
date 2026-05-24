@@ -1,0 +1,29 @@
+{
+  "model": "LinearSVC",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "C",
+    "max_iter"
+  ],
+  "best_params": {
+    "C": "100.0",
+    "max_iter": "5000"
+  },
+  "best_cv_macro_f1_mean": 0.7604223423569936,
+  "best_cv_macro_f1_std": 0.009731458943084319,
+  "holdout": {
+    "accuracy": 0.7554285714285714,
+    "macro_f1": 0.7558702871262616,
+    "weighted_f1": 0.7558398610182981,
+    "f1_per_class": {
+      "Benign": 0.8930323846908734,
+      "Likely benign": 0.8889845094664371,
+      "Likely pathogenic": 0.624943719045475,
+      "Pathogenic": 0.6165205353022611
+    },
+    "mcc": 0.6749211811765624,
+    "fit_seconds": 157.0170407295227
+  }
+}

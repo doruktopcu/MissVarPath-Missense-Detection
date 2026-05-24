@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from src.models import MODEL_SPECS, get_model; print\\(f'{len\\(MODEL_SPECS\\)} models loaded:'\\); [print\\(' -', s.name\\) for s in MODEL_SPECS]; print\\(\\); print\\('Spot-check builders instantiate:'\\); [print\\(' -', s.name, '→', type\\(s.builder\\(4\\)\\).__name__\\) for s in MODEL_SPECS]\")",
+      "Bash(where python *)",
+      "Bash(where python3 *)",
+      "Bash(py --version)",
+      "Bash(py -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(env)",
+      "Bash(git -C \"C:/Users/Doruk-Topcu/Documents/Projects/MissVarPath-Missense-Detection-2\" status --short --branch)"
+    ]
+  }
+}

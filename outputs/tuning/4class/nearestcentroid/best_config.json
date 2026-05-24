@@ -1,0 +1,30 @@
+{
+  "model": "NearestCentroid",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "param_names": [
+    "metric",
+    "shrink_threshold"
+  ],
+  "best_params": {
+    "metric": "euclidean",
+    "shrink_threshold": "1.0"
+  },
+  "best_cv_macro_f1_mean": 0.5608725658550371,
+  "best_cv_macro_f1_std": 0.013026160877722277,
+  "holdout": {
+    "accuracy": 0.5510857142857143,
+    "macro_f1": 0.5514029819836793,
+    "weighted_f1": 0.5513988501016415,
+    "f1_per_class": {
+      "Benign": 0.6227848101265823,
+      "Likely benign": 0.5694799658994032,
+      "Likely pathogenic": 0.5414920368818106,
+      "Pathogenic": 0.4718551150269212
+    },
+    "mcc": 0.40330138088257683,
+    "roc_auc_ovr_macro": 0.8706243129354064,
+    "fit_seconds": 0.042463064193725586
+  }
+}

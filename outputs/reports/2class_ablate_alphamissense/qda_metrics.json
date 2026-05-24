@@ -1,0 +1,63 @@
+{
+  "model": "QDA",
+  "task": "2class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": "ablate_alphamissense",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.966,
+      "macro_f1": 0.9659948673069103,
+      "weighted_f1": 0.9659948673069102,
+      "fit_seconds": 0.17
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.9648571428571429,
+      "macro_f1": 0.9648536282199649,
+      "weighted_f1": 0.9648536282199649,
+      "fit_seconds": 0.18
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.9628465275793083,
+      "macro_f1": 0.962841425597893,
+      "weighted_f1": 0.9628415500364641,
+      "fit_seconds": 0.17
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.963132323521006,
+      "macro_f1": 0.9631323114756951,
+      "weighted_f1": 0.9631323174983505,
+      "fit_seconds": 0.17
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.9665618748213776,
+      "macro_f1": 0.9665597334208338,
+      "weighted_f1": 0.966559656942243,
+      "fit_seconds": 0.17
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.964679573755767,
+    "cv_acc_std": 0.0016637424025235307,
+    "cv_macro_f1_mean": 0.9646763932042595,
+    "cv_macro_f1_std": 0.001663434029531971
+  },
+  "holdout": {
+    "accuracy": 0.9643428571428572,
+    "macro_f1": 0.9643403066451486,
+    "weighted_f1": 0.9643402377127782,
+    "f1_per_class": {
+      "Benign/Likely benign": 0.9640387275242047,
+      "Pathogenic/Likely pathogenic": 0.9646418857660924
+    },
+    "mcc": 0.928826147518106,
+    "roc_auc_ovr_macro": 0.9820041394679713,
+    "fit_seconds": 0.21
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\2class_ablate_alphamissense\\qda.joblib"
+}

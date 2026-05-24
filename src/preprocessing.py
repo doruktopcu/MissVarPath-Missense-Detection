@@ -13,7 +13,8 @@ Steps:
   6. Coerce object columns that are >=95% numerically convertible.
   7. After coercion, drop columns that are still object-typed (free text /
      JSON-like) -- we'll do feature engineering later, per the proposal.
-  8. Drop columns with >95% missingness.
+  8. Drop columns with >50% missingness (threshold set in
+     ``drop_high_missing(..., max_missing=0.50)``).
   9. Fill missing values: numeric -> median; remaining categoricals -> mode.
      Boolean columns are cast to int with NA filled to 0.
  10. Drop near-zero-variance columns (single unique non-NaN value).
@@ -256,7 +257,7 @@ def run() -> PreprocessResult:
         "\n\n## Identifier / text\n" + "\n".join(ids) +
         "\n\n## Coerced object->numeric\n" + "\n".join(coerced) +
         "\n\n## Remaining text dropped\n" + "\n".join(text) +
-        "\n\n## High-missingness (>95%)\n" + "\n".join(hi_miss) +
+        "\n\n## High-missingness (>50%)\n" + "\n".join(hi_miss) +
         "\n\n## Zero-variance\n" + "\n".join(zero_var) + "\n"
     )
 

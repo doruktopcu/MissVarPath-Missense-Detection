@@ -1,0 +1,65 @@
+{
+  "model": "KNN",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": "ablate_bayesdel",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.6517142857142857,
+      "macro_f1": 0.6509068971930683,
+      "weighted_f1": 0.6509068971930683,
+      "fit_seconds": 2.14
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.66,
+      "macro_f1": 0.6600798722032633,
+      "weighted_f1": 0.6600798722032633,
+      "fit_seconds": 1.45
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.6573306659045441,
+      "macro_f1": 0.6570463061955449,
+      "weighted_f1": 0.6570237696351902,
+      "fit_seconds": 1.25
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.6447556444698486,
+      "macro_f1": 0.6433277466192815,
+      "weighted_f1": 0.6433355445517965,
+      "fit_seconds": 1.88
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.6539011146041727,
+      "macro_f1": 0.6535750648108781,
+      "weighted_f1": 0.6535999143147794,
+      "fit_seconds": 1.11
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.6535403421385702,
+    "cv_acc_std": 0.0058465649296208545,
+    "cv_macro_f1_mean": 0.6529871774044073,
+    "cv_macro_f1_std": 0.006417955798106059
+  },
+  "holdout": {
+    "accuracy": 0.6546285714285714,
+    "macro_f1": 0.6543720567088327,
+    "weighted_f1": 0.6543660507248997,
+    "f1_per_class": {
+      "Benign": 0.7397868561278863,
+      "Likely benign": 0.680648236415634,
+      "Likely pathogenic": 0.6020273248126928,
+      "Pathogenic": 0.5950258094791178
+    },
+    "mcc": 0.5399092018719925,
+    "roc_auc_ovr_macro": 0.9019326711121882,
+    "fit_seconds": 0.05
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection-2\\outputs\\models\\4class_ablate_bayesdel\\knn.joblib"
+}

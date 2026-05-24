@@ -1,0 +1,23 @@
+﻿[03:31:15] INFO shap: Task=4class model=HistGradientBoosting variant=base cv_mode=kfold features=208 classes=4
+[03:31:15] INFO shap: Train: (17497, 208)  Test: (4375, 208)
+[03:31:15] INFO shap: Fitting HistGradientBoosting on full train portion...
+[03:31:39] INFO shap: Explaining 1000 held-out rows with TreeExplainer...
+[03:32:16] INFO shap: SHAP values shape: (4, 1000, 208)  (classes, samples, features)
+[03:32:16] INFO shap: Top-15 features by mean(|SHAP|):
+                       feature  mean_abs_shap_overall  mean_abs_shap_Benign  mean_abs_shap_Likely benign  mean_abs_shap_Likely pathogenic  mean_abs_shap_Pathogenic
+                   ditto_score               1.205937              1.051923                     1.116516                         0.949066                  1.706243
+                 metarnn_score               0.507625              0.339334                     0.506399                         0.791935                  0.392834
+        allofus250k_gvs_max_af               0.314643              0.872588                     0.377926                         0.005461                  0.002597
+                     gnomad_af               0.224817              0.434887                     0.302732                         0.151754                  0.009894
+ bayesdel_bayesdel_addaf_score               0.115489              0.034104                     0.260752                         0.030524                  0.136576
+                clinpred_score               0.108483              0.087612                     0.173923                         0.137884                  0.034514
+        allofus250k_gvs_afr_ac               0.053451              0.100601                     0.098869                         0.003881                  0.010454
+mutpred1_mutpred_general_score               0.044623              0.006205                     0.005705                         0.071796                  0.094785
+                mutpred2_score               0.043690              0.010137                     0.034549                         0.099953                  0.030120
+        allofus250k_gvs_max_ac               0.042502              0.072023                     0.092285                         0.003063                  0.002636
+                    gmvp_score               0.030654              0.033309                     0.040901                         0.032586                  0.015819
+                gnomad3_af_nfe               0.030482              0.042716                     0.044466                         0.019213                  0.015533
+                  mistic_score               0.029695              0.006644                     0.020327                         0.020434                  0.071375
+                gnomad3_af_fin               0.028866              0.064199                     0.035689                         0.000366                  0.015209
+                gnomad3_af_afr               0.027996              0.043361                     0.063323                         0.002650                  0.002650
+[03:32:16] INFO shap: SHAP artifacts saved under C:\Users\Doruk-Topcu\Documents\Projects\MissVarPath-Missense-Detection\outputs\shap\canonical_4class

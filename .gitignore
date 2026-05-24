@@ -12,6 +12,6 @@ data/*.csv
 data/*.parquet
 outputs/preprocessing/*.parquet
 outputs/preprocessing/*.csv
-outputs/models/*.joblib
-outputs/models/*.pt
-outputs/models/*.pkl
+outputs/models/**/*.joblib
+outputs/models/**/*.pt
+outputs/models/**/*.pkl

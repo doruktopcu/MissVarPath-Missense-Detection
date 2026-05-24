@@ -1,0 +1,32 @@
+﻿
+===== [02:58:30] START 4class_gene =====
+===== [03:01:40] DONE  4class_gene =====
+
+===== [03:01:40] START 2class_gene =====
+===== [03:02:30] DONE  2class_gene =====
+
+===== [03:02:30] START 4class_augmented =====
+===== [03:07:45] DONE  4class_augmented =====
+
+===== [03:07:45] START 2class_augmented =====
+===== [03:08:49] DONE  2class_augmented =====
+
+===== [03:08:49] START 4class_augmented_raw_only =====
+===== [03:15:17] DONE  4class_augmented_raw_only =====
+
+===== [03:15:17] START 2class_augmented_raw_only =====
+===== [03:16:54] DONE  2class_augmented_raw_only =====
+
+===== [03:16:54] START 4class_augmented_no_vep =====
+===== [03:21:35] DONE  4class_augmented_no_vep =====
+
+===== [03:21:35] START 2class_augmented_no_vep =====
+===== [03:22:33] DONE  2class_augmented_no_vep =====
+
+===== [03:22:33] START 4class_augmented_gene_no_vep =====
+===== [03:26:58] DONE  4class_augmented_gene_no_vep =====
+
+===== [03:26:58] START 4class_no_ditto =====
+===== [03:29:45] DONE  4class_no_ditto =====
+
+===== [03:29:45] ALL EXPERIMENTS COMPLETE =====

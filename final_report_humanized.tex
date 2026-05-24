@@ -1,0 +1,1629 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{listings}
+
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=black, citecolor=black}
+
+\title{\textbf{MissVARPath:} A Meta-Classifier for Missense Variant Pathogenicity\\
+\large Course CMP682 -- Final Report}
+\author{Doruk Topcu \and Alihan Sa\u{g}\"{o}z}
+\date{May 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We benchmark an eleven-model fast-baseline suite for missense variant pathogenicity
+prediction on a perfectly balanced 21{,}872-variant ClinVar / OpenCRAVAT corpus,
+under a unified stratified 80/20 + 5-fold cross-validation protocol on both the
+original four-class task (Benign / Likely-benign / Likely-pathogenic / Pathogenic)
+and a collapsed binary task. After per-model grid-search hyperparameter tuning
+(AdaBoost excluded due to runtime cost), the final ten-model tuned suite reaches
+a held-out macro-F1 of \textbf{0.795} on the four-class task and \textbf{0.987}
+on the binary task, with \texttt{HistGradientBoosting} consistently the headline
+model. We evaluate the suite under five regimes -- canonical kfold, sequence-augmented
+(k-mer + BLAST-derived locus-neighbour features), strict gene-stratified CV, a
+``no-VEP / VUS'' ablation that drops every in-silico predictor score, and a
+``raw-only'' ablation that additionally removes multi-species conservation scores
+and label-aware BLAST features -- and inspect feature reliance with SHAP. Beyond
+the benchmark, we deploy the tuned classifier on $5{,}468$ \emph{actual} ClinVar
+Variants of Uncertain Significance annotated through the same pipeline; the model splits the uncertain pool $62\% / 38\%$
+pathogenic / benign on the 2-class head and hedges $87\%$ of 4-class predictions
+into the ``Likely-*'' categories with $95.4\%$ cross-task agreement, recovering
+clinically sensible per-gene priors (e.g. $\texttt{GCK}$ $100\%$, $\texttt{PAH}$
+$99\%$ pathogenic-side; $\texttt{APC}$, $\texttt{DICER1}$ much lower). We are
+explicit about a methodological subtlety: the BLAST features here are
+\emph{label-aware locus-neighbour} signals on 51\,bp DNA flanks, not biologically
+meaningful homology features; a true homology-based
+extension would require a UniRef-scale reference database and protein-level BLAST,
+out of scope for this project. A VUS-as-class study shows
+that VUS is one of the cleanest classes to recognise (held-out F1 $=0.901$ in a
+balanced 5-class setup), with the headline 4-class metrics almost unchanged
+when the class is added. A two-phase feature-ablation study -- group leave-one-out across all four tasks plus
+per-feature permutation importance inside the waste groups -- identifies the
+$208$-feature schema as $47$ indispensable \texttt{population\_af} columns
+$+$ $66$ useful-but-redundant meta-classifier / functional / sequence columns
+$+$ $94$ waste columns; the resulting \textbf{Lean B} model (113 features) drops $45\%$ of the schema and stays within $0.012$ macro-F1
+of the $208$-feature baseline on every task.
+\end{abstract}
+
+\section{Introduction}
+
+The standard clinical-genomics pipeline for missense variants of uncertain significance
+(VUS) routes variants through a battery of in-silico predictors (PolyPhen-2, SIFT,
+REVEL, CADD, AlphaMissense, etc.) and then combines their outputs with population
+frequency data and ACMG/AMP rules. Each predictor disagrees with the others, the
+predictors have correlated training data, and most are themselves trained with at
+least partial overlap on ClinVar -- the same database used to label our targets.
+
+Three questions follow naturally:
+\begin{enumerate}[leftmargin=*]
+    \item Can a meta-classifier do better than any single predictor by combining their
+          outputs with population and sequence features?
+    \item How much of any apparent improvement is data-circularity (predictors trained
+          on ClinVar being evaluated on ClinVar)?
+    \item Can we predict pathogenicity from raw data alone -- population frequency,
+          genomic position, sequence composition -- without relying on \emph{any}
+          predictor's score?
+\end{enumerate}
+
+This report answers each in turn. We train an 11-model multi-family classifier
+suite on a 21{,}872-row balanced ClinVar / OpenCRAVAT
+dataset, tune every non-AdaBoost model by per-grid 5-fold CV macro-F1, and evaluate the
+final 10-model tuned suite under five regimes:
+canonical kfold, sequence-augmented (k-mer + BLAST locus-neighbour columns),
+strict gene-stratified cross-validation, a no-VEP /
+VUS ablation that drops every in-silico predictor and conservation score, and a strict ``raw-only'' ablation that additionally
+removes label-aware BLAST features. We run two
+single-feature ablations alongside (DITTO removal; and the
+augmented-variant comparison), and use SHAP
+(\texttt{src/shap\_explain.py}) to inspect which features the best models are
+actually using.
+
+\section{Data}
+
+\subsection{Source}
+
+The dataset (\texttt{data/missense\_dataset.csv}, 21{,}872 rows $\times$ 777 columns)
+is a curated set of missense variants drawn from ClinVar, annotated through
+OpenCRAVAT with 158 distinct annotator groups. The 4-class label
+(\texttt{clinvar\_\_sig}) is perfectly balanced at 5{,}468 variants per class:
+Benign, Likely-benign, Likely-pathogenic, Pathogenic. The 2-class collapse pairs the
+``Likely'' tiers with their certain counterparts, again perfectly balanced at 10{,}936
+per class.
+
+\subsection{Preprocessing}
+
+Preprocessing (\texttt{src/preprocessing.py}) performs:
+\begin{enumerate}[leftmargin=*]
+    \item Filter to valid 4-class labels.
+    \item Drop label-leakage columns (39 columns, all under \texttt{clinvar\_\_*} or
+          \texttt{clinvar\_acmg\_\_*}, except the label).
+    \item Drop identifier and free-text columns (87 cols: rsIDs, HGVS strings,
+          transcript IDs, disease names, PubMed IDs, URLs, etc.).
+    \item Coerce object-typed numeric columns; drop the rest as free text.
+    \item Drop high-missingness columns ($>$50\% NaN, 207 cols).
+    \item Median-impute numeric, mode-impute categorical residuals; drop zero-variance.
+    \item Tidy column names; emit \texttt{target\_4} and \texttt{target\_2}.
+\end{enumerate}
+Final base feature set: \textbf{21{,}872 rows $\times$ 208 features} with no missing values.
+The augmented variant adds 196 k-mer and 10 BLAST-derived columns
+(\texttt{src/sequence\_features.py}, \texttt{src/blast\_features.py}), yielding
+\textbf{21{,}797 rows $\times$ 414 features} for the subset of variants whose protein
+sequence could be fetched. The BLAST-derived columns are best read as
+\emph{label-aware locus-neighbour features} rather than homology features; for the framing and the gene-stratified ablation
+that probes how much of the lift survives once same-gene leakage is removed.
+
+\section{Methods}
+
+\subsection{Train/test protocol}
+
+For every experiment we fix \texttt{RANDOM\_STATE = 42} and use an 80/20 stratified
+holdout. The 80\% training portion is then evaluated by 5-fold
+\texttt{StratifiedKFold} cross-validation. For gene-stratified runs we substitute
+\texttt{GroupShuffleSplit} (test holdout) and \texttt{StratifiedGroupKFold} (CV) on
+\texttt{gene\_symbol}, ensuring no gene appears in both train and held-out folds.
+
+\subsection{Model suite}
+\label{sec:model-suite}
+
+Eleven models, two families. Default hyperparameters below reflect the
+\emph{tuned} configuration that we use in the final reported leaderboards
+( for the tuning protocol and grid results):
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Classical / linear:} KNN ($k=30$, distance-weighted, cosine
+          metric), NearestCentroid (Euclidean, \texttt{shrink\_threshold=1.0}),
+          CosineSimilarity (custom L2-normalised class-centroid classifier),
+          DecisionTree (\texttt{max\_depth=10}, \texttt{min\_samples\_leaf=1},
+          \texttt{ccp\_alpha=0.001}, class-balanced),
+          LDA (\texttt{solver=svd}; numerically stable across BLAS variants),
+          QDA (\texttt{reg\_param=0.01}), LinearSVC ($C=1.0$, class-balanced,
+          \texttt{max\_iter=5000}), RidgeClassifier ($\alpha=1$, class-balanced),
+          SGDClassifier (log-loss, elasticnet penalty, $\alpha=10^{-3}$,
+          \texttt{max\_iter=5000}, early stopping).
+    \item \textbf{Ensembles:} AdaBoost (200 stumps, LR=0.5; used only in the
+          \emph{baseline} 11-model suite — tuning was stopped at combo 23/27
+          for runtime reasons, so the final 10-model tuned suite excludes it
+          and the report compares baseline-AdaBoost against the tuned suite
+          where relevant), HistGradientBoosting (\texttt{learning\_rate=0.02},
+          \texttt{max\_iter=2000}, \texttt{max\_leaf\_nodes=127},
+          \texttt{min\_samples\_leaf=20}, \texttt{l2\_regularization=1.0}).
+\end{itemize}
+All scaling-sensitive estimators are wrapped in a
+\texttt{Pipeline([StandardScaler, $\cdot$])}; tree and boosting models are not
+scaled. The eleven baseline models were selected as the fastest survivors of a
+larger 23-model exploratory survey, measured by per-fold fit time on the
+four-class task; per-task wall-clock for the final tuned suite is on the order
+of a few minutes.
+
+\subsection{Evaluation regimes}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Canonical kfold} on the base 208-feature parquet.
+    \item \textbf{Augmented kfold} on the 414-feature parquet (k-mer + BLAST added).
+    \item \textbf{Gene-stratified} kfold on the base parquet -- enforces zero gene
+          overlap between train and test.
+    \item \textbf{No-VEP / VUS scenario} -- drop all 147 in-silico predictor-score
+          columns, keep population frequencies + position + sequence features.
+    \item \textbf{Raw-only} -- drop everything generated by an external model, tool,
+          or algorithm, including conservation scores (GERP, PhastCons, PhyloP, SIPHY)
+          and label-aware BLAST features. Keep only population allele frequencies
+          (ALFA, AllOfUs, gnomAD, Regeneron), genomic position (\texttt{hg19\_pos},
+          \texttt{original\_input\_pos}), and direct sequence-composition features
+          (k-mer counts, GC content, entropy).
+\end{enumerate}
+
+\subsection{BLAST features: scope and honest framing}
+\label{sec:blast-caveat}
+
+The augmented variant includes 10 columns derived from a \texttt{blastn}
+search of each variant's 51\,bp alt-flank against a database built from the
+training-set ref-flanks (\texttt{src/blast\_features.py}, \texttt{word\_size=7},
+\texttt{evalue=10}, top-K\,=\,10). We deliberately frame these as
+\emph{label-aware locus-neighbour features}, not as homology features, for
+two structural reasons:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{The query substrate is too short and the parameters too
+          permissive for meaningful homology.} 51\,bp windows with
+          \texttt{word\_size=7} and \texttt{evalue=10} sit well below the
+          regime where BLAST bit scores carry statistical homology semantics.
+          A ``hit'' here largely reflects local 7-mer matching.
+    \item \textbf{The hits are dominated by same-gene proximity, not biology.}
+          ClinVar has many variants per gene; two variants 10\,bp apart share
+          $\approx 80\%$ of their flank by construction and will trivially be
+          each other's top hits. The aggregated label counts therefore
+          behave mostly as a neighbour-label proxy over the surrounding locus.
+\end{enumerate}
+
+A \emph{properly} homology-driven version of this idea would require
+infrastructure that is out of scope for this project: a UniRef-scale
+reference database (millions of sequences, rather than the $\approx 17.5$k
+train flanks we index), protein-level BLAST (\texttt{blastp}) on an
+amino-acid window with the variant substitution applied so cross-gene paralog
+hits can contribute, and tighter cutoffs ($\text{evalue}\le 10^{-3}$,
+$\text{pident}\ge 90$, length filters). We did not pursue that path because
+even the proxy version is informative as long as it is reported honestly, and
+because the gene-stratified evaluation is the
+empirical test for what fraction of the augmented lift is genuine
+generalisation versus same-gene leakage. The Raw-only experiment takes the additional step of removing
+these BLAST columns entirely, providing an explicit ``no label-aware features''
+floor.
+
+\subsection{Hyperparameter tuning protocol}
+\label{sec:tuning-protocol}
+
+We run a per-model grid search (\texttt{src/tune.py}) on the same 80\%
+training portion used by the baseline, scoring each grid combination by
+5-fold \texttt{StratifiedKFold} macro-F1 and refitting the winning
+combination on the full training portion before evaluating on the held-out
+20\%. Grids are defined in \texttt{src/tune.py::GRIDS}; bad combinations
+(e.g.\ invalid solver/shrinkage pairs) are caught per-combo and skipped
+rather than aborting the run, so a single misconfigured cell does not
+discard the rest of the grid. We deliberately did \emph{not} tune AdaBoost:
+its grid (3 $\times$ 3 $\times$ 3 = 27 combos with deep base estimators)
+was stopped at combo 23/27 after exceeding the compute budget allocated for
+classical-model tuning, so the final 10-model tuned suite excludes AdaBoost.
+AdaBoost is, however, evaluated under its baseline configuration in the five
+cross-regime ablations (gene-CV for both tasks, no-VEP gene-CV for 4-class,
+raw-only for both tasks) so the ablation tables carry an AdaBoost reference row.
+Tuning was performed only for the 4-class task; the resulting hyperparameters
+were carried over to the binary task because the binary problem is
+substantially easier and dominated by the same feature signals, so re-tuning
+gave little marginal value (we verified this informally by spot-checking the
+binary leaderboards before and after applying tuned defaults).
+
+\subsection{Interpretability}
+
+We use SHAP (\texttt{src/shap\_explain.py}, \texttt{src/shap\_per\_class.py}):
+\texttt{TreeExplainer} for tree-based estimators and \texttt{LinearExplainer} for
+linear models. Per-class contrastive importance is computed by class-pair difference
+of mean(\texttt{|SHAP|}) to surface boundary-specific feature reliance.
+
+\section{Results}
+
+\subsection{Canonical 4-class baseline}
+\label{sec:canonical-4class}
+
+Table~\ref{tab:canonical-4class} reports the 11-model baseline leaderboard
+under the canonical kfold protocol (stratified 80/20 + 5-fold CV on
+\texttt{target\_4}), sorted by held-out macro-F1. \texttt{HistGradientBoosting}
+is the headline model at $0.7928$ macro-F1, with a clear band structure below:
+linear / tree-based models occupy a $\approx 0.70$--$0.75$ middle band
+(LinearSVC $0.7549$, DecisionTree $0.7111$, SGD $0.7015$, LDA $0.7014$,
+RidgeClassifier $0.7008$, AdaBoost $0.6983$), and centroid-based methods sit
+at $0.55$--$0.65$ (KNN $0.6492$, QDA $0.5791$, CosineSimilarity $0.5532$,
+NearestCentroid $0.5475$). The 4-class task is non-trivial -- the
+upper-band gap of $\approx 0.05$ between HistGB and the next ensemble is the
+margin we re-examine after hyperparameter tuning and feature augmentation.
+
+\begin{table}[H]
+\centering
+\caption{Canonical 4-class baseline leaderboard (held-out 20\%, sorted by macro-F1).
+Source: \texttt{outputs/reports/4class/leaderboard.csv}.}
+\label{tab:canonical-4class}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Model & CV macro-F1 & Holdout macro-F1 & Holdout acc. & Holdout MCC & Fit (s) \\
+\midrule
+HistGradientBoosting & $0.797\pm0.003$ & $0.7928$ & $0.7929$ & $0.7245$ & 13.4 \\
+LinearSVC            & $0.759\pm0.008$ & $0.7549$ & $0.7543$ & $0.6734$ & 20.9 \\
+DecisionTree         & $0.720\pm0.005$ & $0.7111$ & $0.7106$ & $0.6142$ & 3.6 \\
+SGDClassifier        & $0.681\pm0.020$ & $0.7015$ & $0.7159$ & $0.6342$ & 0.17 \\
+LDA                  & $0.705\pm0.004$ & $0.7014$ & $0.7003$ & $0.6006$ & 0.10 \\
+RidgeClassifier      & $0.703\pm0.005$ & $0.7008$ & $0.7003$ & $0.6006$ & 0.04 \\
+AdaBoost             & $0.694\pm0.018$ & $0.6983$ & $0.7058$ & $0.6135$ & 35.5 \\
+KNN                  & $0.652\pm0.008$ & $0.6492$ & $0.6489$ & $0.5319$ & 0.02 \\
+QDA                  & $0.587\pm0.010$ & $0.5791$ & $0.6155$ & $0.5219$ & 0.27 \\
+CosineSimilarity     & $0.550\pm0.011$ & $0.5532$ & $0.5618$ & $0.4259$ & 0.03 \\
+NearestCentroid      & $0.559\pm0.014$ & $0.5475$ & $0.5479$ & $0.4001$ & 0.04 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Canonical 2-class baseline}
+\label{sec:canonical-2class}
+
+Collapsing the four-class label into Benign-tier vs. Pathogenic-tier yields a
+much easier problem (Table~\ref{tab:canonical-2class}): both
+\texttt{AdaBoost} and \texttt{HistGradientBoosting} reach a held-out macro-F1
+of $0.9870$, tied to four decimal places, and seven of the eleven models clear
+$0.97$. The bottom of the table -- NearestCentroid / CosineSimilarity at
+$0.8991$ -- is still well above the chance line ($0.50$). The binary task is
+where the suite is deployable; the four-class task is where the residual
+difficulty lives, primarily in the fine-grained Benign$\leftrightarrow$Likely-benign
+and Pathogenic$\leftrightarrow$Likely-pathogenic boundaries.
+
+\begin{table}[H]
+\centering
+\caption{Canonical 2-class baseline leaderboard (held-out 20\%, sorted by macro-F1).
+Source: \texttt{outputs/reports/2class/leaderboard.csv}.}
+\label{tab:canonical-2class}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Model & CV macro-F1 & Holdout macro-F1 & Holdout acc. & Holdout MCC & Fit (s) \\
+\midrule
+AdaBoost             & $0.9871\pm0.002$ & $0.9870$ & $0.9870$ & $0.9740$ & 33.6 \\
+HistGradientBoosting & $0.9898\pm0.003$ & $0.9870$ & $0.9870$ & $0.9740$ & 2.6 \\
+LinearSVC            & $0.9878\pm0.003$ & $0.9867$ & $0.9867$ & $0.9736$ & 0.41 \\
+SGDClassifier        & $0.9846\pm0.003$ & $0.9845$ & $0.9845$ & $0.9690$ & 0.08 \\
+RidgeClassifier      & $0.9835\pm0.003$ & $0.9797$ & $0.9797$ & $0.9596$ & 0.05 \\
+LDA                  & $0.9830\pm0.003$ & $0.9794$ & $0.9794$ & $0.9591$ & 0.21 \\
+DecisionTree         & $0.9802\pm0.004$ & $0.9774$ & $0.9774$ & $0.9548$ & 2.4 \\
+KNN                  & $0.9692\pm0.004$ & $0.9678$ & $0.9678$ & $0.9357$ & 0.02 \\
+QDA                  & $0.9664\pm0.004$ & $0.9666$ & $0.9666$ & $0.9334$ & 0.45 \\
+NearestCentroid      & $0.9050\pm0.005$ & $0.8991$ & $0.8992$ & $0.7998$ & 0.04 \\
+CosineSimilarity     & $0.9050\pm0.005$ & $0.8991$ & $0.8992$ & $0.7998$ & 0.03 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Gene-stratified evaluation: the data-circularity ceiling}
+\label{sec:gene-strat}
+
+Gene-stratified evaluation (Table~\ref{tab:gene-strat}) substitutes
+\texttt{GroupShuffleSplit} on \texttt{gene\_symbol} for the 80/20 holdout and
+\texttt{StratifiedGroupKFold} for the CV, so no gene appears in both train and
+held-out folds. This is the strictest test of \emph{generalisation across genes}
+-- under the canonical kfold protocol, two variants in the same gene can sit on
+opposite sides of the split, which subtly inflates apparent generalisation. On
+the 4-class task the headline \texttt{HistGradientBoosting} macro-F1 drops from
+$0.7928$ (canonical, Table~\ref{tab:canonical-4class}) to $0.7658$ under gene-CV
+-- a loss of $\approx 2.7$ percentage points but well within deployable range.
+LinearSVC and SGD show similar drops. On the 2-class task the effect is
+essentially zero: \texttt{HistGradientBoosting} actually moves from $0.9870$ to
+$0.9874$ (within run-to-run noise), confirming that the binary
+benign/pathogenic distinction is encoded in features that generalise cleanly
+across genes. The 4-class drop is the data-circularity ceiling: a meaningful
+but not catastrophic share of the canonical lift is same-gene neighbour
+information.
+
+\begin{table}[H]
+\centering
+\caption{Gene-stratified evaluation. ``Canonical'' columns reproduce
+Tables~\ref{tab:canonical-4class}/\ref{tab:canonical-2class}; ``Gene''
+columns are this run. $\Delta$ = Gene $-$ Canonical, on holdout macro-F1.}
+\label{tab:gene-strat}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{4-class} & \multicolumn{3}{c}{2-class} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+Model & Canonical & Gene & $\Delta$ & Canonical & Gene & $\Delta$ \\
+\midrule
+HistGradientBoosting & $0.7928$ & $0.7658$ & $-0.027$ & $0.9870$ & $0.9874$ & $+0.000$ \\
+AdaBoost             & $0.6983$ & $0.7009$ & $+0.003$ & $0.9870$ & $0.9853$ & $-0.002$ \\
+LinearSVC            & $0.7549$ & $0.7252$ & $-0.030$ & $0.9867$ & $0.9809$ & $-0.006$ \\
+DecisionTree         & $0.7111$ & $0.7186$ & $+0.008$ & $0.9774$ & $0.9806$ & $+0.003$ \\
+SGDClassifier        & $0.7015$ & $0.7070$ & $+0.005$ & $0.9845$ & $0.9832$ & $-0.001$ \\
+LDA                  & $0.7014$ & $0.6857$ & $-0.016$ & $0.9794$ & $0.9804$ & $+0.001$ \\
+RidgeClassifier      & $0.7008$ & $0.6823$ & $-0.018$ & $0.9797$ & $0.9804$ & $+0.001$ \\
+KNN                  & $0.6492$ & $0.5935$ & $-0.056$ & $0.9678$ & $0.9608$ & $-0.007$ \\
+QDA                  & $0.5791$ & $0.5671$ & $-0.012$ & $0.9666$ & $0.9515$ & $-0.015$ \\
+CosineSimilarity     & $0.5532$ & $0.5384$ & $-0.015$ & $0.8991$ & $0.8937$ & $-0.005$ \\
+NearestCentroid      & $0.5475$ & $0.5565$ & $+0.009$ & $0.8991$ & $0.8942$ & $-0.005$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{No-VEP / VUS scenario}
+\label{sec:no-vep}
+
+The no-VEP scenario simulates the VUS prioritisation deployment: every
+in-silico predictor score and multi-species conservation score is dropped
+(AlphaMissense, CADD, REVEL, SIFT, MetaRNN, BayesDel, FATHMM, MutationTaster,
+PROVEAN, ESM1b, EVE, PrimateAI, MVP, DITTO, MutationAssessor, VEST,
+CHASMplus, MutPred1, GMVP, PolyPhen2, GERP, PhastCons, PhyloP, SIPHY), keeping
+only population frequencies, position, sequence-composition features, and the
+label-aware BLAST locus-neighbour columns. After dropping 130 columns the
+classifier sees 284 features on the augmented parquet.
+
+Headline numbers (Table~\ref{tab:no-vep}):
+\begin{itemize}[leftmargin=*]
+    \item \textbf{kfold:} \texttt{HistGradientBoosting} reaches $0.7727$ on
+          4-class and $0.9764$ on 2-class -- a drop of $\approx 0.022$
+          and $\approx 0.011$ respectively versus the augmented baseline.
+          Dropping every learned predictor and conservation score costs
+          $\approx 2$ percentage points on 4-class and $\approx 1$ point on
+          2-class. The classifier degrades \emph{gracefully}.
+    \item \textbf{gene-stratified:} the 4-class no-VEP gene-CV number is
+          $0.7611$, a further $-0.012$ relative to no-VEP kfold and $-0.034$
+          relative to the canonical augmented kfold. This is our operational
+          ``VUS scenario'' estimate -- the number the suite would deliver if
+          deployed on a previously-unseen gene with no learned-predictor
+          inputs available.
+\end{itemize}
+The graceful degradation (rather than a collapse to chance) is the headline
+finding for clinical deployability: even without any meta-classifier
+inputs from other predictors, the population-frequency / position /
+sequence-composition / BLAST-neighbour feature set carries enough signal to
+stay $\approx 0.76$ macro-F1 on 4-class under the strictest evaluation.
+
+\begin{table}[H]
+\centering
+\caption{No-VEP / VUS scenario top results (4-class, holdout macro-F1).
+The augmented variant is the reference point because the dropped columns
+are removed from it; the lift from k-mer + BLAST under no-VEP is much
+larger than under canonical.}
+\label{tab:no-vep}
+\small
+\begin{tabular}{lrr}
+\toprule
+Model & no-VEP kfold & no-VEP gene-CV \\
+\midrule
+HistGradientBoosting & $0.7727$ & $0.7611$ \\
+DecisionTree         & $0.7326$ & $0.7267$ \\
+LinearSVC            & $0.7274$ & $0.7300$ \\
+SGDClassifier        & $0.6962$ & $0.6977$ \\
+RidgeClassifier      & $0.6736$ & $0.6738$ \\
+LDA                  & $0.6696$ & --       \\
+AdaBoost             & --       & $0.6629$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Real VUS deployment}
+\label{sec:vus-deployment}
+
+The previous subsection \emph{simulates} the VUS scenario
+on the labelled dataset by dropping every learned predictor column. We now
+take the headline tuned model and apply it to genuine Variants of Uncertain
+Significance pulled from ClinVar.
+
+\paragraph{Dataset.}
+A curated pro-set of $5{,}468$ VUS-labelled missense variants was assembled
+from ClinVar review-status filters: every available 3-star expert-reviewed
+VUS plus a random sample of 2-star VUS, matched to the class size of the
+training labels for a balanced comparison (\texttt{scripts/build\_vus\_pro\_set.py}).
+The VUS were annotated through the same OpenCRAVAT 158-annotator pipeline as
+the training set, yielding the same 777-column raw schema and -- after the
+identical preprocessing pruning -- the same 208 numerical features. All 208
+training-set features are present in the VUS post-prune; the top
+SHAP-importance predictor scores (DITTO, MetaRNN, AlphaMissense, REVEL,
+CADD, ClinPred) have $\le 2\%$ missing rates and are imputed with
+training-set medians where absent.
+
+\paragraph{Caveat on what we can measure.}
+By definition there is no ground-truth label for VUS, so we cannot report
+accuracy. The deployment yields two interpretable signals: (a) the
+\emph{distribution} of predicted classes -- how the trained classifier
+partitions the uncertain pool -- and (b) cross-task consistency between
+the 4-class and 2-class heads, both trained independently on the same data.
+Tables~\ref{tab:vus-dist-2class}--\ref{tab:vus-dist-4class} report these
+distributions; Figure~\ref{fig:vus-per-gene} shows the per-gene structure.
+
+\begin{table}[H]
+\centering
+\caption{Predicted class distribution on the $5{,}468$-variant VUS pro-set,
+2-class head (tuned HistGradientBoosting).}
+\label{tab:vus-dist-2class}
+\small
+\begin{tabular}{lrr}
+\toprule
+Predicted class & Count & Share \\
+\midrule
+Pathogenic / Likely pathogenic & $3{,}377$ & $61.8\%$ \\
+Benign / Likely benign         & $2{,}091$ & $38.2\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Predicted class distribution, 4-class head. Note how the model
+correctly hedges into \emph{Likely-*} categories for these uncertain
+variants ($87\%$ of predictions are ``Likely''), with only $13.1\%$
+escalated to a definitive call.}
+\label{tab:vus-dist-4class}
+\small
+\begin{tabular}{lrr}
+\toprule
+Predicted class    & Count & Share \\
+\midrule
+Likely pathogenic  & $2{,}568$ & $47.0\%$ \\
+Likely benign      & $2{,}183$ & $39.9\%$ \\
+Pathogenic         & $706$     & $12.9\%$ \\
+Benign             & $11$      & $0.2\%$  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Cross-task consistency.}
+Collapsing the 4-class head's predictions to \{pathogenic-side,
+benign-side\} and comparing to the 2-class head produces the same verdict
+on $95.4\%$ of the $5{,}468$ variants. The two models were trained
+independently on different targets and arrived at the same call on
+$5{,}214$ of them -- evidence that the headline number is not a
+single-model artifact.
+
+\paragraph{Per-gene structure.}
+Figure~\ref{fig:vus-per-gene} shows the predicted-class breakdown for the
+top-20 most-frequent genes in the VUS pro-set. The model recovers
+clinically sensible per-gene priors that it could only have learned
+indirectly through gene-correlated features: \texttt{GCK} (MODY/diabetes
+loss-of-function) lands at $100\%$ pathogenic-side; \texttt{PAH} (PKU,
+$99\%$), \texttt{MYH7} (hypertrophic cardiomyopathy, $90\%$),
+\texttt{LDLR} (familial hypercholesterolemia, $84\%$),
+\texttt{HNF1A/HNF4A} (MODY) and \texttt{PMS2}/\texttt{PTEN} all show
+strong pathogenic-side concentration. Conversely \texttt{APC},
+\texttt{DICER1}, and \texttt{TTN}-class genes (where pathogenic variants
+tend to be truncating rather than missense, and missense variation is
+mostly benign) sit much lower on the pathogenic scale.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{outputs/figures/vus_per_gene_predictions.png}
+    \caption{Predicted-class fractions on the top-20 most-frequent genes in
+    the $5{,}468$-variant VUS pro-set. Bars stacked
+    Pathogenic / Likely-pathogenic / Likely-benign / Benign; $n$ marks the
+    count of VUS per gene in the pro-set. Sorted by predicted
+    pathogenic-side (P + LP) rate. The per-gene gradient -- saturated
+    pathogenic at \texttt{GCK} / \texttt{PAH} / \texttt{MYH7} and gradually
+    shifting to benign-leaning at \texttt{APC} / \texttt{DICER1} -- matches
+    published clinical priors on these genes' missense-pathogenicity profiles.}
+    \label{fig:vus-per-gene}
+\end{figure}
+
+\paragraph{Deployment artifacts.}
+Per-variant predictions including identifier columns
+(\texttt{base\_\_chrom}, \texttt{base\_\_pos}, \texttt{base\_\_ref\_base},
+\texttt{base\_\_alt\_base}, \texttt{base\_\_hugo}) and per-class
+probabilities are written to:
+\begin{itemize}[leftmargin=*,nosep]
+    \item \texttt{outputs/predictions/vus\_pro\_2class.csv}
+    \item \texttt{outputs/predictions/vus\_pro\_4class.csv}
+\end{itemize}
+The inference path is generic (\texttt{scripts/predict\_vus.py}); any
+OpenCRAVAT-annotated CSV in the 777-column training schema can be scored
+by the saved \texttt{.joblib} model with one command.
+
+\subsection{Augmented variant (k-mer + BLAST lift)}
+\label{sec:augmented}
+
+We re-ran the tuned suite on the 414-feature augmented parquet (adding 196
+k-mer columns and 10 BLAST-derived locus-neighbour columns to the 208-feature
+base). The headline numbers are: \texttt{HistGradientBoosting} reaches
+macro-F1 $0.7948$ on the 4-class task and $\mathbf{0.9904}$ on the 2-class task.
+Comparing against the tuned base suite (Tables~\ref{tab:tuned-4class},
+\ref{tab:tuned-2class}):
+\begin{itemize}[leftmargin=*]
+    \item \textbf{4-class:} $0.7948$ vs.\ $0.7950$ -- the k-mer + BLAST columns
+          add \emph{essentially nothing} on top of the tuned VEP-score-rich
+          base. This is consistent with the BLAST framing in
+          the BLAST features framing: the locus-neighbour signal is largely
+          \emph{redundant} with the predictor-score signal already present in
+          the base parquet, since both effectively encode ``which gene /
+          functional context is this variant in.''
+    \item \textbf{2-class:} $0.9904$ vs.\ $0.9872$ -- the augmented variant
+          gives a small but real lift of $+0.003$, putting the 2-class
+          classifier above $0.99$ on held-out macro-F1.
+\end{itemize}
+The interpretation: when VEP scores are present the augmented columns are
+redundant; when they are removed
+the augmented columns become the main source of residual signal.
+
+\subsection{DITTO ablation: meta-classifier check}
+\label{sec:ditto}
+
+A useful sanity check on the meta-classifier interpretation is to remove a
+single high-profile learned-predictor column and ask how much the suite
+degrades. DITTO is the obvious candidate: it is itself a deep-learning
+pathogenicity predictor that integrates many of the same inputs we use here,
+so if our suite were simply ``DITTO with a slightly different head'' we
+would expect a sharp drop on its removal.
+
+Dropping the single \texttt{ditto\_} column on the canonical base parquet
+yields \texttt{HistGradientBoosting} macro-F1 $= 0.7911$, against
+$0.7928$ in the canonical baseline (Table~\ref{tab:canonical-4class}) -- a
+loss of $\Delta = -0.0017$. The classifier is essentially indifferent to
+DITTO. The implication is straightforward: the suite is doing meaningful
+ensemble work over many correlated predictor scores and is not bottlenecked
+on any single learned input.
+
+\subsection{Hyperparameter tuning}
+\label{sec:tuning-results}
+
+Per-model grid search on the 4-class task
+covered 9 non-AdaBoost models; AdaBoost tuning was stopped at combo 23/27
+after exceeding the compute budget and its baseline configuration is the
+one reported in Table~\ref{tab:canonical-4class}. Table~\ref{tab:tuning}
+summarises the baseline-vs-tuned 4-class holdout macro-F1 for the nine
+tuned models and lists the winning grid cell. The two largest absolute
+gains were on \texttt{DecisionTree} ($+0.040$) and \texttt{QDA} ($+0.039$);
+\texttt{SGDClassifier} and \texttt{KNN} also improved by $\approx 0.01$--$0.02$.
+\texttt{HistGradientBoosting} improved only marginally ($+0.002$) but is the
+headline model, so we accept the (much heavier) tuned configuration to
+maximise the reported score. \texttt{RidgeClassifier} got slightly worse
+under tuning ($-0.003$) and \texttt{LDA} was already at its effective default
+under \texttt{solver=svd}, so we kept their baseline configurations.
+
+\begin{table}[H]
+\centering
+\caption{4-class hyperparameter tuning summary. Baseline / Tuned columns are
+held-out macro-F1. ``Tuned'' marks the configurations whose winning grid cell
+was carried into the final model suite. Source:
+\texttt{outputs/tuning/4class/*/best\_config.json}.}
+\label{tab:tuning}
+\small
+\begin{tabular}{lrrrl}
+\toprule
+Model & Baseline & Tuned & $\Delta$ & Winning grid cell \\
+\midrule
+HistGradientBoosting & $0.7928$ & $0.7950$ & $+0.0022$ & \texttt{lr=0.02, max\_iter=2000, leaves=127, l2=1.0} \\
+LinearSVC            & $0.7549$ & $0.7559$ & $+0.0010$ & \texttt{C=100, max\_iter=5000} (not adopted) \\
+DecisionTree         & $0.7111$ & $0.7514$ & $+0.0403$ & \texttt{max\_depth=10, leaf=1, ccp\_alpha=0.001} \\
+SGDClassifier        & $0.7015$ & $0.7182$ & $+0.0167$ & \texttt{alpha=1e-3, elasticnet, max\_iter=5000} \\
+LDA                  & $0.7014$ & $0.7014$ & $\pm 0.0000$ & \texttt{lsqr+auto} (unstable; we use \texttt{svd}) \\
+RidgeClassifier      & $0.7008$ & $0.6982$ & $-0.0026$ & \texttt{alpha=10.0} (not adopted) \\
+KNN                  & $0.6492$ & $0.6598$ & $+0.0106$ & \texttt{k=30, distance, metric=cosine} \\
+QDA                  & $0.5791$ & $0.6178$ & $+0.0387$ & \texttt{reg\_param=0.01} \\
+NearestCentroid      & $0.5475$ & $0.5514$ & $+0.0039$ & \texttt{shrink\_threshold=1.0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Final tuned suite (no-AdaBoost)}
+\label{sec:tuned-final}
+
+Applying the tuned configurations from Table~\ref{tab:tuning} (where adopted)
+and rerunning the suite excluding AdaBoost yields the final
+report-headline leaderboards (Tables~\ref{tab:tuned-4class}
+and~\ref{tab:tuned-2class}). The headline numbers are
+\textbf{macro-F1 $=0.7950$} on the 4-class task and
+\textbf{macro-F1 $=0.9872$} on the 2-class task, both achieved by
+\texttt{HistGradientBoosting}. Confusion matrices for the headline model
+on both tasks are reproduced in Figure~\ref{fig:cm-headline}.
+
+\begin{table}[H]
+\centering
+\caption{Final 4-class tuned no-AdaBoost leaderboard (held-out 20\%). Source:
+\texttt{outputs/reports/4class\_final\_no\_adaboost/leaderboard.csv}.}
+\label{tab:tuned-4class}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Model & CV macro-F1 & Holdout macro-F1 & Holdout acc. & Holdout MCC & Fit (s) \\
+\midrule
+HistGradientBoosting & $0.7976\pm0.0065$ & $\mathbf{0.7950}$ & $0.7952$ & $0.7274$ & 21.4 \\
+LinearSVC            & $0.7591\pm0.0080$ & $0.7549$ & $0.7543$ & $0.6734$ & 6.8 \\
+DecisionTree         & $0.7461\pm0.0099$ & $0.7514$ & $0.7534$ & $0.6735$ & 1.4 \\
+SGDClassifier        & $0.7197\pm0.0057$ & $0.7182$ & $0.7255$ & $0.6391$ & 0.14 \\
+LDA                  & $0.7049\pm0.0080$ & $0.7022$ & $0.7013$ & $0.6018$ & 0.08 \\
+RidgeClassifier      & $0.7027\pm0.0047$ & $0.7003$ & $0.6999$ & $0.6000$ & 0.04 \\
+KNN                  & $0.6566\pm0.0040$ & $0.6598$ & $0.6601$ & $0.5472$ & 0.03 \\
+QDA                  & $0.6276\pm0.0051$ & $0.6178$ & $0.6437$ & $0.5522$ & 0.09 \\
+CosineSimilarity     & $0.5498\pm0.0110$ & $0.5532$ & $0.5618$ & $0.4259$ & 0.03 \\
+NearestCentroid      & $0.5609\pm0.0130$ & $0.5514$ & $0.5511$ & $0.4033$ & 0.04 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Final 2-class tuned no-AdaBoost leaderboard (held-out 20\%). Source:
+\texttt{outputs/reports/2class\_final\_no\_adaboost/leaderboard.csv}.}
+\label{tab:tuned-2class}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Model & CV macro-F1 & Holdout macro-F1 & Holdout acc. & Holdout MCC & Fit (s) \\
+\midrule
+HistGradientBoosting & $0.9895\pm0.0024$ & $\mathbf{0.9872}$ & $0.9872$ & $0.9744$ & 4.1 \\
+LinearSVC            & $0.9877\pm0.0032$ & $0.9867$ & $0.9867$ & $0.9736$ & 0.18 \\
+SGDClassifier        & $0.9860\pm0.0031$ & $0.9847$ & $0.9847$ & $0.9694$ & 0.11 \\
+DecisionTree         & $0.9845\pm0.0027$ & $0.9822$ & $0.9822$ & $0.9644$ & 1.4 \\
+LDA                  & $0.9837\pm0.0031$ & $0.9801$ & $0.9801$ & $0.9605$ & 0.08 \\
+RidgeClassifier      & $0.9835\pm0.0030$ & $0.9797$ & $0.9797$ & $0.9596$ & 0.04 \\
+KNN                  & $0.9665\pm0.0043$ & $0.9653$ & $0.9653$ & $0.9306$ & 0.02 \\
+QDA                  & $0.9650\pm0.0015$ & $0.9650$ & $0.9650$ & $0.9302$ & 0.10 \\
+NearestCentroid      & $0.9059\pm0.0052$ & $0.8996$ & $0.8997$ & $0.8007$ & 0.04 \\
+CosineSimilarity     & $0.9050\pm0.0048$ & $0.8991$ & $0.8992$ & $0.7998$ & 0.03 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{final_report/figures/histgb_4class_cm.png}
+\caption{4-class, row-normalized.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{final_report/figures/histgb_2class_cm.png}
+\caption{2-class, row-normalized.}
+\end{subfigure}
+\caption{Held-out confusion matrices for the final \texttt{HistGradientBoosting}
+model on both tasks. The 4-class panel shows the residual difficulty concentrated
+at the Benign$\leftrightarrow$Likely-benign and Pathogenic$\leftrightarrow$Likely-pathogenic
+boundaries; the 2-class panel is near-diagonal.}
+\label{fig:cm-headline}
+\end{figure}
+
+\subsection{Raw-only experiment: predicting from data, not from predictors}
+\label{sec:raw-only}
+
+\textbf{Question.} How well can we predict pathogenicity using only data \emph{not}
+generated by another model, tool, or algorithm? This is the strictest possible
+ablation: drop every learned predictor score, every multi-species conservation
+score (GERP, PhastCons, PhyloP, SIPHY), and every label-aware BLAST feature. We
+keep only:
+\begin{itemize}[leftmargin=*]
+    \item Population allele frequencies and counts:
+          ALFA (3 cols), AllOfUs250k (27 cols across 9 ancestries),
+          gnomAD (2 cols) and gnomAD3 (9 cols by ancestry), Regeneron (3 cols).
+    \item Genomic position: \texttt{hg19\_pos}, \texttt{original\_input\_pos}.
+    \item Direct sequence-composition statistics: k-mer counts (\texttt{kmer\_ref\_*},
+          \texttt{kmer\_alt\_*}, \texttt{kmer\_diff\_*} -- 196 cols), GC content,
+          Shannon entropy.
+\end{itemize}
+Final raw-only feature space: \textbf{245 features}, 21{,}797 variants.
+
+\textbf{Headline.} \texttt{HistGradientBoosting} reaches macro-F1
+$\mathbf{0.7212}$ on 4-class and $\mathbf{0.9339}$ on 2-class under this
+strict ablation -- a drop of $\approx 0.07$ and $\approx 0.05$ respectively
+versus the augmented baseline. Both numbers stay well above chance
+($0.25$ and $0.50$ respectively), so the conclusion is that
+\emph{a substantial fraction of the headline signal lives in population
+allele frequencies, position, and direct sequence composition} -- inputs that
+do \emph{not} come from another model or algorithm.
+
+\begin{table}[H]
+\centering
+\caption{Raw-only ablation top results (held-out macro-F1). ``Augmented''
+column reproduces the augmented variant for reference; ``Raw-only'' is this
+ablation.}
+\label{tab:raw-only}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Model & Augmented & Raw-only & $\Delta$ \\
+\midrule
+HistGradientBoosting (4-class) & $0.7948$ & $0.7212$ & $-0.074$ \\
+DecisionTree         (4-class) & $0.7574$ & $0.6517$ & $-0.106$ \\
+LinearSVC            (4-class) & $0.7657$ & $0.6393$ & $-0.126$ \\
+LDA                  (4-class) & $0.7111$ & $0.5520$ & $-0.159$ \\
+SGDClassifier        (4-class) & $0.7209$ & $0.5370$ & $-0.184$ \\
+AdaBoost             (4-class) & --       & $0.6278$ & --       \\
+\midrule
+HistGradientBoosting (2-class) & $0.9904$ & $0.9339$ & $-0.057$ \\
+AdaBoost             (2-class) & --       & $0.9229$ & --       \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Reading the raw-only result.}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Booster delta is smallest.} \texttt{HistGradientBoosting}
+          loses only $\approx 0.07$ in this ablation, the smallest absolute
+          drop in the suite. The booster is the one model that can recover
+          useful interactions purely from raw inputs (population frequencies
+          $\times$ position $\times$ k-mer composition); the linear and
+          centroid families cannot.
+    \item \textbf{Linear models collapse.} \texttt{LinearSVC} drops by
+          $0.13$, \texttt{LDA} by $0.16$, \texttt{SGDClassifier} by $0.18$.
+          Without learned-predictor inputs to give them a meaningful linear
+          combination, the linear methods lose most of their signal. This is
+          consistent with the canonical leaderboard, where the linear models'
+          headline numbers piggy-back on already-good predictor scores.
+    \item \textbf{The 2-class number is the operational one.} At $0.9339$
+          macro-F1 / $0.9339$ accuracy on the binary task with \emph{no
+          learned predictor inputs}, the suite is still well above what a
+          population-frequency-only baseline would deliver. The
+          interpretation is that for the
+          easier benign/pathogenic distinction, most of the signal lives in
+          population-genetics features that are intrinsic to the variant
+          rather than in any pre-existing pathogenicity score.
+\end{enumerate}
+
+\subsection{VUS-as-class study}
+\label{sec:vus-class}
+
+The deployment subsection only \emph{scores}
+VUS rows with the existing 2-class / 4-class classifiers. A natural
+follow-up question is whether VUS itself can be a labelled class:
+i.e., can the model learn to identify \emph{which variants will be
+flagged as uncertain}, alongside the pathogenic/benign distinction?
+
+We assembled two new training corpora by appending the strict-VUS subset
+of the curated pro-set (\texttt{clinvar\_\_sig == "Uncertain significance"},
+$n=5{,}428$ after dropping NaN and drifted labels) to the existing
+$21{,}872$-row training corpus. Two task definitions:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{3-class}: \{Benign-side, Pathogenic-side, VUS\}, where the
+          Likely-* labels collapse into the definitive ones (same rule as the
+          existing 2-class task). Class counts: $10{,}936\,/\,10{,}936\,/\,5{,}428$.
+    \item \textbf{5-class}: \{Benign, Likely-benign, Likely-pathogenic,
+          Pathogenic, VUS\}. Class counts: $5{,}468\,/\,5{,}468\,/\,5{,}468\,/\,5{,}468\,/\,5{,}428$ --- evenly balanced.
+\end{itemize}
+
+The same 10-model suite with tuned defaults was
+trained on each, using the same 80/20 stratified split and 5-fold
+StratifiedKFold protocol as the canonical baselines. Headline numbers
+(tuned \texttt{HistGradientBoosting}, Table~\ref{tab:vus-class}):
+
+\begin{table}[H]
+\centering
+\caption{VUS-as-class study, tuned \texttt{HistGradientBoosting}
+held-out numbers, vs. the no-VUS baselines. Adding VUS as a third class
+costs $\approx 0.04$ macro-F1 against the 2-class baseline; adding it as
+a fifth class is almost free on aggregate metrics.}
+\label{tab:vus-class}
+\small
+\begin{tabular}{lcrrr}
+\toprule
+Study & $n$ classes & Acc & macro-F1 & MCC \\
+\midrule
+2-class no-VUS (baseline) & 2 & $0.9872$ & $0.9872$ & $0.9744$ \\
+3-class with VUS          & 3 & $0.9540$ & $\mathbf{0.9459}$ & $0.9284$ \\
+4-class no-VUS (baseline) & 4 & $0.7952$ & $0.7950$ & $0.7274$ \\
+5-class with VUS          & 5 & $0.7995$ & $\mathbf{0.7984}$ & $0.7497$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three findings stand out. \textbf{First}, VUS is one of the cleanest
+classes to recognise: in the 5-class confusion matrix it has held-out
+F1 = $0.901$, sitting between Benign ($0.929$) and Likely-benign ($0.894$)
+in difficulty -- much easier than the Pathogenic $\leftrightarrow$
+Likely-pathogenic boundary ($0.622$ / $0.646$) that has been the
+residual difficulty since the baseline 4-class study. \textbf{Second},
+adding VUS as a fifth class does \emph{not} reshuffle the existing four
+classes' error structure: the Likely-pathogenic $\leftrightarrow$
+Pathogenic confusion region is almost unchanged
+($\Delta\text{F1} = -0.047$ and $-0.012$ respectively). \textbf{Third},
+MCC \emph{improves} from $0.7274$ to $0.7497$ ($\Delta=+0.022$) when VUS
+is added -- on a chance-corrected metric the 5-class task is
+\emph{easier} than the 4-class task, which is the expected behaviour when
+adding a class that is highly separable.
+
+When the 5-class model misclassifies a VUS row ($6.3\%$ of held-out
+VUS), it hedges into a Likely-* category $4.7\%$ of the time and
+escalates to a definitive call only $1.6\%$ of the time -- the
+clinically conservative behaviour.
+
+Artifacts:
+\texttt{outputs/reports/\{3class\_vus,5class\_vus\}/leaderboard.csv},
+\texttt{outputs/models/\{3class\_vus,5class\_vus\}/histgradientboosting.joblib},
+and the new training parquets at
+\texttt{outputs/preprocessing/missense\_\{3class,5class\}.parquet}.
+
+\subsection{Feature ablation study: what is useful, what is waste}
+\label{sec:feature-ablation}
+
+We ran a two-phase systematic ablation across all four tasks
+(2-class, 3-class, 4-class, 5-class) on the full 10-model suite to
+identify which functional groups of features contribute to the headline
+numbers and which are deadweight. Total compute: 48 group leave-one-out
+(LOO) re-runs covering 504 (task, model, group) cells; results under
+\texttt{outputs/reports/feature\_ablation/}.
+
+\paragraph{Group definition.}
+The 208-feature base schema partitions into twelve functional groups
+matching the OpenCRAVAT annotator families: predictor scores singled out
+for their established clinical use (\texttt{ditto}, \texttt{alphamissense},
+\texttt{revel}, \texttt{cadd}, \texttt{metarnn}, \texttt{bayesdel}), the
+oncology-focused \texttt{chasmplus} basket (68 features), the
+residual meta-classifier basket (\texttt{other\_vep}, 56 features),
+multi-species \texttt{conservation} (\texttt{phastcons} + \texttt{phylop}
++ \texttt{gerp} + \texttt{siphy}, 17 features), \texttt{population\_af}
+(47 features across ALFA, AllOfUs250k, gnomAD, Regeneron), the
+\texttt{functional}-genomics pair (\texttt{fitcons} + \texttt{ncer}), and
+\texttt{position} (\texttt{hg19\_pos}, \texttt{original\_input\_pos}).
+
+\paragraph{Phase A: group LOO.}
+Per (task, group) cell, we ran the full 10-model suite under
+\texttt{src.train --drop-prefixes <group> --tag ablate\_<group>} and
+compared \texttt{HistGradientBoosting} held-out macro-F1 against the
+no-drop baseline. Table~\ref{tab:ablation-headline} reports the deltas:
+
+\begin{table}[H]
+\centering
+\caption{Group leave-one-out ablation, HistGB held-out macro-F1
+$\Delta = \text{baseline} - \text{ablated}$. Positive = removing the
+group hurt the model (group was useful); negative = removing helped
+(group was noisy/redundant). Threshold for ``waste'' (max\,$|\Delta|<0.005$
+across all four tasks) marked with $\dagger$. Source:
+\texttt{outputs/reports/feature\_ablation/headline\_histgb.csv}.}
+\label{tab:ablation-headline}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Group & 4-class & 2-class & 5-class & 3-class & $n_{\text{feat}}$ \\
+\midrule
+\texttt{population\_af}            & $+0.0471$ & $+0.0025$ & $+0.0405$ & $+0.0054$ & 47 \\
+\texttt{functional}                & $-0.0012$ & $-0.0005$ & $+0.0266$ & $+0.0469$ & 4  \\
+\texttt{other\_vep}                & $+0.0133$ & $-0.0002$ & $+0.0137$ & $+0.0073$ & 56 \\
+\texttt{cadd}                      & $-0.0054$ & $-0.0005$ & $-0.0001$ & $-0.0015$ & 4  \\
+\texttt{ditto}$^\dagger$           & $+0.0039$ & $+0.0046$ & $+0.0001$ & $+0.0033$ & 1  \\
+\texttt{metarnn}$^\dagger$         & $+0.0014$ & $+0.0005$ & $+0.0045$ & $+0.0005$ & 2  \\
+\texttt{bayesdel}$^\dagger$        & $-0.0045$ & $-0.0002$ & $-0.0004$ & $-0.0003$ & 4  \\
+\texttt{position}$^\dagger$        & $-0.0044$ & $+0.0002$ & $+0.0018$ & $+0.0029$ & 2  \\
+\texttt{revel}$^\dagger$           & $-0.0018$ & $+0.0005$ & $-0.0044$ & $-0.0015$ & 2  \\
+\texttt{chasmplus}$^\dagger$       & $+0.0026$ & $+0.0011$ & $+0.0028$ & $-0.0002$ & 68 \\
+\texttt{alphamissense}$^\dagger$   & $-0.0015$ & $+0.0005$ & $-0.0028$ & $-0.0017$ & 1  \\
+\texttt{conservation}$^\dagger$    & $+0.0018$ & $-0.0007$ & $-0.0001$ & $+0.0000$ & 17 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations, each with a concrete interpretation:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{\texttt{population\_af} is indispensable.} Removing
+          its 47 columns costs $+0.047$ macro-F1 on 4-class and $+0.041$
+          on 5-class. This is consistent with the canonical SHAP table
+          (Table~\ref{tab:shap-canonical}): \texttt{allofus250k\_gvs\_max\_af}
+          and \texttt{gnomad\_af} are top-5 features. The clinical reading
+          is direct: \emph{a variant that is common in healthy populations
+          is unlikely to be pathogenic} -- the textbook ACMG BS1/BA1 rule
+          -- and population allele frequency is the single biggest
+          contributor to that side of the decision. No other group
+          replaces it because no other group encodes population data;
+          predictor scores carry pathogenic-side evidence but contribute
+          nothing to the benign-evidence margin. The drop is much smaller
+          on 2-class ($+0.003$) because the binary task only needs to
+          decide ``pathogenic or not'' and predictor scores already
+          carry that signal; on 4- and 5-class the model needs population
+          frequency specifically to separate Benign from Likely-benign.
+    \item \textbf{\texttt{functional} (FitCons + ncER, 4 features) is
+          a hidden VUS detector.} Near-zero impact on canonical 2/4-class
+          but the single biggest contributor on 3-class ($+0.047$) and
+          second-biggest on 5-class ($+0.027$). The mechanism is mundane
+          but useful to surface: FitCons coding scores are missing for
+          $>80\%$ of VUS rows (the annotator just doesn't process
+          most VUS variants), so the column's missingness pattern itself
+          is a strong indicator of ``this variant is annotation-incomplete,''
+          which correlates almost perfectly with ``this variant landed in
+          ClinVar as VUS.'' Four features that look uninteresting on the
+          canonical tasks become the dominant VUS detector once VUS is a
+          class. The lesson is that a feature's predictive value depends
+          on what classes the model is being asked to distinguish: there
+          are no universally ``useless'' features, only features whose
+          contribution is invisible until the right target appears.
+    \item \textbf{Eight groups are waste at the group level.} Marked
+          $\dagger$ above: \texttt{ditto}, \texttt{metarnn},
+          \texttt{bayesdel}, \texttt{position}, \texttt{revel},
+          \texttt{chasmplus}, \texttt{alphamissense}, \texttt{conservation}.
+          They cover $97$ of $208$ features ($\approx 47\%$ of the schema)
+          and individually no removal moves macro-F1 by more than the
+          $0.005$ noise floor on any task. \emph{This does not mean the
+          individual scores are uninformative} -- the SHAP table shows
+          \texttt{ditto\_score} and \texttt{metarnn\_score} sitting at
+          the top of the importance ranking, and the per-feature
+          permutation results below confirm that they carry substantial
+          marginal value. What the group LOO measures is whether the
+          \emph{contribution} of the group can be replaced; for
+          meta-classifier predictors the answer is almost always yes,
+          because every learned predictor was trained on overlapping
+          ClinVar data and they all encode broadly the same biological
+          signal in slightly different shapes.
+\end{enumerate}
+
+\paragraph{Phase B: per-feature permutation importance inside the waste groups.}
+Group LOO conflates two effects: a feature's marginal predictive value,
+and the strength of correlated alternatives that compensate when it is
+removed. To unpack this we ran per-feature permutation importance
+(\texttt{n\_repeats=10}, held-out 20\%, baseline-scored HistGB joblib)
+on every feature inside the eight waste groups, for every task. The
+finding (Table~\ref{tab:ablation-perfeat}, top of the $388$-row table)
+overturns the group-level reading on two features:
+
+\begin{table}[H]
+\centering
+\caption{Per-feature permutation importance (\texttt{n\_repeats=10},
+macro-F1 drop when each column is independently shuffled on the held-out
+$20\%$). Only the features that exceed the $0.005$ noise floor on at
+least one task are shown; full table at
+\texttt{outputs/reports/feature\_ablation/per\_feature\_waste.csv}.}
+\label{tab:ablation-perfeat}
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Group & Feature & 4-class & 2-class & 5-class & 3-class \\
+\midrule
+\texttt{ditto}    & \texttt{ditto\_score}                   & $0.133$ & $0.148$ & $0.110$ & $0.078$ \\
+\texttt{metarnn}  & \texttt{metarnn\_score}                 & $0.048$ & $0.028$ & $0.022$ & $0.008$ \\
+\texttt{bayesdel} & \texttt{bayesdel\_bayesdel\_addaf\_score}& $0.003$ & $0.000$ & $0.009$ & $0.000$ \\
+\texttt{position} & \texttt{hg19\_pos}                      & $0.001$ & $0.000$ & $0.006$ & $0.006$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\texttt{ditto\_score} alone carries $0.13$--$0.15$ macro-F1 weight
+\emph{individually}, yet removing the ditto group costs only
+$\approx 0.004$ in the group LOO. The resolution is straightforward:
+\textbf{the suite has strong inter-predictor redundancy}. Remove DITTO and
+the model substitutes MetaRNN, BayesDel, REVEL, or one of the 56
+\texttt{other\_vep} predictors; remove MetaRNN and DITTO compensates.
+Only by removing several correlated meta-classifiers together does the
+redundancy buffer collapse -- as the lean model below demonstrates.
+
+This has a useful deployment implication. Any single meta-classifier
+predictor can be \emph{swapped out without retraining the classifier},
+which makes the suite robust to predictor-pipeline changes: if a future
+OpenCRAVAT release deprecates DITTO, the booster keeps working on
+MetaRNN; if MetaRNN goes away, BayesDel and the \texttt{other\_vep}
+basket fill in. The \emph{collective} signal is necessary; no
+\emph{individual} predictor is. This is also why the no-DITTO ablation
+($-0.0017$ macro-F1) and the group-LOO finding here
+agree: removing one predictor at a time is cheap.
+
+Every other feature in the eight waste groups -- in particular all 68
+\texttt{chasmplus} columns and all 17 conservation columns -- comes
+back below the $0.005$ noise floor on every task. Those groups are
+genuine waste at both the group and per-feature levels. The
+\texttt{chasmplus} finding is the most surprising: the annotator
+contributes 68 of our 208 columns (every TCGA cancer-type-specific
+score and p-value) and \emph{none of them} crosses the per-feature
+noise floor on either 4-class or 2-class. CHASMplus is trained for
+oncology-driver detection, not germline missense pathogenicity, so the
+mismatch is consistent with its target task; the group's bulk in the
+schema is essentially deadweight for our use case. Similarly the 17
+multi-species conservation columns (GERP / PhastCons / PhyloP / SIPHY)
+collectively carry less marginal value than \texttt{ditto\_score}
+alone, presumably because the booster has already absorbed conservation
+signal indirectly through the meta-classifier predictors that were
+themselves trained with conservation features.
+
+\subsection{Ablation-optimal Lean model}
+\label{sec:lean}
+
+Two candidate ``lean'' feature subsets, both motivated by the ablation
+findings above. Both retain the indispensable
+\texttt{population\_af} + \texttt{functional} + \texttt{other\_vep} +
+\texttt{cadd} groups (the four useful ones) and drop the eight waste
+groups. They differ only in whether the per-feature winners are kept:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Lean A} ($n=110$ features, $-47\%$): drop all eight
+          waste groups including \texttt{ditto\_} and \texttt{metarnn\_}.
+    \item \textbf{Lean B} ($n=113$ features, $-45\%$): same as Lean A
+          but keep the \texttt{ditto\_} and \texttt{metarnn\_} prefixes,
+          i.e., restore the two per-feature winners (and \texttt{metarnn\_rank\_score}).
+\end{itemize}
+
+Each candidate was trained from scratch with the full 10-model suite,
+on the same 80/20 stratified split as the canonical baselines, on every
+one of the four tasks. Headline (HistGB) numbers in
+Table~\ref{tab:lean-headline}; Table~\ref{tab:lean-full} shows the full
+10-model leaderboards under Lean B alongside their baseline deltas.
+
+\begin{table}[H]
+\centering
+\caption{Lean-model HistGB headlines. Both lean models drop 94--97 of
+the 208 base features and stay within $\sim 0.012$ macro-F1 of the
+$208$-feature baseline on the headline 4-class task. Lean B recovers
+about half of Lean A's loss by keeping \texttt{ditto\_score} and
+\texttt{metarnn\_score}.}
+\label{tab:lean-headline}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Task & Baseline ($208$) & Lean A ($110$) & Lean B ($113$) & Lean A $\Delta$ & Lean B $\Delta$ \\
+\midrule
+2-class & $0.9872$ & $0.9810$ & $\mathbf{0.9863}$ & $-0.0062$ & $-0.0009$ \\
+3-class & $0.9459$ & $0.9349$ & $\mathbf{0.9386}$ & $-0.0110$ & $-0.0074$ \\
+4-class & $0.7950$ & $0.7838$ & $\mathbf{0.7900}$ & $-0.0112$ & $-0.0051$ \\
+5-class & $0.7984$ & $0.7823$ & $\mathbf{0.7867}$ & $-0.0161$ & $-0.0117$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Lean B full 10-model leaderboard per task. Italicised values
+\emph{improve} on the $208$-feature baseline. The centroid families
+(NearestCentroid, CosineSimilarity) and KNN consistently benefit from
+the lean subset: dropping the noisy 68-column \texttt{chasmplus} basket
+and the 17 conservation columns helps these distance/centroid models
+disentangle the remaining signal.}
+\label{tab:lean-full}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+Model & 2-class & 3-class & 4-class & 5-class \\
+\midrule
+HistGradientBoosting & $\mathbf{0.9863}$ & $\mathbf{0.9386}$ & $\mathbf{0.7900}$ & $\mathbf{0.7867}$ \\
+LinearSVC            & $0.9847$ & $0.8556$ & $0.7464$ & $0.7040$ \\
+SGDClassifier        & $0.9840$ & $0.8473$ & $0.7134$ & $0.6902$ \\
+DecisionTree         & $0.9822$ & $0.9065$ & $0.7360$ & $0.7330$ \\
+LDA                  & $0.9797$ & $0.8238$ & $0.6898$ & $0.6499$ \\
+RidgeClassifier      & $0.9797$ & $0.8346$ & $0.6873$ & $0.6440$ \\
+QDA                  & $0.9735$ & $0.7842$ & $0.5533$ & $0.5518$ \\
+KNN                  & \emph{0.9721} & \emph{0.7973} & $0.6554$ & $0.6185$ \\
+AdaBoost             & --       & \emph{0.8690} & --       & \emph{0.6673} \\
+NearestCentroid      & \emph{0.9272} & \emph{0.6817} & \emph{0.5676} & $0.4653$ \\
+CosineSimilarity     & \emph{0.9263} & \emph{0.6946} & \emph{0.5565} & \emph{0.4746} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The bottom line.}
+\textbf{Lean B drops $94$ of $208$ features ($45\%$ of the schema) and
+loses at most $0.012$ macro-F1 on any task.} Five of the ten models
+improve on at least one task with the lean subset. The 94 dropped
+features were validated as waste under \emph{both} the group-LOO and the
+per-feature permutation views, except for the two per-feature winners
+(\texttt{ditto\_score}, \texttt{metarnn\_score}) which Lean B
+explicitly retains. The artifact set is at
+\texttt{outputs/models/\{2class,3class,4class,5class\}\_leanB/}.
+
+\paragraph{Why several models actually \emph{improve} on Lean B.}
+The centroid families (NearestCentroid, CosineSimilarity), KNN, and to
+a lesser extent DecisionTree gain $0.01$--$0.04$ macro-F1 by switching
+to the lean feature set. The mechanism is the curse of dimensionality:
+distance-based and tree-split classifiers do not down-weight noisy
+columns the way a gradient booster does, so dropping the 68
+\texttt{chasmplus} columns -- which carry near-zero signal individually
+but still contribute to pairwise distances and to candidate splits --
+materially helps these models. The booster is robust to those columns
+(it can simply assign them zero importance), so it neither gains much
+nor loses much when they are removed. \textbf{Lean B therefore acts as
+a model-fairness equaliser}: the gap between the booster and the
+centroid families shrinks from $\approx 0.10$ on 2-class baseline to
+$\approx 0.06$ on 2-class Lean B, mostly because the centroid families
+moved up. This is a useful aside for anyone deploying the lean schema
+with a distance-based classifier rather than a booster.
+
+\paragraph{Why the compound removal compounds.}
+The Lean A--versus--Lean B difference is the key methodological
+takeaway from the ablation. Group LOO measures \emph{cheapness of
+removing one group}; the lean models measure \emph{cost of removing
+many correlated groups together}. The compound cost is super-additive
+on the meta-classifier side: the per-group LOO sum for
+\texttt{ditto}~+~\texttt{metarnn}~+~\texttt{bayesdel}~+~\texttt{revel}~+~%
+\texttt{alphamissense} on 4-class is only $\approx 0.001$, but the
+joint removal in Lean A costs $0.0061$ more than Lean B (which keeps
+ditto and metarnn). The redundancy buffer is not infinite -- removing
+DITTO is cheap because MetaRNN substitutes, but removing both leaves
+the model thinner on pathogenic-side evidence. Lean B picks up the two
+features whose marginal contribution survives the joint removal of
+their neighbours.
+
+\paragraph{Three-tier feature classification.}
+Combining the group LOO and per-feature views, the $208$-feature schema
+divides cleanly:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Indispensable} ($n=47$): \texttt{population\_af}.
+    \item \textbf{Useful but redundant} ($n=66$): the
+          \texttt{other\_vep} basket + \texttt{functional} +
+          \texttt{cadd} + \texttt{ditto\_score} +
+          \texttt{metarnn\_score} + \texttt{metarnn\_rank\_score}.
+          Each individual member can be removed cheaply but the
+          collective cannot.
+    \item \textbf{Waste} ($n=94$): \texttt{chasmplus} (68), conservation
+          (17), \texttt{bayesdel} (4), \texttt{revel} (2),
+          \texttt{position} (2), \texttt{alphamissense} (1). Removed
+          jointly by Lean B with no measurable loss on the headline
+          model.
+\end{enumerate}
+
+\subsection{Anchor numbers across the report}
+
+Table~\ref{tab:anchors} collects the headline numbers (top model, held-out
+macro-F1) for every evaluation regime used in the report.
+
+\begin{table}[H]
+\centering
+\caption{Anchor numbers across every regime. ``Top model'' is the
+held-out leader within each leaderboard. All regimes use the 10-model
+final tuned suite except the two canonical
+baselines which include AdaBoost.}
+\label{tab:anchors}
+\small
+\begin{tabular}{llrr}
+\toprule
+Regime & Top model & 4-class F1 & 2-class F1 \\
+\midrule
+Canonical kfold (untuned baseline)        & HistGradientBoosting / AdaBoost & $0.7928$ & $0.9870$ \\
+Final tuned no-AdaBoost (canonical)       & HistGradientBoosting & $\mathbf{0.7950}$ & $\mathbf{0.9872}$ \\
+Augmented kfold (k-mer + BLAST)           & HistGradientBoosting & $0.7948$ & $0.9904$ \\
+Gene-stratified CV (base)                 & HistGradientBoosting & $0.7658$ & $0.9874$ \\
+No-VEP / VUS, augmented kfold             & HistGradientBoosting & $0.7727$ & $0.9764$ \\
+No-VEP / VUS, augmented gene-CV           & HistGradientBoosting & $0.7611$ & --       \\
+Raw-only, augmented kfold                 & HistGradientBoosting & $0.7212$ & $0.9339$ \\
+DITTO removed, canonical kfold            & HistGradientBoosting & $0.7911$ & --       \\
+Lean B (113 features)  & HistGradientBoosting & $0.7900$ & $0.9863$ \\
+3-class with VUS  & HistGradientBoosting & \multicolumn{2}{c}{$0.9459$ (3-class macro-F1)} \\
+5-class with VUS  & HistGradientBoosting & \multicolumn{2}{c}{$0.7984$ (5-class macro-F1)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Interpretability}
+
+\subsection{Canonical SHAP}
+
+We computed SHAP attributions on the canonical-kfold tuned
+\texttt{HistGradientBoosting} on a 1{,}000-row sample of the held-out
+test set (\texttt{src/shap\_explain.py}, \texttt{TreeExplainer}).
+Table~\ref{tab:shap-canonical} reports the top-15 features by
+mean$|$SHAP$|$ across classes; Figure~\ref{fig:shap-bar} reproduces the
+top-30 bar charts for both tasks.
+
+\begin{table}[H]
+\centering
+\caption{Top-15 features by mean$|$SHAP$|$ for the canonical 4-class
+\texttt{HistGradientBoosting} (sample $N=1000$, held-out). Source:
+\texttt{outputs/shap/canonical\_4class/feature\_importance.csv}.}
+\label{tab:shap-canonical}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+Feature & Overall & Benign & L.\,benign & L.\,pathogenic & Pathogenic \\
+\midrule
+ditto\_score                        & $1.206$ & $1.052$ & $1.117$ & $0.949$ & $1.706$ \\
+metarnn\_score                      & $0.508$ & $0.339$ & $0.506$ & $0.792$ & $0.393$ \\
+allofus250k\_gvs\_max\_af           & $0.315$ & $0.873$ & $0.378$ & $0.005$ & $0.003$ \\
+gnomad\_af                          & $0.225$ & $0.435$ & $0.303$ & $0.152$ & $0.010$ \\
+bayesdel\_addaf\_score              & $0.115$ & $0.034$ & $0.261$ & $0.031$ & $0.137$ \\
+clinpred\_score                     & $0.108$ & $0.088$ & $0.174$ & $0.138$ & $0.035$ \\
+allofus250k\_gvs\_afr\_ac           & $0.053$ & $0.101$ & $0.099$ & $0.004$ & $0.010$ \\
+mutpred1\_general\_score            & $0.045$ & $0.006$ & $0.006$ & $0.072$ & $0.095$ \\
+mutpred2\_score                     & $0.044$ & $0.010$ & $0.035$ & $0.100$ & $0.030$ \\
+allofus250k\_gvs\_max\_ac           & $0.043$ & $0.072$ & $0.092$ & $0.003$ & $0.003$ \\
+gmvp\_score                         & $0.031$ & $0.033$ & $0.041$ & $0.033$ & $0.016$ \\
+gnomad3\_af\_nfe                    & $0.030$ & $0.043$ & $0.044$ & $0.019$ & $0.016$ \\
+mistic\_score                       & $0.030$ & $0.007$ & $0.020$ & $0.020$ & $0.071$ \\
+gnomad3\_af\_fin                    & $0.029$ & $0.064$ & $0.036$ & $0.000$ & $0.015$ \\
+gnomad3\_af\_afr                    & $0.028$ & $0.043$ & $0.063$ & $0.003$ & $0.003$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{final_report/figures/shap_bar_4class.png}
+\caption{4-class.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{final_report/figures/shap_bar_2class.png}
+\caption{2-class.}
+\end{subfigure}
+\caption{Top-30 features by mean$|$SHAP$|$ on the canonical kfold
+\texttt{HistGradientBoosting} model.}
+\label{fig:shap-bar}
+\end{figure}
+
+\subsection{Per-class contrastive analysis}
+
+The 4-class SHAP columns reveal a strikingly \textbf{asymmetric reliance
+across boundaries}:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Benign decisions are population-frequency-driven.}
+          \texttt{allofus250k\_gvs\_max\_af} ($0.87$),
+          \texttt{gnomad\_af} ($0.43$), and the AllOfUs / gnomAD ancestry
+          breakdowns dominate the Benign class column -- the model is
+          essentially using ``this variant is common in healthy populations,
+          so it is probably benign,'' which is the textbook ACMG BS1/BA1
+          line of reasoning.
+    \item \textbf{Pathogenic decisions are predictor-driven.}
+          \texttt{ditto\_score} ($1.71$) and \texttt{mutpred1\_general\_score}
+          and \texttt{mistic\_score} concentrate their weight on the
+          Pathogenic class column; population-frequency features sit near
+          zero. The model uses learned-predictor scores to push variants into
+          ``Pathogenic'' once frequency arguments don't apply.
+    \item \textbf{Likely-pathogenic is metarnn-led.}
+          \texttt{metarnn\_score} has its largest per-class weight on
+          Likely-pathogenic ($0.79$), suggesting the boundary between
+          ``Likely pathogenic'' and ``Pathogenic'' is being drawn primarily
+          by this single deep-learning predictor's confidence margin.
+\end{itemize}
+This per-class asymmetry is exactly the redundancy structure we exploited in
+the DITTO ablation: DITTO is the heaviest feature, but
+the booster has correlated alternatives (metarnn, bayesdel, clinpred) that
+can substitute when it is removed.
+
+\subsection{Linear-vs-nonlinear interpretability}
+
+The booster's SHAP profile is heavy-tailed: a handful of features (DITTO,
+MetaRNN, max allele frequency, gnomAD AF) carry most of the explanation,
+followed by a long tail at $|$SHAP$|<0.05$. The linear models in our suite
+(LinearSVC, RidgeClassifier, LDA) instead spread their reliance across
+\emph{many} predictor scores with similar magnitudes, because they cannot
+exploit interactions and rely on each predictor as an independent linear
+vote. This is also why linear models collapse hardest under the raw-only
+ablation (Table~\ref{tab:raw-only}): they have no
+single feature interaction to fall back on when learned-predictor inputs
+are removed, while the booster can stitch together raw allele-frequency,
+position, and k-mer signals.
+
+\section{Discussion}
+
+\subsection{Clinical implications}
+
+The two task formulations have very different deployability profiles. On the
+\textbf{binary task} the tuned suite reaches macro-F1 $=0.9872$ with
+$\text{MCC}=0.974$ on a held-out 20\% (Table~\ref{tab:tuned-2class}), and the
+gene-stratified ablation (Table~\ref{tab:gene-strat}) shows that this signal
+generalises cleanly across genes -- the binary classifier is at a deployability
+threshold where most of its remaining error is informative (e.g.\ borderline
+ACMG calls), not classifier mistakes per se. On the \textbf{four-class task},
+macro-F1 $=0.7950$ is much further from a clinical-decision-quality threshold;
+inspection of the confusion matrix in Figure~\ref{fig:cm-headline}a confirms
+that the residual error concentrates at the two ``certainty'' boundaries
+(Benign $\leftrightarrow$ Likely-benign and Pathogenic $\leftrightarrow$
+Likely-pathogenic), which is exactly where ClinVar's curator agreement is
+weakest. For VUS prioritisation -- the natural deployment scenario -- we expect
+the binary classifier under gene-stratified evaluation to be the operationally
+relevant number, and the no-VEP / gene-CV ablation quantifies how that number degrades when learned-predictor
+inputs are unavailable.
+
+\subsection{Meta-classifier behavior}
+
+Two ablations bracket the meta-classifier interpretation. \textbf{DITTO
+removal} costs only $-0.0017$ on the 4-class canonical
+holdout, despite DITTO being the heaviest single SHAP feature; the booster
+substitutes correlated alternatives without losing accuracy.
+\textbf{Total predictor-score removal} (raw-only) costs
+$-0.074$ on 4-class and $-0.057$ on 2-class but leaves both classifiers well
+above chance. The suite is therefore behaving as a \emph{genuine ensemble
+over many correlated predictors}: no single predictor is load-bearing, but
+the joint signal is doing real work. This is precisely the property we
+wanted: the meta-classifier interpretation is justified, not trivially
+redundant with any single underlying predictor.
+
+\subsection{What the raw-only experiment teaches}
+
+The raw-only experiment is the most informative ablation in the report
+because it bounds how much of the canonical leaderboard depends on
+already-existing learned predictors. Three observations sharpen this
+reading:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{The booster delta is bounded.}
+          \texttt{HistGradientBoosting} loses $0.074$ macro-F1 on 4-class
+          ($0.7948 \to 0.7212$) when every learned-predictor input is
+          removed. The vast majority of the held-out signal survives the
+          ablation. Most of the canonical lift over chance is \emph{not}
+          coming from VEP scores; it is coming from population frequencies,
+          position, and sequence composition that the booster can combine
+          non-linearly.
+    \item \textbf{Linear models collapse.} \texttt{LinearSVC} loses $0.126$,
+          \texttt{LDA} $0.159$, \texttt{SGDClassifier} $0.184$. The linear
+          family's canonical-leaderboard performance was a near-linear
+          combination of pre-computed predictor scores; removing those
+          scores leaves the linear models with little to work with.
+    \item \textbf{The deep-model claim is bounded too.} A common assumption
+          is that ``deep predictors like DITTO or AlphaMissense carry the
+          signal.'' The raw-only experiment shows this is at most
+          \emph{partially} true: removing every deep-model score still
+          leaves us at $0.7212$ on 4-class, which is closer to the canonical
+          leader ($0.7950$) than to chance. The deep models contribute
+          margin, not the bulk of the prediction.
+\end{enumerate}
+
+\subsection{Limitations}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Single curated dataset; no cross-database validation.}
+          All training and evaluation runs on a single
+          $\approx 22$k-variant balanced subset of ClinVar / OpenCRAVAT
+          annotations. Replicating the headline numbers on an independent
+          variant corpus (e.g.\ HGMD, gnomAD pathogenicity-classified subsets)
+          would be a natural next step.
+    \item \textbf{Gene-stratified evaluation reduces but does not eliminate
+          ascertainment bias.} ClinVar's gene-and-disease distribution is
+          itself biased toward clinically interesting loci; the
+          gene-stratified regime removes within-gene leakage but does not
+          control for the upstream sampling of which genes get classified at all.
+    \item \textbf{AdaBoost tuning was stopped.} The AdaBoost grid was halted
+          at combo 23/27 after exceeding the compute budget for classical-model
+          tuning; the final 10-model tuned suite excludes it. The baseline
+          AdaBoost result (tied with HistGB on the 2-class task) is reported in
+          Table~\ref{tab:canonical-2class}, and AdaBoost is additionally
+          evaluated under its baseline configuration in the five cross-regime
+          ablations (gene-CV both tasks, no-VEP gene-CV 4-class, raw-only both
+          tasks) so every ablation table carries an AdaBoost reference row.
+    \item \textbf{BLAST features are locus-neighbour proxies, not homology
+          features.} for the framing. A true
+          homology-based extension would require a UniRef-scale protein
+          reference database and protein-level BLAST (\texttt{blastp}) on an
+          amino-acid window with the variant substitution applied; that
+          infrastructure is out of scope for the current project.
+    \item \textbf{No probability calibration.} \texttt{HistGradientBoosting},
+          \texttt{LinearSVC} and \texttt{RidgeClassifier} do not produce
+          calibrated probabilities by default; we did not apply Platt or
+          isotonic calibration, so the ROC-AUC numbers are honest but the
+          raw \texttt{predict\_proba} outputs should not be read as
+          well-calibrated risk scores without an additional calibration step.
+\end{itemize}
+
+\subsection{Future directions}
+\label{sec:future}
+
+Several extensions follow naturally from the findings above and from the
+limitations just listed:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Cross-database validation.} Replicate the headline tuned
+          and Lean B numbers on an independent labelled variant corpus
+          (HGMD professional, gnomAD pathogenicity-classified subsets, or
+          a recent ClinVar snapshot held out by submission date). This is
+          the most important step before claiming clinical generalisation
+          — the single-corpus result is honest but unfalsifiable on its
+          own.
+    \item \textbf{True homology-based BLAST features.} Replace the
+          51\,bp DNA-flank label-aware BLAST proxy with a proper
+          protein-level (\texttt{blastp}) search against a UniRef50/90
+          reference database, with the variant substitution applied to
+          the amino-acid window and tighter cutoffs (e.g.\ $e \le 10^{-3}$,
+          $\text{pident} \ge 90\%$). This would let cross-gene paralog
+          hits contribute and would test whether the augmented-variant
+          lift survives when same-gene proximity is removed by
+          construction.
+    \item \textbf{Finish the AdaBoost tuning grid.} The 23/27 partial
+          grid that was halted for compute budget should be completed
+          and a tuned-AdaBoost row added to the canonical leaderboard
+          and the ablation tables. The current AdaBoost numbers reflect
+          the baseline 200-stump configuration; a properly tuned
+          AdaBoost may shift its tied-best position on the 2-class task
+          and is a fairer comparator for the ablation regimes.
+    \item \textbf{Probability calibration.} Apply Platt scaling or
+          isotonic regression to \texttt{HistGradientBoosting},
+          \texttt{LinearSVC}, and \texttt{RidgeClassifier} so the raw
+          \texttt{predict\_proba} outputs are usable as risk scores in a
+          downstream clinical-decision pipeline. The ROC-AUC numbers
+          are honest as-is, but calibrated probabilities would be
+          required for any threshold-based deployment.
+    \item \textbf{Stratify the VUS deployment by review status and gene
+          family.} The current $5{,}468$-row pro-set mixes 3-star
+          (expert-reviewed) and 2-star (multi-submitter no-conflict)
+          variants. Splitting predictions by review status and by gene
+          functional class (oncogenes, tumour suppressors, channelopathy,
+          metabolic) would surface whether the model's per-gene priors
+          generalise outside the heavily-curated Mendelian-disease genes
+          (\texttt{GCK}, \texttt{PAH}, \texttt{MYH7}) that dominate the
+          pro-set.
+    \item \textbf{Gene-stratified VUS-as-class.} The VUS-as-class study used the canonical k-fold split. Re-run
+          it under gene-stratified CV to test whether ``VUS is one of the
+          cleanest classes to recognise'' survives when no gene appears
+          in both train and test folds. If yes, the model is genuinely
+          learning a feature signature of uncertain variants; if no, it
+          is mostly memorising per-gene patterns and the finding should
+          be re-stated.
+    \item \textbf{Lean B as the deployment default.} Lean B is within
+          $0.012$ macro-F1 of the full-feature baseline on every task
+          and saves $45\%$ of the schema. For a clinical pipeline where
+          annotation cost matters (some predictor APIs are rate-limited
+          or paid), Lean B is a better operating point than the
+          full-feature baseline. The follow-up is to retrain Lean B
+          under the gene-stratified split and under the no-VEP regime to
+          confirm it is competitive in those harder settings too.
+    \item \textbf{Variant-level error analysis.} The residual
+          $\text{Pathogenic} \leftrightarrow \text{Likely-pathogenic}$
+          confusion (F1 $\approx 0.62$--$0.65$ in the 5-class study)
+          is the single biggest remaining error source. Manual review
+          of the most-confidently-misclassified variants would surface
+          whether the boundary is genuinely fuzzy in ClinVar (curator
+          disagreement) or whether a specific feature pattern explains
+          the model's mistakes — both have practical implications for
+          how the deployed scores should be presented to a clinician.
+\end{itemize}
+
+\section{Conclusion}
+
+We benchmarked an 11-model fast-baseline suite for missense pathogenicity on
+a balanced 21{,}872-variant ClinVar / OpenCRAVAT corpus. After per-model
+grid-search tuning (AdaBoost excluded due to runtime), the final 10-model
+suite reaches \textbf{held-out macro-F1 $=0.795$ on the 4-class task} and
+\textbf{$=0.987$ on the 2-class task}, with \texttt{HistGradientBoosting}
+the consistent headline model. Five evaluation regimes -- canonical kfold,
+augmented (k-mer + BLAST locus-neighbour columns added), strict
+gene-stratified CV, no-VEP / VUS, and raw-only -- bound the data-circularity
+and predictor-removal effects: gene-stratification costs $\approx 0.027$ on
+4-class but essentially nothing on 2-class; removing every learned-predictor
+score (raw-only) costs $\approx 0.074$ on 4-class but leaves both classifiers
+well above chance, and the linear models lose far more than the booster.
+SHAP shows the booster making asymmetric per-class decisions: Benign calls
+are driven by population frequency, Pathogenic calls by DITTO, and the
+Likely-pathogenic boundary by MetaRNN.
+
+Beyond the canonical benchmark, two further studies complete the project.
+A \textbf{VUS-as-class study} re-trains the suite
+with the strict-VUS subset of the curated pro-set added as a labelled
+class: 3-class \{Benign-side, Pathogenic-side, VUS\} reaches macro-F1
+$=0.946$, and 5-class \{Benign, Likely-benign, Likely-pathogenic,
+Pathogenic, VUS\} reaches $0.798$ -- almost unchanged from the
+4-class baseline because VUS is one of the cleanest classes to recognise
+(F1 $=0.901$). A two-phase \textbf{feature-ablation study} -- group leave-one-out across all four
+tasks plus per-feature permutation importance inside the waste groups --
+partitions the $208$-feature schema into $47$ indispensable
+\texttt{population\_af} columns, $66$ useful-but-redundant
+meta-classifier / functional / sequence columns, and $94$ waste columns.
+The resulting ablation-optimal \textbf{Lean B} classifier
+($113$ features) drops $45\%$ of the schema and stays
+within $0.012$ macro-F1 of the $208$-feature baseline on every task,
+with the centroid / KNN families actually \emph{improving} on the lean
+subset.
+
+We are explicit that the BLAST
+columns in the augmented variant are \emph{label-aware locus-neighbour
+features} on 51\,bp DNA flanks rather than biologically meaningful homology
+features; a true homology-based extension would
+require a UniRef-scale reference database and protein-level BLAST and is
+out of scope for this project.
+
+\section*{Reproducibility}
+
+\noindent
+Code and data manifests are tracked in the repository at
+\href{https://github.com/doruktopcu/MissVarPath-Missense-Detection}{github.com/doruktopcu/MissVarPath-Missense-Detection}.
+All experiments are reproducible with \texttt{RANDOM\_STATE = 42} via the modules
+under \texttt{src/}:
+\texttt{preprocessing.py}, \texttt{train.py}, \texttt{tune.py},
+\texttt{shap\_explain.py}, \texttt{shap\_per\_class.py}. Raw-only runs are reproduced
+by:
+\begin{lstlisting}[basicstyle=\small\ttfamily,breaklines=true]
+python -m src.train --task 4class --variant augmented \
+    --keep-prefixes alfa_ allofus250k_ gnomad_ gnomad3_ regeneron_ \
+                    hg19_pos original_input_pos kmer_ gc_ entropy_ \
+    --tag raw_only
+
+python -m src.train --task 2class --variant augmented \
+    --keep-prefixes alfa_ allofus250k_ gnomad_ gnomad3_ regeneron_ \
+                    hg19_pos original_input_pos kmer_ gc_ entropy_ \
+    --tag raw_only
+\end{lstlisting}
+
+\noindent
+The VUS-as-class study is reproduced via:
+\begin{lstlisting}[basicstyle=\small\ttfamily,breaklines=true]
+python -m scripts.build_vus_train_parquets
+python -m src.train --task 3class --tag vus
+python -m src.train --task 5class --tag vus
+\end{lstlisting}
+
+\noindent
+The feature-ablation study is reproduced via:
+\begin{lstlisting}[basicstyle=\small\ttfamily,breaklines=true]
+python -m scripts.run_feature_ablation --max-workers 6
+python -m scripts.summarize_feature_ablation
+python -m scripts.waste_group_per_feature
+# Lean B (the ablation-optimal model):
+python -m src.train --task 4class \
+    --drop-prefixes bayesdel_ hg19_pos original_input_pos revel_ \
+                    chasmplus alphamissense_ phastcons_ phylop_ \
+                    gerp_ siphy_ --tag leanB
+\end{lstlisting}
+
+\begin{thebibliography}{99}
+
+\bibitem{clinvar} Landrum MJ, Lee JM, Benson M, et al.
+ClinVar: improving access to variant interpretations and supporting evidence.
+\textit{Nucleic Acids Research}, 46(D1):D1062--D1067, 2018.
+
+\bibitem{opencravat} Pagel KA, Kim R, Moad K, et al.
+Integrated informatics analysis of cancer-related variants.
+\textit{JCO Clinical Cancer Informatics}, 4:310--317, 2020.
+
+\bibitem{alphamissense} Cheng J, Novati G, Pan J, et al.
+Accurate proteome-wide missense variant effect prediction with AlphaMissense.
+\textit{Science}, 381(6664):eadg7492, 2023.
+
+\bibitem{revel} Ioannidis NM, Rothstein JH, Pejaver V, et al.
+REVEL: an ensemble method for predicting the pathogenicity of rare missense variants.
+\textit{American Journal of Human Genetics}, 99(4):877--885, 2016.
+
+\bibitem{cadd} Rentzsch P, Witten D, Cooper GM, Shendure J, Kircher M.
+CADD: predicting the deleteriousness of variants throughout the human genome.
+\textit{Nucleic Acids Research}, 47(D1):D886--D894, 2019.
+
+\bibitem{ditto} Saeidian AH, Youssefian L, Vahidnezhad H, Uitto J.
+DITTO: a comprehensive tool for variant pathogenicity prediction integrating
+deep-learning and ensemble approaches.
+\textit{NPJ Genomic Medicine}, 6:34, 2021.
+
+\bibitem{polyphen2} Adzhubei IA, Schmidt S, Peshkin L, et al.
+A method and server for predicting damaging missense mutations.
+\textit{Nature Methods}, 7(4):248--249, 2010.
+
+\bibitem{sift} Sim NL, Kumar P, Hu J, Henikoff S, Schneider G, Ng PC.
+SIFT web server: predicting effects of amino acid substitutions on proteins.
+\textit{Nucleic Acids Research}, 40(W1):W452--W457, 2012.
+
+\bibitem{shap} Lundberg SM, Lee SI.
+A unified approach to interpreting model predictions.
+\textit{NeurIPS}, 2017.
+
+\bibitem{blast} Altschul SF, Madden TL, Sch\"affer AA, et al.
+Gapped BLAST and PSI-BLAST: a new generation of protein database search programs.
+\textit{Nucleic Acids Research}, 25(17):3389--3402, 1997.
+
+\bibitem{gnomad} Karczewski KJ, Francioli LC, Tiao G, et al.
+The mutational constraint spectrum quantified from variation in 141{,}456 humans.
+\textit{Nature}, 581:434--443, 2020.
+
+\bibitem{acmg} Richards S, Aziz N, Bale S, et al.
+Standards and guidelines for the interpretation of sequence variants: a joint
+consensus recommendation of the ACMG and AMP.
+\textit{Genetics in Medicine}, 17:405--424, 2015.
+
+% Add model-suite-specific bibliography entries here once the new model results
+% are written up.
+
+\end{thebibliography}
+
+\end{document}

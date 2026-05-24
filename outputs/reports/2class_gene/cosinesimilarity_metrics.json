@@ -1,0 +1,62 @@
+{
+  "model": "CosineSimilarity",
+  "task": "2class",
+  "variant": "base",
+  "cv_mode": "gene",
+  "tag": "gene",
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.8843314191960624,
+      "macro_f1": 0.8842814410340374,
+      "weighted_f1": 0.8844438700606185,
+      "fit_seconds": 0.03
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.9080224833929484,
+      "macro_f1": 0.9064338731372303,
+      "weighted_f1": 0.9075739346148632,
+      "fit_seconds": 0.03
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.9126959729480479,
+      "macro_f1": 0.9124425762535038,
+      "weighted_f1": 0.9125482788746565,
+      "fit_seconds": 0.03
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.8989510489510489,
+      "macro_f1": 0.8955101103771959,
+      "weighted_f1": 0.8998858704133096,
+      "fit_seconds": 0.04
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.9110712455151204,
+      "macro_f1": 0.908588993296384,
+      "weighted_f1": 0.9106427385224614,
+      "fit_seconds": 0.04
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.9030144340006455,
+    "cv_acc_std": 0.011718480139667732,
+    "cv_macro_f1_mean": 0.9014513988196702,
+    "cv_macro_f1_std": 0.01147478371624348
+  },
+  "holdout": {
+    "accuracy": 0.8938404106392908,
+    "macro_f1": 0.8937441546153782,
+    "weighted_f1": 0.8936963996887859,
+    "f1_per_class": {
+      "Benign/Likely benign": 0.8905460668751504,
+      "Pathogenic/Likely pathogenic": 0.8969422423556059
+    },
+    "mcc": 0.7911264421146361,
+    "fit_seconds": 0.03
+  },
+  "model_path": "C:\\Users\\Doruk-Topcu\\Documents\\Projects\\MissVarPath-Missense-Detection\\outputs\\models\\2class_gene\\cosinesimilarity.joblib"
+}

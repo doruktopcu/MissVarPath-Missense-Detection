@@ -1,0 +1,64 @@
+{
+  "model": "SGDClassifier",
+  "task": "4class",
+  "variant": "base",
+  "cv_mode": "kfold",
+  "tag": null,
+  "cv": [
+    {
+      "fold": 1,
+      "accuracy": 0.7028571428571428,
+      "macro_f1": 0.6906389365406512,
+      "weighted_f1": 0.6906389365406512,
+      "fit_seconds": 0.22
+    },
+    {
+      "fold": 2,
+      "accuracy": 0.6908571428571428,
+      "macro_f1": 0.6789868619727121,
+      "weighted_f1": 0.6789868619727121,
+      "fit_seconds": 0.19
+    },
+    {
+      "fold": 3,
+      "accuracy": 0.7039154044012575,
+      "macro_f1": 0.6957810141546585,
+      "weighted_f1": 0.6957295543341326,
+      "fit_seconds": 0.32
+    },
+    {
+      "fold": 4,
+      "accuracy": 0.6887682194912832,
+      "macro_f1": 0.6464777381367939,
+      "weighted_f1": 0.6465970207195079,
+      "fit_seconds": 0.2
+    },
+    {
+      "fold": 5,
+      "accuracy": 0.7062017719348386,
+      "macro_f1": 0.6933635441005052,
+      "weighted_f1": 0.6933719767573208,
+      "fit_seconds": 0.17
+    }
+  ],
+  "cv_summary": {
+    "cv_acc_mean": 0.698519936308333,
+    "cv_acc_std": 0.008073837680078027,
+    "cv_macro_f1_mean": 0.6810496189810642,
+    "cv_macro_f1_std": 0.02037198860232067
+  },
+  "holdout": {
+    "accuracy": 0.7158857142857142,
+    "macro_f1": 0.7015063263645408,
+    "weighted_f1": 0.7014706942762647,
+    "f1_per_class": {
+      "Benign": 0.8825986078886311,
+      "Likely benign": 0.8573967125721902,
+      "Likely pathogenic": 0.6415651531930602,
+      "Pathogenic": 0.42446483180428135
+    },
+    "mcc": 0.6341838087993894,
+    "roc_auc_ovr_macro": 0.9161118112963083,
+    "fit_seconds": 0.17
+  }
+}

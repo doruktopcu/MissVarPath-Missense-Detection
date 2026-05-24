@@ -1,34 +1,63 @@
 """Model zoo.
 
 A unified ``ModelSpec`` interface lets ``train.py`` iterate over heterogeneous
-estimators (sklearn / XGBoost / LightGBM / CatBoost / PyTorch) without special
-casing inside the training loop.
+sklearn estimators without special casing inside the training loop.
 
-Models included (10 total per the project plan):
-    1.  Logistic Regression
-    2.  Random Forest
-    3.  Extra Trees
-    4.  XGBoost
-    5.  LightGBM
-    6.  CatBoost
-    7.  Shallow Neural Network (1 hidden layer MLP)
-    8.  CNN 1D            (PyTorch)
-    9.  LSTM              (PyTorch)
-    10. RNN               (PyTorch)
+Active suite (11 models — classical baselines plus two fast ensembles,
+all M1 Pro-friendly):
+    Classical / linear:  KNN, NearestCentroid, CosineSimilarity, DecisionTree,
+                         LDA, QDA, LinearSVC, RidgeClassifier, SGDClassifier
+    Ensembles:           AdaBoost, HistGradientBoosting
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable
 
 import numpy as np
-from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.neural_network import MLPClassifier
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    HistGradientBoostingClassifier,
+)
+from sklearn.linear_model import RidgeClassifier, SGDClassifier
+from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import LinearSVC
+from sklearn.tree import DecisionTreeClassifier
 
 from .config import RANDOM_STATE
+
+
+# ---------------- Custom estimators --------------------------------------------
+
+class CosineSimilarityClassifier(BaseEstimator, ClassifierMixin):
+    """Predicts the class whose L2-normalised mean vector is most cosine-similar
+    to the input. Equivalent to NearestCentroid with a cosine distance metric.
+    """
+
+    def fit(self, X, y):
+        X = np.asarray(X, dtype=np.float64)
+        y = np.asarray(y)
+        self.classes_ = np.unique(y)
+        centroids = np.stack([X[y == c].mean(axis=0) for c in self.classes_])
+        norms = np.linalg.norm(centroids, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        self.centroids_ = centroids / norms
+        return self
+
+    def predict(self, X):
+        X = np.asarray(X, dtype=np.float64)
+        norms = np.linalg.norm(X, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        X_norm = X / norms
+        sim = X_norm @ self.centroids_.T  # (N, C)
+        return self.classes_[np.argmax(sim, axis=1)]
 
 
 @dataclass
@@ -36,129 +65,119 @@ class ModelSpec:
     name: str
     builder: Callable[[int], object]
     needs_scaling: bool = False
-    family: str = "sklearn"  # 'sklearn' | 'torch'
+    family: str = "sklearn"
 
 
-# ---------------- Sklearn-style builders ---------------------------------------
+# ---------------- Classical / linear builders ----------------------------------
 
-def _logreg(_n_classes: int):
+def _knn(_n_classes: int):
     return Pipeline([
         ("scaler", StandardScaler()),
-        ("clf", LogisticRegression(max_iter=5000, solver="lbfgs",
-                                    n_jobs=-1, random_state=RANDOM_STATE)),
+        ("clf", KNeighborsClassifier(n_neighbors=30, weights="distance",
+                                      metric="cosine", n_jobs=-1)),
     ])
 
 
-def _random_forest(_n_classes: int):
-    return RandomForestClassifier(
-        n_estimators=500, max_depth=None, n_jobs=-1,
+def _nearest_centroid(_n_classes: int):
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", NearestCentroid(shrink_threshold=1.0)),
+    ])
+
+
+def _cosine_similarity(_n_classes: int):
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", CosineSimilarityClassifier()),
+    ])
+
+
+def _decision_tree(_n_classes: int):
+    return DecisionTreeClassifier(
+        max_depth=10, min_samples_leaf=1, ccp_alpha=0.001,
         class_weight="balanced", random_state=RANDOM_STATE,
     )
 
 
-def _extra_trees(_n_classes: int):
-    return ExtraTreesClassifier(
-        n_estimators=500, n_jobs=-1, class_weight="balanced",
-        random_state=RANDOM_STATE,
-    )
-
-
-def _xgboost(n_classes: int):
-    from xgboost import XGBClassifier
-    return XGBClassifier(
-        n_estimators=600,
-        learning_rate=0.05,
-        max_depth=6,
-        subsample=0.9,
-        colsample_bytree=0.9,
-        objective="multi:softprob" if n_classes > 2 else "binary:logistic",
-        num_class=n_classes if n_classes > 2 else None,
-        tree_method="hist",
-        eval_metric="mlogloss" if n_classes > 2 else "logloss",
-        n_jobs=-1,
-        random_state=RANDOM_STATE,
-    )
-
-
-def _lightgbm(n_classes: int):
-    from lightgbm import LGBMClassifier
-    return LGBMClassifier(
-        n_estimators=600,
-        learning_rate=0.05,
-        num_leaves=63,
-        max_depth=-1,
-        subsample=0.9,
-        colsample_bytree=0.9,
-        objective="multiclass" if n_classes > 2 else "binary",
-        num_class=n_classes if n_classes > 2 else 1,
-        n_jobs=-1,
-        random_state=RANDOM_STATE,
-        verbose=-1,
-    )
-
-
-def _catboost(n_classes: int):
-    from catboost import CatBoostClassifier
-    return CatBoostClassifier(
-        iterations=600,
-        learning_rate=0.05,
-        depth=6,
-        loss_function="MultiClass" if n_classes > 2 else "Logloss",
-        random_seed=RANDOM_STATE,
-        verbose=False,
-        thread_count=-1,
-    )
-
-
-def _shallow_nn(_n_classes: int):
+def _lda(_n_classes: int):
+    # solver='svd' is numerically stable across sklearn / BLAS variants;
+    # the tuned (lsqr, shrinkage=auto) combination was unstable under
+    # sklearn 1.7+ on Windows, producing fold-to-fold variance >0.10 in
+    # macro-F1. 'svd' does not accept a shrinkage parameter but gives
+    # equivalent results to lsqr+auto on this dataset under stable BLAS.
     return Pipeline([
         ("scaler", StandardScaler()),
-        ("clf", MLPClassifier(
-            hidden_layer_sizes=(128,),
-            activation="relu",
-            solver="adam",
-            alpha=1e-4,
-            batch_size=256,
-            learning_rate_init=1e-3,
-            max_iter=400,
-            n_iter_no_change=15,
-            tol=1e-5,
-            early_stopping=True,
-            random_state=RANDOM_STATE,
-        )),
+        ("clf", LinearDiscriminantAnalysis(solver="svd")),
     ])
 
 
-# ---------------- PyTorch builders ---------------------------------------------
-
-def _torch_cnn1d(_n_classes: int):
-    from .torch_models import TorchClassifier, CNN1D
-    return TorchClassifier(model_factory=CNN1D, epochs=25, batch_size=256, lr=1e-3)
-
-
-def _torch_lstm(_n_classes: int):
-    from .torch_models import TorchClassifier, LSTMNet
-    return TorchClassifier(model_factory=LSTMNet, epochs=25, batch_size=256, lr=1e-3)
+def _qda(_n_classes: int):
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", QuadraticDiscriminantAnalysis(reg_param=0.01)),
+    ])
 
 
-def _torch_rnn(_n_classes: int):
-    from .torch_models import TorchClassifier, RNNNet
-    return TorchClassifier(model_factory=RNNNet, epochs=25, batch_size=256, lr=1e-3)
+def _linear_svc(_n_classes: int):
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", LinearSVC(C=1.0, max_iter=5000, dual="auto",
+                          class_weight="balanced",
+                          random_state=RANDOM_STATE)),
+    ])
+
+
+def _ridge(_n_classes: int):
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", RidgeClassifier(alpha=1.0, class_weight="balanced",
+                                 random_state=RANDOM_STATE)),
+    ])
+
+
+def _sgd(_n_classes: int):
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", SGDClassifier(loss="log_loss", alpha=1e-3,
+                              penalty="elasticnet", l1_ratio=0.15,
+                              max_iter=5000, tol=1e-3, early_stopping=True,
+                              class_weight="balanced",
+                              n_jobs=-1, random_state=RANDOM_STATE)),
+    ])
+
+
+# ---------------- Ensemble builders --------------------------------------------
+
+def _adaboost(_n_classes: int):
+    return AdaBoostClassifier(
+        n_estimators=200, learning_rate=0.5, random_state=RANDOM_STATE,
+    )
+
+
+def _hist_gbm(_n_classes: int):
+    return HistGradientBoostingClassifier(
+        learning_rate=0.02, max_iter=2000, max_depth=None,
+        max_leaf_nodes=127, min_samples_leaf=20,
+        l2_regularization=1.0, random_state=RANDOM_STATE,
+    )
 
 
 # ---------------- Public registry ----------------------------------------------
 
 MODEL_SPECS: list[ModelSpec] = [
-    ModelSpec("LogisticRegression", _logreg, needs_scaling=True),
-    ModelSpec("RandomForest", _random_forest),
-    ModelSpec("ExtraTrees", _extra_trees),
-    ModelSpec("XGBoost", _xgboost),
-    ModelSpec("LightGBM", _lightgbm),
-    ModelSpec("CatBoost", _catboost),
-    ModelSpec("ShallowNN_MLP", _shallow_nn, needs_scaling=True),
-    ModelSpec("CNN1D", _torch_cnn1d, needs_scaling=True, family="torch"),
-    ModelSpec("LSTM", _torch_lstm, needs_scaling=True, family="torch"),
-    ModelSpec("RNN", _torch_rnn, needs_scaling=True, family="torch"),
+    # --- Classical / linear ---
+    ModelSpec("KNN", _knn, needs_scaling=True),
+    ModelSpec("NearestCentroid", _nearest_centroid, needs_scaling=True),
+    ModelSpec("CosineSimilarity", _cosine_similarity, needs_scaling=True),
+    ModelSpec("DecisionTree", _decision_tree),
+    ModelSpec("LDA", _lda, needs_scaling=True),
+    ModelSpec("QDA", _qda, needs_scaling=True),
+    ModelSpec("LinearSVC", _linear_svc, needs_scaling=True),
+    ModelSpec("RidgeClassifier", _ridge, needs_scaling=True),
+    ModelSpec("SGDClassifier", _sgd, needs_scaling=True),
+    # --- Ensembles ---
+    ModelSpec("AdaBoost", _adaboost),
+    ModelSpec("HistGradientBoosting", _hist_gbm),
 ]
 
 
