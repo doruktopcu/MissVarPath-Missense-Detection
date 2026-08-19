@@ -15,3 +15,8 @@ outputs/preprocessing/*.csv
 outputs/models/**/*.joblib
 outputs/models/**/*.pt
 outputs/models/**/*.pkl
+
+# OS / local tool artifacts
+._*
+.Rhistory
+.claude/
